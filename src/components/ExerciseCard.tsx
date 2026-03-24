@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import type { LoggedExercise, WorkoutSession } from "../lib/types";
-import { RefreshCw, Minus, Plus } from "lucide-react";
+import { RefreshCw, Minus, Plus, Search } from "lucide-react";
 
 interface Props {
   exercise: LoggedExercise;
@@ -27,7 +27,9 @@ export function ExerciseCard({
   const [swapping, setSwapping] = useState(false);
   const [swapName, setSwapName] = useState("");
   const [justCompleted, setJustCompleted] = useState(false);
+  const [weightBump, setWeightBump] = useState<number | null>(null);
   const prevSets = useRef(exercise.setsCompleted);
+  const prevWeight = useRef(exercise.startingWeight);
 
   const allDone = exercise.setsCompleted === exercise.targetSets;
 
@@ -39,6 +41,24 @@ export function ExerciseCard({
     }
     prevSets.current = exercise.setsCompleted;
   }, [exercise.setsCompleted, allDone]);
+
+  const weightDebounce = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (weightDebounce.current) clearTimeout(weightDebounce.current);
+    const next = exercise.startingWeight;
+    weightDebounce.current = setTimeout(() => {
+      const prev = prevWeight.current;
+      if (next != null && prev != null && next > prev) {
+        setWeightBump(next - prev);
+        setTimeout(() => setWeightBump(null), 900);
+      }
+      prevWeight.current = next;
+    }, 600);
+    return () => {
+      if (weightDebounce.current) clearTimeout(weightDebounce.current);
+    };
+  }, [exercise.startingWeight]);
 
   const lastExercise = lastSession?.exercises.find(
     (e) => e.templateId === exercise.templateId || e.name === exercise.name,
@@ -96,7 +116,17 @@ export function ExerciseCard({
         </div>
       ) : (
         <div className="flex items-center justify-between mb-3">
-          <h3 className="font-semibold text-zinc-100">{exercise.name}</h3>
+          <div className="flex items-center gap-2">
+            <h3 className="font-semibold text-zinc-100">{exercise.name}</h3>
+            <a
+              href={`https://www.google.com/search?q=${encodeURIComponent(exercise.name + " exercise form")}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-zinc-500 hover:text-zinc-300 transition-colors"
+            >
+              <Search size={13} />
+            </a>
+          </div>
           <button
             onClick={() => setSwapping(true)}
             className="flex items-center gap-1 text-xs text-zinc-400 hover:text-zinc-200 transition-colors"
@@ -116,42 +146,42 @@ export function ExerciseCard({
         </div>
       )}
 
-      <div className="flex items-center gap-4">
+      <div className="flex items-end gap-2">
         {/* Sets stepper */}
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => adjustSets(-1)}
-            disabled={exercise.setsCompleted === 0}
-            className="w-8 h-8 rounded-full bg-zinc-700 hover:bg-zinc-600 disabled:opacity-30 flex items-center justify-center transition-colors"
-          >
-            <Minus size={14} />
-          </button>
-          <div className="text-center min-w-[60px]">
+        <div className="flex flex-col">
+          <div className="text-xs text-zinc-500 mb-1">sets</div>
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={() => adjustSets(-1)}
+              disabled={exercise.setsCompleted === 0}
+              className="w-7 h-7 rounded-full bg-zinc-700 hover:bg-zinc-600 disabled:opacity-30 flex items-center justify-center transition-colors"
+            >
+              <Minus size={12} />
+            </button>
             <div
               key={exercise.setsCompleted}
               style={{ animation: "pop 0.25s ease-out" }}
-              className={`text-xl font-bold ${allDone ? "text-green-400" : "text-zinc-100"}`}
+              className={`text-base font-bold min-w-[44px] text-center ${allDone ? "text-green-400" : "text-zinc-100"}`}
             >
               {exercise.setsCompleted}
-              <span className="text-zinc-500 text-sm font-normal">
+              <span className="text-zinc-500 text-xs font-normal">
                 /{exercise.targetSets}
               </span>
             </div>
-            <div className="text-xs text-zinc-500">sets</div>
+            <button
+              onClick={() => adjustSets(1)}
+              disabled={exercise.setsCompleted === exercise.targetSets}
+              className="w-7 h-7 rounded-full bg-zinc-700 hover:bg-zinc-600 disabled:opacity-30 flex items-center justify-center transition-colors"
+            >
+              <Plus size={12} />
+            </button>
           </div>
-          <button
-            onClick={() => adjustSets(1)}
-            disabled={exercise.setsCompleted === exercise.targetSets}
-            className="w-8 h-8 rounded-full bg-zinc-700 hover:bg-zinc-600 disabled:opacity-30 flex items-center justify-center transition-colors"
-          >
-            <Plus size={14} />
-          </button>
         </div>
 
         {/* Reps inputs */}
-        <div className="flex gap-2 flex-1">
-          <div className="flex-1">
-            <div className="text-xs text-zinc-500 mb-1">min reps</div>
+        <div className="flex-1 min-w-0">
+          <div className="text-xs text-zinc-500 mb-1">reps</div>
+          <div className="flex items-center bg-zinc-700 rounded overflow-hidden focus-within:ring-1 focus-within:ring-violet-500">
             <input
               type="number"
               value={exercise.minReps}
@@ -163,11 +193,9 @@ export function ExerciseCard({
                   exercise.maxReps,
                 )
               }
-              className="w-full bg-zinc-700 rounded px-3 py-1.5 text-sm text-zinc-100 focus:outline-none focus:ring-1 focus:ring-violet-500"
+              className="w-full min-w-0 bg-transparent px-2 py-1.5 text-sm text-zinc-100 focus:outline-none text-center"
             />
-          </div>
-          <div className="flex-1">
-            <div className="text-xs text-zinc-500 mb-1">max reps</div>
+            <span className="text-zinc-400 text-sm select-none">–</span>
             <input
               type="number"
               value={exercise.maxReps}
@@ -179,13 +207,21 @@ export function ExerciseCard({
                   Number(e.target.value),
                 )
               }
-              className="w-full bg-zinc-700 rounded px-3 py-1.5 text-sm text-zinc-100 focus:outline-none focus:ring-1 focus:ring-violet-500"
+              className="w-full min-w-0 bg-transparent px-2 py-1.5 text-sm text-zinc-100 focus:outline-none text-center"
             />
           </div>
         </div>
 
         {/* Weight input */}
-        <div className="w-20">
+        <div className="w-16 relative">
+          {weightBump != null && (
+            <div
+              style={{ animation: "float-up 0.9s ease-out forwards" }}
+              className="absolute -top-1 left-1/2 -translate-x-1/2 text-xs font-bold text-green-400 pointer-events-none whitespace-nowrap"
+            >
+              +{weightBump} lbs
+            </div>
+          )}
           <div className="text-xs text-zinc-500 mb-1">lbs</div>
           <input
             type="number"
@@ -197,7 +233,7 @@ export function ExerciseCard({
                 e.target.value === "" ? undefined : Number(e.target.value),
               )
             }
-            className="w-full bg-zinc-700 rounded px-3 py-1.5 text-sm text-zinc-100 focus:outline-none focus:ring-1 focus:ring-violet-500"
+            className="w-full bg-zinc-700 rounded px-2 py-1.5 text-sm text-zinc-100 focus:outline-none focus:ring-1 focus:ring-violet-500"
           />
         </div>
       </div>

@@ -17,6 +17,37 @@ import {
 import { createDefaultProgram } from "../lib/defaultProgram";
 import { randomUUID } from "../lib/uuid";
 
+const DAYS: DaySet[] = ["day1", "day2"];
+const TYPES: WorkoutType[] = ["upperA", "upperB", "lowerA", "lowerB"];
+
+function setTemplateWeight(
+  program: ProgramBlock,
+  templateId: string,
+  startingWeight: number | undefined,
+): ProgramBlock {
+  for (const day of DAYS) {
+    for (const type of TYPES) {
+      const idx = program.workouts[day][type].findIndex(
+        (t) => t.id === templateId,
+      );
+      if (idx === -1) continue;
+      return {
+        ...program,
+        workouts: {
+          ...program.workouts,
+          [day]: {
+            ...program.workouts[day],
+            [type]: program.workouts[day][type].map((t, i) =>
+              i === idx ? { ...t, startingWeight } : t,
+            ),
+          },
+        },
+      };
+    }
+  }
+  return program;
+}
+
 interface AppState {
   programs: ProgramBlock[];
   sessions: WorkoutSession[];
@@ -130,12 +161,22 @@ function reducer(state: AppState, action: AppAction): AppState {
     }
     case "UPDATE_WEIGHT": {
       if (!state.activeSession) return state;
+      const { exerciseIndex, startingWeight } = action.payload;
+      const templateId =
+        state.activeSession.exercises[exerciseIndex].templateId;
       const exercises = state.activeSession.exercises.map((ex, ei) =>
-        ei !== action.payload.exerciseIndex
-          ? ex
-          : { ...ex, startingWeight: action.payload.startingWeight },
+        ei !== exerciseIndex ? ex : { ...ex, startingWeight },
       );
-      return { ...state, activeSession: { ...state.activeSession, exercises } };
+      const programs = state.programs.map((p) =>
+        p.id !== state.activeSession!.programBlockId
+          ? p
+          : setTemplateWeight(p, templateId, startingWeight),
+      );
+      return {
+        ...state,
+        activeSession: { ...state.activeSession, exercises },
+        programs,
+      };
     }
     default:
       return state;

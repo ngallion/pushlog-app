@@ -99,22 +99,24 @@ function SortableExerciseCard({
           />
         </div>
         <div className="flex items-center gap-1.5">
-          <label className="text-xs text-zinc-400">Min reps</label>
-          <input
-            type="number"
-            value={ex.minReps}
-            onChange={(e) => onUpdate(idx, "minReps", Number(e.target.value))}
-            className="w-14 bg-zinc-700 rounded px-2 py-1 text-sm text-center text-zinc-100 focus:outline-none focus:ring-1 focus:ring-violet-500"
-          />
-        </div>
-        <div className="flex items-center gap-1.5">
-          <label className="text-xs text-zinc-400">Max reps</label>
-          <input
-            type="number"
-            value={ex.maxReps}
-            onChange={(e) => onUpdate(idx, "maxReps", Number(e.target.value))}
-            className="w-14 bg-zinc-700 rounded px-2 py-1 text-sm text-center text-zinc-100 focus:outline-none focus:ring-1 focus:ring-violet-500"
-          />
+          <label className="text-xs text-zinc-400">Reps</label>
+          <div className="flex items-center bg-zinc-700 rounded overflow-hidden focus-within:ring-1 focus-within:ring-violet-500">
+            <input
+              type="number"
+              value={ex.minReps}
+              onChange={(e) => onUpdate(idx, "minReps", Number(e.target.value))}
+              className="w-10 bg-transparent px-1.5 py-1 text-sm text-center text-zinc-100 focus:outline-none"
+            />
+            <span className="text-zinc-400 text-sm select-none shrink-0">
+              –
+            </span>
+            <input
+              type="number"
+              value={ex.maxReps}
+              onChange={(e) => onUpdate(idx, "maxReps", Number(e.target.value))}
+              className="w-10 bg-transparent px-1.5 py-1 text-sm text-center text-zinc-100 focus:outline-none"
+            />
+          </div>
         </div>
         <div className="flex items-center gap-1.5">
           <label className="text-xs text-zinc-400">Start wt.</label>
