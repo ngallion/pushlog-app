@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useApp } from "../context/AppContext";
 import { useNextWorkout } from "../hooks/useNextWorkout";
@@ -5,10 +6,74 @@ import { useLastSession } from "../hooks/useLastSession";
 import { WorkoutTypeLabel } from "../components/WorkoutTypeLabel";
 import { ExerciseCard } from "../components/ExerciseCard";
 import { getWorkoutLabel, getDaySetLabel } from "../lib/rotation";
-import type { ExerciseTemplate, LoggedExercise } from "../lib/types";
-import { Dumbbell, CheckCircle } from "lucide-react";
+import type {
+  ExerciseTemplate,
+  LoggedExercise,
+  WorkoutSession,
+} from "../lib/types";
+import { Dumbbell, CheckCircle, Plus } from "lucide-react";
 import confetti from "canvas-confetti";
 import { randomUUID } from "../lib/uuid";
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import type { DragEndEvent } from "@dnd-kit/core";
+import {
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+  arrayMove,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+
+function SortableExerciseCard({
+  exercise,
+  exerciseIndex,
+  lastSession,
+  onChange,
+  onSwap,
+  onWeightChange,
+}: {
+  exercise: LoggedExercise;
+  exerciseIndex: number;
+  lastSession: WorkoutSession | null;
+  onChange: (i: number, sets: number, min: number, max: number) => void;
+  onSwap: (i: number, name: string) => void;
+  onWeightChange: (i: number, weight: number | undefined) => void;
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: exercise.templateId });
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+  return (
+    <div ref={setNodeRef} style={style}>
+      <ExerciseCard
+        exercise={exercise}
+        exerciseIndex={exerciseIndex}
+        lastSession={lastSession}
+        onChange={onChange}
+        onSwap={onSwap}
+        onWeightChange={onWeightChange}
+        dragHandleAttributes={attributes as unknown as Record<string, unknown>}
+        dragHandleListeners={listeners as unknown as Record<string, unknown>}
+      />
+    </div>
+  );
+}
 
 export function Today() {
   const navigate = useNavigate();
@@ -21,6 +86,16 @@ export function Today() {
   );
 
   const currentProgram = state.programs[state.programs.length - 1];
+
+  const [addingExercise, setAddingExercise] = useState(false);
+  const [newExerciseName, setNewExerciseName] = useState("");
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(TouchSensor, {
+      activationConstraint: { delay: 200, tolerance: 5 },
+    }),
+  );
 
   // ── Active workout view ──────────────────────────────────────────────────
   if (session) {
@@ -66,6 +141,38 @@ export function Today() {
       });
     };
 
+    const handleDragEnd = (event: DragEndEvent) => {
+      const { active, over } = event;
+      if (!over || active.id === over.id) return;
+      const oldIndex = session.exercises.findIndex(
+        (e) => e.templateId === active.id,
+      );
+      const newIndex = session.exercises.findIndex(
+        (e) => e.templateId === over.id,
+      );
+      dispatch({
+        type: "REORDER_EXERCISES",
+        payload: arrayMove(session.exercises, oldIndex, newIndex),
+      });
+    };
+
+    const handleAddExercise = () => {
+      if (!newExerciseName.trim()) return;
+      dispatch({
+        type: "ADD_EXERCISE",
+        payload: {
+          templateId: `impromptu-${randomUUID()}`,
+          name: newExerciseName.trim(),
+          setsCompleted: 0,
+          targetSets: 3,
+          minReps: 8,
+          maxReps: 12,
+        },
+      });
+      setNewExerciseName("");
+      setAddingExercise(false);
+    };
+
     const handleFinish = () => {
       confetti({
         particleCount: 80,
@@ -98,21 +205,74 @@ export function Today() {
           {completedExercises}/{totalExercises} exercises complete
         </div>
 
-        {session.exercises.map((exercise, ei) => (
-          <ExerciseCard
-            key={ei}
-            exercise={exercise}
-            exerciseIndex={ei}
-            lastSession={lastSessionForType}
-            onChange={handleChange}
-            onSwap={handleSwap}
-            onWeightChange={handleWeightChange}
-          />
-        ))}
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext
+            items={session.exercises.map((e) => e.templateId)}
+            strategy={verticalListSortingStrategy}
+          >
+            {session.exercises.map((exercise, ei) => (
+              <SortableExerciseCard
+                key={exercise.templateId}
+                exercise={exercise}
+                exerciseIndex={ei}
+                lastSession={lastSessionForType}
+                onChange={handleChange}
+                onSwap={handleSwap}
+                onWeightChange={handleWeightChange}
+              />
+            ))}
+          </SortableContext>
+        </DndContext>
+
+        {addingExercise ? (
+          <div className="flex gap-2 items-center mt-3">
+            <input
+              autoFocus
+              type="text"
+              placeholder="Exercise name"
+              value={newExerciseName}
+              onChange={(e) => setNewExerciseName(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleAddExercise();
+                if (e.key === "Escape") {
+                  setAddingExercise(false);
+                  setNewExerciseName("");
+                }
+              }}
+              className="flex-1 bg-zinc-800 rounded-lg px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:ring-1 focus:ring-violet-500"
+            />
+            <button
+              onClick={handleAddExercise}
+              className="bg-violet-600 hover:bg-violet-500 text-white px-3 py-2 rounded-lg text-sm"
+            >
+              Add
+            </button>
+            <button
+              onClick={() => {
+                setAddingExercise(false);
+                setNewExerciseName("");
+              }}
+              className="bg-zinc-800 hover:bg-zinc-700 text-zinc-300 px-3 py-2 rounded-lg text-sm"
+            >
+              Cancel
+            </button>
+          </div>
+        ) : (
+          <button
+            onClick={() => setAddingExercise(true)}
+            className="w-full border border-dashed border-zinc-600 rounded-xl py-3 text-zinc-400 hover:text-zinc-300 hover:border-zinc-500 flex items-center justify-center gap-2 transition-colors mt-3"
+          >
+            <Plus size={16} /> Add Exercise
+          </button>
+        )}
 
         <button
           onClick={handleFinish}
-          className="w-full bg-green-600 hover:bg-green-500 text-white rounded-xl py-4 font-bold text-lg flex items-center justify-center gap-2 transition-colors mt-4"
+          className="w-full bg-green-600 hover:bg-green-500 text-white rounded-xl py-4 font-bold text-lg flex items-center justify-center gap-2 transition-colors mt-3"
         >
           <CheckCircle size={22} />
           Finish Workout

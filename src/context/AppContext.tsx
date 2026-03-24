@@ -87,7 +87,9 @@ type AppAction =
   | {
       type: "UPDATE_WEIGHT";
       payload: { exerciseIndex: number; startingWeight: number | undefined };
-    };
+    }
+  | { type: "ADD_EXERCISE"; payload: LoggedExercise }
+  | { type: "REORDER_EXERCISES"; payload: LoggedExercise[] };
 
 function reducer(state: AppState, action: AppAction): AppState {
   switch (action.type) {
@@ -176,6 +178,23 @@ function reducer(state: AppState, action: AppAction): AppState {
         ...state,
         activeSession: { ...state.activeSession, exercises },
         programs,
+      };
+    }
+    case "ADD_EXERCISE": {
+      if (!state.activeSession) return state;
+      return {
+        ...state,
+        activeSession: {
+          ...state.activeSession,
+          exercises: [...state.activeSession.exercises, action.payload],
+        },
+      };
+    }
+    case "REORDER_EXERCISES": {
+      if (!state.activeSession) return state;
+      return {
+        ...state,
+        activeSession: { ...state.activeSession, exercises: action.payload },
       };
     }
     default:

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import type { LoggedExercise, WorkoutSession } from "../lib/types";
-import { RefreshCw, Minus, Plus, Search } from "lucide-react";
+import { RefreshCw, Minus, Plus, Search, GripVertical } from "lucide-react";
 
 interface Props {
   exercise: LoggedExercise;
@@ -14,6 +14,8 @@ interface Props {
   ) => void;
   onSwap: (exerciseIndex: number, newName: string) => void;
   onWeightChange: (exerciseIndex: number, weight: number | undefined) => void;
+  dragHandleAttributes?: Record<string, unknown>;
+  dragHandleListeners?: Record<string, unknown>;
 }
 
 export function ExerciseCard({
@@ -23,6 +25,8 @@ export function ExerciseCard({
   onChange,
   onSwap,
   onWeightChange,
+  dragHandleAttributes,
+  dragHandleListeners,
 }: Props) {
   const [swapping, setSwapping] = useState(false);
   const [swapName, setSwapName] = useState("");
@@ -117,6 +121,15 @@ export function ExerciseCard({
       ) : (
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
+            {dragHandleAttributes && (
+              <button
+                {...dragHandleAttributes}
+                {...dragHandleListeners}
+                className="text-zinc-500 hover:text-zinc-300 touch-none cursor-grab active:cursor-grabbing"
+              >
+                <GripVertical size={14} />
+              </button>
+            )}
             <h3 className="font-semibold text-zinc-100">{exercise.name}</h3>
             <a
               href={`https://www.google.com/search?q=${encodeURIComponent(exercise.name + " exercise form")}`}
@@ -146,11 +159,11 @@ export function ExerciseCard({
         </div>
       )}
 
-      <div className="flex items-end gap-2">
+      <div className="flex items-start gap-2">
         {/* Sets stepper */}
         <div className="flex flex-col">
           <div className="text-xs text-zinc-500 mb-1">sets</div>
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 mt-[2px]">
             <button
               onClick={() => adjustSets(-1)}
               disabled={exercise.setsCompleted === 0}
