@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import type { LoggedExercise, WorkoutSession } from "../lib/types";
 import { RefreshCw, Minus, Plus } from "lucide-react";
 
@@ -26,6 +26,19 @@ export function ExerciseCard({
 }: Props) {
   const [swapping, setSwapping] = useState(false);
   const [swapName, setSwapName] = useState("");
+  const [justCompleted, setJustCompleted] = useState(false);
+  const prevSets = useRef(exercise.setsCompleted);
+
+  const allDone = exercise.setsCompleted === exercise.targetSets;
+
+  useEffect(() => {
+    if (exercise.setsCompleted > prevSets.current && allDone) {
+      setJustCompleted(true);
+      const t = setTimeout(() => setJustCompleted(false), 700);
+      return () => clearTimeout(t);
+    }
+    prevSets.current = exercise.setsCompleted;
+  }, [exercise.setsCompleted, allDone]);
 
   const lastExercise = lastSession?.exercises.find(
     (e) => e.templateId === exercise.templateId || e.name === exercise.name,
@@ -47,11 +60,12 @@ export function ExerciseCard({
     onChange(exerciseIndex, next, exercise.minReps, exercise.maxReps);
   };
 
-  const allDone = exercise.setsCompleted === exercise.targetSets;
-
   return (
     <div
-      className={`bg-zinc-800 rounded-xl p-4 mb-3 transition-opacity ${allDone ? "opacity-70" : ""}`}
+      style={
+        justCompleted ? { animation: "card-complete 0.7s ease-out" } : undefined
+      }
+      className={`bg-zinc-800 rounded-xl p-4 mb-3 transition-opacity ${allDone ? "opacity-60" : ""}`}
     >
       {swapping ? (
         <div className="flex gap-2 items-center mb-3">
@@ -114,6 +128,8 @@ export function ExerciseCard({
           </button>
           <div className="text-center min-w-[60px]">
             <div
+              key={exercise.setsCompleted}
+              style={{ animation: "pop 0.25s ease-out" }}
               className={`text-xl font-bold ${allDone ? "text-green-400" : "text-zinc-100"}`}
             >
               {exercise.setsCompleted}

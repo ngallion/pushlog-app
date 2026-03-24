@@ -7,6 +7,7 @@ import { ExerciseCard } from "../components/ExerciseCard";
 import { getWorkoutLabel, getDaySetLabel } from "../lib/rotation";
 import type { ExerciseTemplate, LoggedExercise } from "../lib/types";
 import { Dumbbell, CheckCircle } from "lucide-react";
+import confetti from "canvas-confetti";
 import { randomUUID } from "../lib/uuid";
 
 export function Today() {
@@ -66,6 +67,12 @@ export function Today() {
     };
 
     const handleFinish = () => {
+      confetti({
+        particleCount: 80,
+        spread: 70,
+        origin: { y: 0.7 },
+        colors: ["#7c3aed", "#a78bfa", "#ffffff", "#6ee7b7"],
+      });
       dispatch({ type: "FINISH_WORKOUT" });
     };
 
