@@ -38,7 +38,7 @@ export function History() {
                 {getWorkoutLabel(session.workoutType)}
               </span>
               <span className="ml-auto text-zinc-400 text-sm">
-                {new Date(session.date).toLocaleDateString("en-US", {
+                {new Date(session.startedAt).toLocaleDateString("en-US", {
                   month: "short",
                   day: "numeric",
                   year: "numeric",

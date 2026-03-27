@@ -195,7 +195,7 @@ export function Today() {
           </h1>
         </div>
         <p className="text-zinc-400 text-sm mb-2">
-          {new Date(session.date).toLocaleDateString("en-US", {
+          {new Date(session.startedAt).toLocaleDateString("en-US", {
             weekday: "long",
             month: "long",
             day: "numeric",

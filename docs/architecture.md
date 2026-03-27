@@ -4,10 +4,10 @@
 
 | Layer       | Choice                     | Why                                                     |
 | ----------- | -------------------------- | ------------------------------------------------------- |
-| Framework   | React 18 + Vite            | Fast dev experience, lightweight prod bundle            |
-| Language    | TypeScript                 | Catches data model mistakes early                       |
-| Styling     | Tailwind CSS               | Mobile-first, no stylesheet bloat                       |
-| Routing     | React Router v6            | Simple, well-known                                      |
+| Framework   | React 19 + Vite 8          | Fast dev experience, lightweight prod bundle            |
+| Language    | TypeScript (strict)        | Catches data model mistakes early                       |
+| Styling     | Tailwind CSS 3             | Mobile-first, no stylesheet bloat                       |
+| Routing     | React Router 7             | Simple, well-known                                      |
 | State       | React Context + useReducer | No library needed at this scale                         |
 | Persistence | localStorage               | Zero cost, no backend                                   |
 | PWA         | vite-plugin-pwa (Workbox)  | Service worker + manifest, installable on mobile        |
@@ -24,14 +24,15 @@ All data is stored in localStorage under namespaced keys.
 A program block is a 2-week set of workout templates.
 
 ```ts
+type WorkoutType = "upperA" | "upperB" | "lowerA" | "lowerB";
+type DaySet = "day1" | "day2";
+
 interface ProgramBlock {
   id: string;
   startedAt: string; // ISO date string
   workouts: {
-    upperA: ExerciseTemplate[];
-    upperB: ExerciseTemplate[];
-    lowerA: ExerciseTemplate[];
-    lowerB: ExerciseTemplate[];
+    day1: Record<WorkoutType, ExerciseTemplate[]>;
+    day2: Record<WorkoutType, ExerciseTemplate[]>;
   };
 }
 
@@ -39,7 +40,9 @@ interface ExerciseTemplate {
   id: string;
   name: string;
   sets: number;
-  targetReps: string; // e.g. "8-10" or "5"
+  minReps: number;
+  maxReps: number;
+  startingWeight?: number;
 }
 ```
 
@@ -50,25 +53,29 @@ One entry per completed workout.
 ```ts
 interface WorkoutSession {
   id: string;
-  date: string; // ISO date string
-  workoutType: WorkoutType; // 'upperA' | 'upperB' | 'lowerA' | 'lowerB'
+  startedAt: string;   // ISO timestamp — when the workout was started
+  finishedAt?: string; // ISO timestamp — when the workout was finished
+  date?: string;       // kept for backwards-compatibility with pre-v2 exports
+  workoutType: WorkoutType;
+  daySet: DaySet;
   programBlockId: string;
   exercises: LoggedExercise[];
 }
 
 interface LoggedExercise {
-  templateId: string; // matches ExerciseTemplate.id (or null if swapped in)
-  name: string; // stored directly in case template changes later
-  sets: LoggedSet[];
-}
-
-interface LoggedSet {
-  setNumber: number;
-  weight: number; // lbs (unit display can be added later)
-  reps: number;
-  completed: boolean;
+  templateId: string; // matches ExerciseTemplate.id (or "impromptu-<uuid>" for ad-hoc exercises)
+  name: string;       // stored directly in case template changes later
+  setsCompleted: number;
+  targetSets: number;
+  minReps: number;
+  maxReps: number;
+  startingWeight?: number;
 }
 ```
+
+### `pushlog:schemaVersion` — `number`
+
+Tracks the current localStorage schema version. Used to run migrations on load when the schema evolves. Current version: **2**.
 
 ### Derived state (not stored)
 

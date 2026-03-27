@@ -96,7 +96,7 @@ function reducer(state: AppState, action: AppAction): AppState {
     case "START_WORKOUT": {
       const session: WorkoutSession = {
         id: randomUUID(),
-        date: new Date().toISOString(),
+        startedAt: new Date().toISOString(),
         workoutType: action.payload.workoutType,
         daySet: action.payload.daySet,
         programBlockId: action.payload.programBlockId,
@@ -135,7 +135,11 @@ function reducer(state: AppState, action: AppAction): AppState {
     }
     case "FINISH_WORKOUT": {
       if (!state.activeSession) return state;
-      const sessions = [...state.sessions, state.activeSession];
+      const finished: WorkoutSession = {
+        ...state.activeSession,
+        finishedAt: new Date().toISOString(),
+      };
+      const sessions = [...state.sessions, finished];
       return { ...state, sessions, activeSession: null };
     }
     case "SAVE_PROGRAM": {

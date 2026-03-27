@@ -31,7 +31,9 @@ export interface LoggedExercise {
 
 export interface WorkoutSession {
   id: string;
-  date: string;
+  startedAt: string;   // ISO timestamp — when the workout was started
+  finishedAt?: string; // ISO timestamp — when the workout was finished
+  date?: string;       // kept for backwards-compatibility with pre-v2 exports
   workoutType: WorkoutType;
   daySet: DaySet;
   programBlockId: string;
