@@ -11,7 +11,7 @@ import type {
   LoggedExercise,
   WorkoutSession,
 } from "../lib/types";
-import { Dumbbell, CheckCircle, Plus } from "lucide-react";
+import { Dumbbell, CheckCircle, Plus, XCircle } from "lucide-react";
 import confetti from "canvas-confetti";
 import { randomUUID } from "../lib/uuid";
 import {
@@ -89,6 +89,7 @@ export function Today() {
 
   const [addingExercise, setAddingExercise] = useState(false);
   const [newExerciseName, setNewExerciseName] = useState("");
+  const [confirmCancel, setConfirmCancel] = useState(false);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -277,6 +278,31 @@ export function Today() {
           <CheckCircle size={22} />
           Finish Workout
         </button>
+
+        {confirmCancel ? (
+          <div className="flex gap-2 mt-3">
+            <button
+              onClick={() => dispatch({ type: "CANCEL_WORKOUT" })}
+              className="flex-1 bg-red-700 hover:bg-red-600 text-white rounded-xl py-3 font-semibold flex items-center justify-center gap-2 transition-colors"
+            >
+              <XCircle size={18} />
+              Discard Workout
+            </button>
+            <button
+              onClick={() => setConfirmCancel(false)}
+              className="flex-1 bg-zinc-700 hover:bg-zinc-600 text-zinc-300 rounded-xl py-3 font-semibold transition-colors"
+            >
+              Keep Going
+            </button>
+          </div>
+        ) : (
+          <button
+            onClick={() => setConfirmCancel(true)}
+            className="w-full text-zinc-500 hover:text-zinc-400 text-sm py-2 mt-1 transition-colors"
+          >
+            Cancel Workout
+          </button>
+        )}
       </div>
     );
   }

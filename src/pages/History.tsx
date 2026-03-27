@@ -1,11 +1,18 @@
+import { useState } from "react";
 import { useApp } from "../context/AppContext";
 import { WorkoutTypeLabel } from "../components/WorkoutTypeLabel";
 import { getWorkoutLabel } from "../lib/rotation";
-import { Dumbbell } from "lucide-react";
+import { Dumbbell, Trash2 } from "lucide-react";
 
 export function History() {
-  const { state } = useApp();
+  const { state, dispatch } = useApp();
   const sessions = [...state.sessions].reverse();
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+
+  const handleDelete = (id: string) => {
+    dispatch({ type: "DELETE_SESSION", payload: id });
+    setConfirmDeleteId(null);
+  };
 
   if (sessions.length === 0) {
     return (
@@ -44,6 +51,30 @@ export function History() {
                   year: "numeric",
                 })}
               </span>
+              {confirmDeleteId === session.id ? (
+                <div className="flex items-center gap-1 ml-2">
+                  <button
+                    onClick={() => handleDelete(session.id)}
+                    className="text-xs bg-red-600 hover:bg-red-500 text-white px-2 py-1 rounded"
+                  >
+                    Delete
+                  </button>
+                  <button
+                    onClick={() => setConfirmDeleteId(null)}
+                    className="text-xs bg-zinc-700 hover:bg-zinc-600 text-zinc-300 px-2 py-1 rounded"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => setConfirmDeleteId(session.id)}
+                  className="ml-2 text-zinc-600 hover:text-red-400 transition-colors"
+                  aria-label="Delete session"
+                >
+                  <Trash2 size={15} />
+                </button>
+              )}
             </div>
             <div className="space-y-1.5">
               {session.exercises.map((ex, ei) => (
