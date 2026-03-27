@@ -3,6 +3,32 @@ import { useApp } from "../context/AppContext";
 import type { ProgramBlock, WorkoutSession } from "../lib/types";
 import { Download, Upload } from "lucide-react";
 
+function isValidProgram(p: unknown): p is ProgramBlock {
+  if (!p || typeof p !== "object") return false;
+  const prog = p as Record<string, unknown>;
+  return (
+    typeof prog.id === "string" &&
+    typeof prog.startedAt === "string" &&
+    prog.workouts !== null &&
+    typeof prog.workouts === "object" &&
+    !Array.isArray(prog.workouts)
+  );
+}
+
+function isValidSession(s: unknown): s is WorkoutSession {
+  if (!s || typeof s !== "object") return false;
+  const sess = s as Record<string, unknown>;
+  const hasTimestamp =
+    typeof sess.startedAt === "string" || typeof sess.date === "string";
+  return (
+    typeof sess.id === "string" &&
+    hasTimestamp &&
+    typeof sess.workoutType === "string" &&
+    typeof sess.programBlockId === "string" &&
+    Array.isArray(sess.exercises)
+  );
+}
+
 export function Settings() {
   const { state, dispatch } = useApp();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -39,7 +65,23 @@ export function Settings() {
           !Array.isArray(parsed.programs) ||
           !Array.isArray(parsed.sessions)
         ) {
-          throw new Error("Invalid file: missing programs or sessions");
+          throw new Error("Invalid file: missing programs or sessions arrays");
+        }
+        const invalidProgram = parsed.programs.findIndex(
+          (p: unknown) => !isValidProgram(p),
+        );
+        if (invalidProgram !== -1) {
+          throw new Error(
+            `Invalid program at index ${invalidProgram}: missing required fields (id, startedAt, workouts)`,
+          );
+        }
+        const invalidSession = parsed.sessions.findIndex(
+          (s: unknown) => !isValidSession(s),
+        );
+        if (invalidSession !== -1) {
+          throw new Error(
+            `Invalid session at index ${invalidSession}: missing required fields (id, workoutType, programBlockId, exercises)`,
+          );
         }
         dispatch({
           type: "IMPORT_STATE",
