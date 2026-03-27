@@ -89,7 +89,9 @@ type AppAction =
       payload: { exerciseIndex: number; startingWeight: number | undefined };
     }
   | { type: "ADD_EXERCISE"; payload: LoggedExercise }
-  | { type: "REORDER_EXERCISES"; payload: LoggedExercise[] };
+  | { type: "REORDER_EXERCISES"; payload: LoggedExercise[] }
+  | { type: "DELETE_SESSION"; payload: string }
+  | { type: "CANCEL_WORKOUT" };
 
 function reducer(state: AppState, action: AppAction): AppState {
   switch (action.type) {
@@ -200,6 +202,15 @@ function reducer(state: AppState, action: AppAction): AppState {
         ...state,
         activeSession: { ...state.activeSession, exercises: action.payload },
       };
+    }
+    case "DELETE_SESSION": {
+      return {
+        ...state,
+        sessions: state.sessions.filter((s) => s.id !== action.payload),
+      };
+    }
+    case "CANCEL_WORKOUT": {
+      return { ...state, activeSession: null };
     }
     default:
       return state;
