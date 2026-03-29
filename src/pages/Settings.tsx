@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { useApp } from "../context/AppContext";
 import type { ProgramBlock, WorkoutSession } from "../lib/types";
-import { Download, Upload } from "lucide-react";
+import { Download, Share2, Upload } from "lucide-react";
 
 function isValidProgram(p: unknown): p is ProgramBlock {
   if (!p || typeof p !== "object") return false;
@@ -37,20 +37,43 @@ export function Settings() {
   >("idle");
   const [errorMessage, setErrorMessage] = useState("");
 
-  const handleExport = () => {
-    const data = {
-      programs: state.programs,
-      sessions: state.sessions,
-    };
-    const blob = new Blob([JSON.stringify(data, null, 2)], {
+  const buildExportData = () => ({
+    programs: state.programs,
+    sessions: state.sessions,
+  });
+
+  const buildExportFile = () => {
+    const fileName = `pushlog-backup-${new Date().toISOString().slice(0, 10)}.json`;
+    return new File([JSON.stringify(buildExportData(), null, 2)], fileName, {
       type: "application/json",
     });
-    const url = URL.createObjectURL(blob);
+  };
+
+  const handleExport = () => {
+    const file = buildExportFile();
+    const url = URL.createObjectURL(file);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `pushlog-backup-${new Date().toISOString().slice(0, 10)}.json`;
+    a.download = file.name;
     a.click();
     URL.revokeObjectURL(url);
+  };
+
+  const canShare =
+    typeof navigator !== "undefined" &&
+    typeof navigator.share === "function" &&
+    typeof navigator.canShare === "function" &&
+    navigator.canShare({ files: [new File([""], "test.json", { type: "application/json" })] });
+
+  const handleShare = async () => {
+    const file = buildExportFile();
+    try {
+      await navigator.share({ title: "Pushlog Backup", files: [file] });
+    } catch (err) {
+      if (err instanceof Error && err.name !== "AbortError") {
+        console.error("Share failed:", err);
+      }
+    }
   };
 
   const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -116,13 +139,24 @@ export function Settings() {
           <p className="text-zinc-400 text-sm mb-3">
             Download all programs and workout history as a JSON file.
           </p>
-          <button
-            onClick={handleExport}
-            className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 text-white rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors"
-          >
-            <Download size={16} />
-            Export JSON
-          </button>
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={handleExport}
+              className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 text-white rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors"
+            >
+              <Download size={16} />
+              Export JSON
+            </button>
+            {canShare && (
+              <button
+                onClick={handleShare}
+                className="flex items-center gap-2 bg-zinc-700 hover:bg-zinc-600 text-zinc-100 rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors"
+              >
+                <Share2 size={16} />
+                Share
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Import */}
