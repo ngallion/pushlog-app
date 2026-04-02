@@ -11,6 +11,11 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Prevent iOS Safari from zooming on input focus (requires font-size >= 16px) */
+input, textarea, select {
+  font-size: 1rem;
+}
+
 /* Hide number input spinners */
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
