@@ -11,9 +11,11 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Prevent iOS Safari from zooming on input focus (requires font-size >= 16px) */
+/* Prevent iOS Safari from zooming on input focus (requires font-size >= 16px).
+   !important is necessary to override Tailwind utility classes (e.g. text-sm)
+   which have higher specificity than element selectors. */
 input, textarea, select {
-  font-size: 1rem;
+  font-size: 1rem !important;
 }
 
 /* Hide number input spinners */
