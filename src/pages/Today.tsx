@@ -7,6 +7,7 @@ import { useRestTimer } from "../hooks/useRestTimer";
 import { loadRestTimerDuration } from "../lib/storage";
 import { WorkoutTypeLabel } from "../components/WorkoutTypeLabel";
 import { ExerciseCard } from "../components/ExerciseCard";
+import { WorkoutSummary } from "../components/WorkoutSummary";
 import { getWorkoutLabel, getDaySetLabel } from "../lib/rotation";
 import type {
   ExerciseTemplate,
@@ -95,6 +96,11 @@ export function Today() {
   const [addingExercise, setAddingExercise] = useState(false);
   const [newExerciseName, setNewExerciseName] = useState("");
   const [confirmCancel, setConfirmCancel] = useState(false);
+  const [finishedSnapshot, setFinishedSnapshot] = useState<{
+    session: WorkoutSession;
+    previousSession: WorkoutSession | null;
+    allPreviousSessions: WorkoutSession[];
+  } | null>(null);
 
   const restDuration = loadRestTimerDuration();
   const { secondsLeft, isRunning: timerRunning, start: startTimer, stop: stopTimer } =
@@ -106,6 +112,21 @@ export function Today() {
       activationConstraint: { delay: 200, tolerance: 5 },
     }),
   );
+
+  // ── Post-workout summary ─────────────────────────────────────────────────
+  if (finishedSnapshot && !session) {
+    return (
+      <WorkoutSummary
+        session={finishedSnapshot.session}
+        previousSession={finishedSnapshot.previousSession}
+        allPreviousSessions={finishedSnapshot.allPreviousSessions}
+        nextWorkoutType={workoutType}
+        nextDaySet={daySet}
+        nextExercises={currentProgram?.workouts[daySet][workoutType] ?? []}
+        onDismiss={() => setFinishedSnapshot(null)}
+      />
+    );
+  }
 
   // ── Active workout view ──────────────────────────────────────────────────
   if (session) {
@@ -189,6 +210,19 @@ export function Today() {
         spread: 70,
         origin: { y: 0.7 },
         colors: ["#7c3aed", "#a78bfa", "#ffffff", "#6ee7b7"],
+      });
+      const prevSession =
+        state.sessions
+          .filter(
+            (s) =>
+              s.workoutType === session.workoutType &&
+              s.daySet === session.daySet,
+          )
+          .at(-1) ?? null;
+      setFinishedSnapshot({
+        session,
+        previousSession: prevSession,
+        allPreviousSessions: [...state.sessions],
       });
       dispatch({ type: "FINISH_WORKOUT" });
     };
