@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { useApp } from "../context/AppContext";
 import { useNextWorkout } from "../hooks/useNextWorkout";
 import { useLastSession } from "../hooks/useLastSession";
+import { useRestTimer } from "../hooks/useRestTimer";
+import { loadRestTimerDuration } from "../lib/storage";
 import { WorkoutTypeLabel } from "../components/WorkoutTypeLabel";
 import { ExerciseCard } from "../components/ExerciseCard";
 import { getWorkoutLabel, getDaySetLabel } from "../lib/rotation";
@@ -11,7 +13,7 @@ import type {
   LoggedExercise,
   WorkoutSession,
 } from "../lib/types";
-import { Dumbbell, CheckCircle, Plus, XCircle } from "lucide-react";
+import { Dumbbell, CheckCircle, Plus, XCircle, Timer } from "lucide-react";
 import confetti from "canvas-confetti";
 import { randomUUID } from "../lib/uuid";
 import {
@@ -38,6 +40,7 @@ function SortableExerciseCard({
   onChange,
   onSwap,
   onWeightChange,
+  onSetLogged,
 }: {
   exercise: LoggedExercise;
   exerciseIndex: number;
@@ -45,6 +48,7 @@ function SortableExerciseCard({
   onChange: (i: number, sets: number, min: number, max: number) => void;
   onSwap: (i: number, name: string) => void;
   onWeightChange: (i: number, weight: number | undefined) => void;
+  onSetLogged?: () => void;
 }) {
   const {
     attributes,
@@ -68,6 +72,7 @@ function SortableExerciseCard({
         onChange={onChange}
         onSwap={onSwap}
         onWeightChange={onWeightChange}
+        onSetLogged={onSetLogged}
         dragHandleAttributes={attributes as unknown as Record<string, unknown>}
         dragHandleListeners={listeners as unknown as Record<string, unknown>}
       />
@@ -90,6 +95,10 @@ export function Today() {
   const [addingExercise, setAddingExercise] = useState(false);
   const [newExerciseName, setNewExerciseName] = useState("");
   const [confirmCancel, setConfirmCancel] = useState(false);
+
+  const restDuration = loadRestTimerDuration();
+  const { secondsLeft, isRunning: timerRunning, start: startTimer, stop: stopTimer } =
+    useRestTimer(restDuration);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -224,6 +233,7 @@ export function Today() {
                 onChange={handleChange}
                 onSwap={handleSwap}
                 onWeightChange={handleWeightChange}
+                onSetLogged={restDuration > 0 ? startTimer : undefined}
               />
             ))}
           </SortableContext>
@@ -302,6 +312,27 @@ export function Today() {
           >
             Cancel Workout
           </button>
+        )}
+
+        {timerRunning && secondsLeft !== null && (
+          <div className="fixed bottom-14 left-0 right-0 z-40 flex justify-center pointer-events-none">
+            <div className="mx-4 w-full max-w-lg bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 flex items-center justify-between shadow-lg pointer-events-auto">
+              <div className="flex items-center gap-3">
+                <Timer size={18} className="text-violet-400 shrink-0" />
+                <span className="text-sm text-zinc-400">Rest</span>
+                <span className="text-xl font-bold tabular-nums text-zinc-100">
+                  {Math.floor(secondsLeft / 60)}:
+                  {String(secondsLeft % 60).padStart(2, "0")}
+                </span>
+              </div>
+              <button
+                onClick={stopTimer}
+                className="text-xs text-zinc-400 hover:text-zinc-200 px-3 py-1.5 rounded-lg bg-zinc-700 hover:bg-zinc-600 transition-colors"
+              >
+                Skip
+              </button>
+            </div>
+          </div>
         )}
       </div>
     );
