@@ -1,7 +1,13 @@
 import { useRef, useState } from "react";
 import { useApp } from "../context/AppContext";
 import type { ProgramBlock, WorkoutSession } from "../lib/types";
-import { Download, Upload } from "lucide-react";
+import {
+  loadRestTimerDuration,
+  saveRestTimerDuration,
+} from "../lib/storage";
+import { Download, Upload, Timer } from "lucide-react";
+
+const REST_DURATION_OPTIONS = [60, 90, 120, 180] as const;
 
 function isValidProgram(p: unknown): p is ProgramBlock {
   if (!p || typeof p !== "object") return false;
@@ -36,6 +42,14 @@ export function Settings() {
     "idle" | "success" | "error"
   >("idle");
   const [errorMessage, setErrorMessage] = useState("");
+  const [restDuration, setRestDuration] = useState<number>(
+    loadRestTimerDuration,
+  );
+
+  const handleRestDurationChange = (seconds: number) => {
+    setRestDuration(seconds);
+    saveRestTimerDuration(seconds);
+  };
 
   const buildExportData = () => ({
     programs: state.programs,
@@ -132,6 +146,50 @@ export function Settings() {
       <p className="text-zinc-400 text-sm mb-6">Manage your data</p>
 
       <div className="space-y-3">
+        {/* Rest Timer */}
+        <div className="bg-zinc-800 rounded-xl p-4">
+          <div className="flex items-center gap-2 mb-1">
+            <Timer size={16} className="text-violet-400" />
+            <h2 className="font-semibold">Rest timer</h2>
+          </div>
+          <p className="text-zinc-400 text-sm mb-3">
+            Automatically starts a countdown after each set. Set to "Off" to
+            disable.
+          </p>
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={() => handleRestDurationChange(0)}
+              className={`px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors ${
+                restDuration === 0
+                  ? "bg-violet-600 text-white"
+                  : "bg-zinc-700 text-zinc-300 hover:bg-zinc-600"
+              }`}
+            >
+              Off
+            </button>
+            {REST_DURATION_OPTIONS.map((s) => (
+              <button
+                key={s}
+                onClick={() => handleRestDurationChange(s)}
+                className={`px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors ${
+                  restDuration === s
+                    ? "bg-violet-600 text-white"
+                    : "bg-zinc-700 text-zinc-300 hover:bg-zinc-600"
+                }`}
+              >
+                {s}s
+              </button>
+            ))}
+          </div>
+          {restDuration > 0 &&
+            typeof Notification !== "undefined" &&
+            Notification.permission === "default" && (
+              <p className="mt-3 text-xs text-zinc-500">
+                Allow notifications to get an alert when rest is over.
+              </p>
+            )}
+        </div>
+
         {/* Export */}
         <div className="bg-zinc-800 rounded-xl p-4">
           <h2 className="font-semibold mb-1">Export data</h2>

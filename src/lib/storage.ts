@@ -1,5 +1,8 @@
 import type { ProgramBlock, WorkoutSession } from "./types";
 
+const REST_TIMER_KEY = "pushlog:restTimerDuration";
+export const DEFAULT_REST_DURATION = 90;
+
 const PROGRAMS_KEY = "pushlog:programs";
 const SESSIONS_KEY = "pushlog:sessions";
 const SCHEMA_VERSION_KEY = "pushlog:schemaVersion";
@@ -86,4 +89,15 @@ export function saveSessions(sessions: WorkoutSession[]): void {
   localStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions));
   // Ensure the version stamp is always current after a save
   setStoredSchemaVersion(CURRENT_SCHEMA_VERSION);
+}
+
+export function loadRestTimerDuration(): number {
+  const raw = localStorage.getItem(REST_TIMER_KEY);
+  if (raw === null) return DEFAULT_REST_DURATION;
+  const n = parseInt(raw, 10);
+  return isNaN(n) ? DEFAULT_REST_DURATION : n;
+}
+
+export function saveRestTimerDuration(seconds: number): void {
+  localStorage.setItem(REST_TIMER_KEY, String(seconds));
 }
