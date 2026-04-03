@@ -315,7 +315,10 @@ export function Today() {
         )}
 
         {timerRunning && secondsLeft !== null && (
-          <div className="fixed bottom-14 left-0 right-0 z-40 flex justify-center pointer-events-none">
+          <div
+            className="fixed left-0 right-0 z-40 flex justify-center pointer-events-none"
+            style={{ bottom: "calc(56px + env(safe-area-inset-bottom, 0px))" }}
+          >
             <div className="mx-4 w-full max-w-lg bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 flex items-center justify-between shadow-lg pointer-events-auto">
               <div className="flex items-center gap-3">
                 <Timer size={18} className="text-violet-400 shrink-0" />
