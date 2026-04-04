@@ -2,19 +2,39 @@ import { useState } from "react";
 import { useApp } from "../context/AppContext";
 import { WorkoutTypeLabel } from "../components/WorkoutTypeLabel";
 import { getWorkoutLabel } from "../lib/rotation";
-import { Dumbbell, Trash2 } from "lucide-react";
+import type { WorkoutType } from "../lib/types";
+import { Dumbbell, Search, Trash2, X } from "lucide-react";
+
+type FilterType = "all" | WorkoutType;
+
+const FILTER_OPTIONS: { value: FilterType; label: string }[] = [
+  { value: "all", label: "All" },
+  { value: "upperA", label: "Upper A" },
+  { value: "lowerA", label: "Lower A" },
+  { value: "upperB", label: "Upper B" },
+  { value: "lowerB", label: "Lower B" },
+];
 
 export function History() {
   const { state, dispatch } = useApp();
-  const sessions = [...state.sessions].reverse();
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [activeFilter, setActiveFilter] = useState<FilterType>("all");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleDelete = (id: string) => {
     dispatch({ type: "DELETE_SESSION", payload: id });
     setConfirmDeleteId(null);
   };
 
-  if (sessions.length === 0) {
+  const allSessions = [...state.sessions].reverse();
+  const trimmed = searchQuery.trim().toLowerCase();
+  const sessions = allSessions.filter((s) => {
+    if (activeFilter !== "all" && s.workoutType !== activeFilter) return false;
+    if (trimmed && !s.exercises.some((ex) => ex.name.toLowerCase().includes(trimmed))) return false;
+    return true;
+  });
+
+  if (allSessions.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen px-4 pb-20">
         <Dumbbell size={48} className="text-zinc-600 mb-4" />
@@ -29,9 +49,49 @@ export function History() {
   return (
     <div className="max-w-lg mx-auto px-4 pt-6 pb-24">
       <h1 className="text-2xl font-bold mb-1">History</h1>
-      <p className="text-zinc-400 text-sm mb-5">
+      <p className="text-zinc-400 text-sm mb-4">
         {state.sessions.length} workouts completed
       </p>
+
+      <div className="flex gap-2 overflow-x-auto pb-1 mb-3 no-scrollbar">
+        {FILTER_OPTIONS.map((opt) => (
+          <button
+            key={opt.value}
+            onClick={() => setActiveFilter(opt.value)}
+            className={`flex-shrink-0 text-sm px-3 py-1 rounded-full border transition-colors ${
+              activeFilter === opt.value
+                ? "bg-violet-600 border-violet-600 text-white"
+                : "border-zinc-600 text-zinc-400 hover:border-zinc-400 hover:text-zinc-200"
+            }`}
+          >
+            {opt.label}
+          </button>
+        ))}
+      </div>
+
+      <div className="relative mb-5">
+        <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none" />
+        <input
+          type="text"
+          placeholder="Search exercises…"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full bg-zinc-800 text-sm text-zinc-200 placeholder-zinc-500 rounded-lg pl-8 pr-8 py-2 outline-none focus:ring-1 focus:ring-violet-500"
+        />
+        {searchQuery && (
+          <button
+            onClick={() => setSearchQuery("")}
+            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300"
+            aria-label="Clear search"
+          >
+            <X size={14} />
+          </button>
+        )}
+      </div>
+
+      {sessions.length === 0 && (
+        <p className="text-zinc-500 text-sm text-center mt-12">No sessions match your filter.</p>
+      )}
 
       <div className="space-y-4">
         {sessions.map((session) => (
