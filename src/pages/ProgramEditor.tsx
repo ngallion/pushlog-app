@@ -26,6 +26,7 @@ import type {
 import { getWorkoutLabel, getCycleLabel } from "../lib/rotation";
 import { randomUUID } from "../lib/uuid";
 import { Plus, Trash2, Save, GripVertical, Info, X } from "lucide-react";
+import { NumericInput } from "../components/NumericInput";
 
 const WORKOUT_TYPES: WorkoutType[] = ["upperA", "upperB", "lowerA", "lowerB"];
 const CYCLES: Cycle[] = ["cycle1", "cycle2"];
@@ -91,29 +92,26 @@ function SortableExerciseCard({
       <div className="flex flex-wrap gap-x-3 gap-y-2 pl-7">
         <div className="flex items-center gap-1.5">
           <label className="text-xs text-zinc-400">Sets</label>
-          <input
-            type="number"
+          <NumericInput
             value={ex.sets}
-            onChange={(e) => onUpdate(idx, "sets", Number(e.target.value))}
+            onChange={(v) => onUpdate(idx, "sets", v)}
             className="w-14 bg-zinc-700 rounded px-2 py-1 text-sm text-center text-zinc-100 focus:outline-none focus:ring-1 focus:ring-violet-500"
           />
         </div>
         <div className="flex items-center gap-1.5">
           <label className="text-xs text-zinc-400">Reps</label>
           <div className="flex items-center bg-zinc-700 rounded overflow-hidden focus-within:ring-1 focus-within:ring-violet-500">
-            <input
-              type="number"
+            <NumericInput
               value={ex.minReps}
-              onChange={(e) => onUpdate(idx, "minReps", Number(e.target.value))}
+              onChange={(v) => onUpdate(idx, "minReps", v)}
               className="w-10 bg-transparent px-1.5 py-1 text-sm text-center text-zinc-100 focus:outline-none"
             />
             <span className="text-zinc-400 text-sm select-none shrink-0">
               –
             </span>
-            <input
-              type="number"
+            <NumericInput
               value={ex.maxReps}
-              onChange={(e) => onUpdate(idx, "maxReps", Number(e.target.value))}
+              onChange={(v) => onUpdate(idx, "maxReps", v)}
               className="w-10 bg-transparent px-1.5 py-1 text-sm text-center text-zinc-100 focus:outline-none"
             />
           </div>
