@@ -273,6 +273,72 @@ Please analyze my workout program and give me specific, actionable feedback on:
             )}
         </div>
 
+        {/* AI Feedback */}
+        <div className="bg-zinc-800 rounded-xl p-4">
+          <div className="flex items-center gap-2 mb-1">
+            <Sparkles size={16} className="text-violet-400" />
+            <h2 className="font-semibold">AI feedback</h2>
+          </div>
+          <p className="text-zinc-400 text-sm mb-3">
+            Copy a prompt with your program data pre-loaded, then paste it into
+            your AI of choice for personalised feedback.
+          </p>
+          <button
+            onClick={handleCopyPrompt}
+            className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 text-white rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors mb-3"
+          >
+            {copied ? <Check size={16} /> : <Copy size={16} />}
+            {copied ? "Copied!" : "Copy prompt"}
+          </button>
+          <p className="text-zinc-500 text-xs mb-2">Open your AI of choice and paste:</p>
+          <div className="flex flex-wrap gap-2">
+            <a
+              href="https://claude.ai/new"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3 py-1.5 bg-zinc-700 hover:bg-zinc-600 text-zinc-200 rounded-lg text-xs font-semibold transition-colors"
+            >
+              Claude
+            </a>
+            <a
+              href="https://chatgpt.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3 py-1.5 bg-zinc-700 hover:bg-zinc-600 text-zinc-200 rounded-lg text-xs font-semibold transition-colors"
+            >
+              ChatGPT
+            </a>
+            <a
+              href="https://gemini.google.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3 py-1.5 bg-zinc-700 hover:bg-zinc-600 text-zinc-200 rounded-lg text-xs font-semibold transition-colors"
+            >
+              Gemini
+            </a>
+          </div>
+        </div>
+
+        {/* Donate */}
+        <div className="bg-zinc-800 rounded-xl p-4">
+          <div className="flex items-center gap-2 mb-1">
+            <Heart size={16} className="text-pink-400" />
+            <h2 className="font-semibold">Support Pushlog</h2>
+          </div>
+          <p className="text-zinc-400 text-sm mb-3">
+            If Pushlog helps your training, consider buying me a coffee.
+          </p>
+          <a
+            href="https://ko-fi.com/nicholasgallion"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 bg-pink-600 hover:bg-pink-500 text-white rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors"
+          >
+            <Heart size={16} />
+            Donate
+          </a>
+        </div>
+
         {/* Program export/import */}
         <div className="bg-zinc-800 rounded-xl p-4">
           <h2 className="font-semibold mb-1">Program</h2>
@@ -350,72 +416,6 @@ Please analyze my workout program and give me specific, actionable feedback on:
           {importStatus === "error" && (
             <p className="mt-3 text-sm text-red-400">{errorMessage}</p>
           )}
-        </div>
-
-        {/* AI Feedback */}
-        <div className="bg-zinc-800 rounded-xl p-4">
-          <div className="flex items-center gap-2 mb-1">
-            <Sparkles size={16} className="text-violet-400" />
-            <h2 className="font-semibold">AI feedback</h2>
-          </div>
-          <p className="text-zinc-400 text-sm mb-3">
-            Copy a prompt with your program data pre-loaded, then paste it into
-            your AI of choice for personalised feedback.
-          </p>
-          <button
-            onClick={handleCopyPrompt}
-            className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 text-white rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors mb-3"
-          >
-            {copied ? <Check size={16} /> : <Copy size={16} />}
-            {copied ? "Copied!" : "Copy prompt"}
-          </button>
-          <p className="text-zinc-500 text-xs mb-2">Open your AI of choice and paste:</p>
-          <div className="flex flex-wrap gap-2">
-            <a
-              href="https://claude.ai/new"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-3 py-1.5 bg-zinc-700 hover:bg-zinc-600 text-zinc-200 rounded-lg text-xs font-semibold transition-colors"
-            >
-              Claude
-            </a>
-            <a
-              href="https://chatgpt.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-3 py-1.5 bg-zinc-700 hover:bg-zinc-600 text-zinc-200 rounded-lg text-xs font-semibold transition-colors"
-            >
-              ChatGPT
-            </a>
-            <a
-              href="https://gemini.google.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-3 py-1.5 bg-zinc-700 hover:bg-zinc-600 text-zinc-200 rounded-lg text-xs font-semibold transition-colors"
-            >
-              Gemini
-            </a>
-          </div>
-        </div>
-
-        {/* Donate */}
-        <div className="bg-zinc-800 rounded-xl p-4">
-          <div className="flex items-center gap-2 mb-1">
-            <Heart size={16} className="text-pink-400" />
-            <h2 className="font-semibold">Support Pushlog</h2>
-          </div>
-          <p className="text-zinc-400 text-sm mb-3">
-            If Pushlog helps your training, consider buying me a coffee.
-          </p>
-          <a
-            href="https://ko-fi.com/nicholasgallion"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 bg-pink-600 hover:bg-pink-500 text-white rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors"
-          >
-            <Heart size={16} />
-            Donate
-          </a>
         </div>
       </div>
     </div>
