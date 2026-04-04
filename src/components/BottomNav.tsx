@@ -2,6 +2,13 @@ import { useEffect, useRef } from "react";
 import { NavLink } from "react-router-dom";
 import { Home, ClipboardList, History, Settings } from "lucide-react";
 
+const tabs = [
+  { to: "/", label: "Today", icon: Home, end: true },
+  { to: "/program", label: "Program", icon: ClipboardList, end: false },
+  { to: "/history", label: "History", icon: History, end: false },
+  { to: "/settings", label: "Settings", icon: Settings, end: false },
+];
+
 export function BottomNav() {
   const navRef = useRef<HTMLElement>(null);
 
@@ -30,24 +37,30 @@ export function BottomNav() {
     };
   }, []);
 
-  const navClass = ({ isActive }: { isActive: boolean }) =>
-    `flex items-center justify-center w-12 h-12 rounded-full transition-colors ${isActive ? "bg-zinc-700 text-white" : "text-zinc-500 hover:text-zinc-300"}`;
-
   return (
     <nav ref={navRef} className="fixed bottom-0 left-0 right-0 z-50 flex justify-center pb-6 pb-safe pointer-events-none">
-      <div className="pointer-events-auto flex items-center gap-1 bg-zinc-900 border border-zinc-700 rounded-full px-3 py-2 shadow-xl">
-        <NavLink to="/" end className={navClass}>
-          <Home size={22} />
-        </NavLink>
-        <NavLink to="/program" className={navClass}>
-          <ClipboardList size={22} />
-        </NavLink>
-        <NavLink to="/history" className={navClass}>
-          <History size={22} />
-        </NavLink>
-        <NavLink to="/settings" className={navClass}>
-          <Settings size={22} />
-        </NavLink>
+      <div className="pointer-events-auto flex items-center gap-1 bg-zinc-900 border border-zinc-800 rounded-full px-2 py-2 shadow-xl">
+        {tabs.map(({ to, label, icon: Icon, end }) => (
+          <NavLink
+            key={to}
+            to={to}
+            end={end}
+            className={({ isActive }) =>
+              `flex flex-col items-center gap-0.5 px-4 py-2 rounded-full transition-colors ${
+                isActive
+                  ? "bg-zinc-700/70 text-blue-400"
+                  : "text-zinc-500 hover:text-zinc-300"
+              }`
+            }
+          >
+            {({ isActive }) => (
+              <>
+                <Icon size={22} strokeWidth={isActive ? 2.5 : 1.75} />
+                <span className="text-[10px] font-medium leading-none">{label}</span>
+              </>
+            )}
+          </NavLink>
+        ))}
       </div>
     </nav>
   );
