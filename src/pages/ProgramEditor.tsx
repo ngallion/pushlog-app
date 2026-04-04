@@ -254,7 +254,9 @@ export function ProgramEditor() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-base font-semibold text-zinc-100">How the rotation works</h2>
+              <h2 className="text-base font-semibold text-zinc-100">
+                How the rotation works
+              </h2>
               <button
                 onClick={() => setShowInfo(false)}
                 className="text-zinc-500 hover:text-zinc-300 transition-colors"
@@ -266,30 +268,85 @@ export function ProgramEditor() {
 
             <div className="space-y-4 text-sm text-zinc-300">
               <div>
-                <p className="text-zinc-400 text-xs uppercase tracking-wide font-medium mb-2">Workout sequence</p>
+                <p className="text-zinc-400 text-xs uppercase tracking-wide font-medium mb-2">
+                  Workout sequence
+                </p>
                 <div className="flex items-center gap-1.5 flex-wrap">
-                  {(["upperA", "lowerA", "upperB", "lowerB"] as WorkoutType[]).map((t, i, arr) => (
+                  {(
+                    ["upperA", "lowerA", "upperB", "lowerB"] as WorkoutType[]
+                  ).map((t, i, arr) => (
                     <span key={t} className="flex items-center gap-1.5">
-                      <span className="bg-zinc-800 rounded px-2 py-0.5 text-zinc-200 font-medium">{getWorkoutLabel(t)}</span>
-                      {i < arr.length - 1 && <span className="text-zinc-600">→</span>}
+                      <span className="bg-zinc-800 rounded px-2 py-0.5 text-zinc-200 font-medium">
+                        {getWorkoutLabel(t)}
+                      </span>
+                      {i < arr.length - 1 && (
+                        <span className="text-zinc-600">→</span>
+                      )}
                     </span>
                   ))}
                   <span className="text-zinc-600">→ repeat</span>
                 </div>
-                <p className="mt-2 text-zinc-400">Every workout cycles through these four types in order.</p>
+                <p className="mt-2 text-zinc-400">
+                  Every workout cycles through these four types in order.
+                </p>
               </div>
 
               <div>
-                <p className="text-zinc-400 text-xs uppercase tracking-wide font-medium mb-2">Cycles</p>
-                <p>Each workout type has two exercise lists — <span className="text-zinc-200 font-medium">Cycle 1</span> and <span className="text-zinc-200 font-medium">Cycle 2</span>. After every 8 workouts (two full cycles), the active cycle flips, giving you natural variation without changing the structure.</p>
+                <p className="text-zinc-400 text-xs uppercase tracking-wide font-medium mb-2">
+                  Cycles
+                </p>
+                <p>
+                  Each workout type has two exercise lists —{" "}
+                  <span className="text-zinc-200 font-medium">Cycle 1</span> and{" "}
+                  <span className="text-zinc-200 font-medium">Cycle 2</span>.
+                  After every 8 workouts (two full cycles), the active cycle
+                  flips, giving you natural variation without changing the
+                  structure.
+                </p>
               </div>
 
               <div>
-                <p className="text-zinc-400 text-xs uppercase tracking-wide font-medium mb-2">Research</p>
+                <p className="text-zinc-400 text-xs uppercase tracking-wide font-medium mb-2">
+                  Research
+                </p>
                 <ul className="space-y-1.5 list-none">
-                  <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC8372753/" target="_blank" rel="noopener noreferrer" className="text-violet-400 hover:text-violet-300 underline">Evangelista et al. (2021)</a> — split and full-body routines produce similar muscular adaptations.</li>
-                  <li><a href="https://pubmed.ncbi.nlm.nih.gov/27102172/" target="_blank" rel="noopener noreferrer" className="text-violet-400 hover:text-violet-300 underline">Schoenfeld et al. (2016)</a> — training each muscle group twice per week promotes superior hypertrophy vs. once per week.</li>
-                  <li><a href="https://pubmed.ncbi.nlm.nih.gov/38595233/" target="_blank" rel="noopener noreferrer" className="text-violet-400 hover:text-violet-300 underline">Ramos-Campo et al. (2024)</a> — meta-analysis confirms split vs. full-body choice does not significantly impact strength or muscle growth when volume is equated.</li>
+                  <li>
+                    <a
+                      href="https://pmc.ncbi.nlm.nih.gov/articles/PMC8372753/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-violet-400 hover:text-violet-300 underline"
+                    >
+                      Evangelista et al. (2021)
+                    </a>{" "}
+                    — split and full-body routines produce similar muscular
+                    adaptations.
+                  </li>
+                  <li>
+                    <a
+                      href="https://pubmed.ncbi.nlm.nih.gov/27102172/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-violet-400 hover:text-violet-300 underline"
+                    >
+                      Schoenfeld et al. (2016)
+                    </a>{" "}
+                    — training each muscle group twice per week promotes
+                    superior hypertrophy vs. once per week.
+                  </li>
+                  <li>
+                    <a
+                      href="https://pubmed.ncbi.nlm.nih.gov/38595233/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-violet-400 hover:text-violet-300 underline"
+                    >
+                      Ramos-Campo et al. (2024)
+                    </a>{" "}
+                    — meta-analysis confirms split vs. full-body choice does not
+                    significantly impact strength or muscle growth when volume
+                    is equated.
+                  </li>
                 </ul>
               </div>
             </div>

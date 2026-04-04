@@ -12,18 +12,18 @@ AI assistant context for the `pushlog-app` repository. Read this before making c
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| Framework | React 19 + Vite 8 |
-| Language | TypeScript 5 (strict mode) |
-| Styling | Tailwind CSS 3 (utility-first, no separate stylesheets) |
-| Routing | React Router 7 (client-side only) |
-| State | Context API + `useReducer` |
+| Layer       | Technology                                                    |
+| ----------- | ------------------------------------------------------------- |
+| Framework   | React 19 + Vite 8                                             |
+| Language    | TypeScript 5 (strict mode)                                    |
+| Styling     | Tailwind CSS 3 (utility-first, no separate stylesheets)       |
+| Routing     | React Router 7 (client-side only)                             |
+| State       | Context API + `useReducer`                                    |
 | Persistence | `localStorage` (keys: `pushlog:programs`, `pushlog:sessions`) |
-| PWA | `vite-plugin-pwa` with Workbox auto-update |
-| Drag & Drop | `@dnd-kit/core` + `@dnd-kit/sortable` |
-| Icons | `lucide-react` |
-| Animations | `canvas-confetti` + custom Tailwind keyframes |
+| PWA         | `vite-plugin-pwa` with Workbox auto-update                    |
+| Drag & Drop | `@dnd-kit/core` + `@dnd-kit/sortable`                         |
+| Icons       | `lucide-react`                                                |
+| Animations  | `canvas-confetti` + custom Tailwind keyframes                 |
 
 ---
 
@@ -87,7 +87,7 @@ interface ExerciseTemplate {
 
 interface ProgramBlock {
   id: string;
-  startedAt: string;       // ISO date string
+  startedAt: string; // ISO date string
   workouts: {
     day1: Record<WorkoutType, ExerciseTemplate[]>;
     day2: Record<WorkoutType, ExerciseTemplate[]>;
@@ -106,7 +106,7 @@ interface LoggedExercise {
 
 interface WorkoutSession {
   id: string;
-  date: string;            // ISO date string
+  date: string; // ISO date string
   workoutType: WorkoutType;
   daySet: DaySet;
   programBlockId: string;
@@ -115,6 +115,7 @@ interface WorkoutSession {
 ```
 
 **localStorage keys:**
+
 - `pushlog:programs` — `ProgramBlock[]`
 - `pushlog:sessions` — `WorkoutSession[]`
 
@@ -126,18 +127,18 @@ State lives in `src/context/AppContext.tsx`. Use the `useApp()` hook to access `
 
 **Reducer actions:**
 
-| Action | Effect |
-|--------|--------|
-| `START_WORKOUT` | Begins a new session |
-| `LOG_EXERCISE` | Updates exercise in active session |
-| `SWAP_EXERCISE` | Replaces an exercise mid-workout (one-off, non-persisted) |
-| `FINISH_WORKOUT` | Saves session to history |
-| `SAVE_PROGRAM` | Persists a program block |
-| `DELETE_PROGRAM` | Removes a program block |
-| `UPDATE_WEIGHT` | Updates weight in active session and template |
-| `ADD_EXERCISE` | Adds exercise to active workout (non-persisted, `id: "impromptu-${uuid}"`) |
-| `REORDER_EXERCISES` | Reorders exercises in active session |
-| `IMPORT_STATE` | Replaces all programs and sessions (used by Settings import) |
+| Action              | Effect                                                                     |
+| ------------------- | -------------------------------------------------------------------------- |
+| `START_WORKOUT`     | Begins a new session                                                       |
+| `LOG_EXERCISE`      | Updates exercise in active session                                         |
+| `SWAP_EXERCISE`     | Replaces an exercise mid-workout (one-off, non-persisted)                  |
+| `FINISH_WORKOUT`    | Saves session to history                                                   |
+| `SAVE_PROGRAM`      | Persists a program block                                                   |
+| `DELETE_PROGRAM`    | Removes a program block                                                    |
+| `UPDATE_WEIGHT`     | Updates weight in active session and template                              |
+| `ADD_EXERCISE`      | Adds exercise to active workout (non-persisted, `id: "impromptu-${uuid}"`) |
+| `REORDER_EXERCISES` | Reorders exercises in active session                                       |
+| `IMPORT_STATE`      | Replaces all programs and sessions (used by Settings import)               |
 
 State changes trigger `useEffect` to sync to `localStorage`.
 
@@ -175,12 +176,14 @@ No test framework is configured. Do not add tests without discussing the approac
 ## Code Conventions
 
 ### Naming
+
 - `camelCase` — variables, functions, hooks
 - `PascalCase` — React components, TypeScript interfaces/types
 - `UPPER_CASE` — module-level constants (e.g., `PROGRAMS_KEY`, `SEQUENCE`, `TYPES`)
 - File names match the component/hook they export (e.g., `ExerciseCard.tsx`)
 
 ### React Patterns
+
 - **Functional components only** — no class components
 - **Controlled inputs** — always use `value` + `onChange`
 - **Custom hooks** for shared domain logic; pages handle complex orchestration
@@ -188,19 +191,23 @@ No test framework is configured. Do not add tests without discussing the approac
 - **No prop drilling past 2 levels** — lift to context if needed
 
 ### Styling
+
 - **Tailwind utility classes only** — do not write custom CSS unless adding keyframe animations to `index.css`
 - Keep component class lists readable; extract repeated patterns to variables if repeated 3+ times
 
 ### TypeScript
+
 - **Strict mode is enabled** — no `any`, no `@ts-ignore` without justification
 - All new types go in `src/lib/types.ts` unless they are purely component-local
 - Use union types and discriminated unions for reducer actions (see `AppContext.tsx`)
 
 ### Immutability
+
 - State updates always use spread operators or `Array.prototype` methods that return new arrays
 - Never mutate state objects directly
 
 ### Drag & Drop
+
 - Use `PointerSensor` for mouse, `TouchSensor` with `{ delay: 200, tolerance: 5 }` for touch
 - Both `Today.tsx` and `ProgramEditor.tsx` use `@dnd-kit` — keep patterns consistent between them
 

@@ -11,20 +11,20 @@ import { Settings } from "./pages/Settings";
 export default function App() {
   return (
     <ErrorBoundary>
-    <AppProvider>
-      <BrowserRouter>
-        <div className="min-h-screen bg-zinc-900 text-zinc-100">
-          <Routes>
-            <Route path="/" element={<Today />} />
-            <Route path="/program" element={<ProgramEditor />} />
-            <Route path="/history" element={<History />} />
-            <Route path="/settings" element={<Settings />} />
-          </Routes>
-          <BottomNav />
-          <PWAInstallPrompt />
-        </div>
-      </BrowserRouter>
-    </AppProvider>
+      <AppProvider>
+        <BrowserRouter>
+          <div className="min-h-screen bg-zinc-900 text-zinc-100">
+            <Routes>
+              <Route path="/" element={<Today />} />
+              <Route path="/program" element={<ProgramEditor />} />
+              <Route path="/history" element={<History />} />
+              <Route path="/settings" element={<Settings />} />
+            </Routes>
+            <BottomNav />
+            <PWAInstallPrompt />
+          </div>
+        </BrowserRouter>
+      </AppProvider>
     </ErrorBoundary>
   );
 }

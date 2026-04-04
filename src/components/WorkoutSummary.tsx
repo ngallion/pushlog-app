@@ -1,4 +1,10 @@
-import { CheckCircle, TrendingUp, TrendingDown, Minus, ChevronRight } from "lucide-react";
+import {
+  CheckCircle,
+  TrendingUp,
+  TrendingDown,
+  Minus,
+  ChevronRight,
+} from "lucide-react";
 import { WorkoutTypeLabel } from "./WorkoutTypeLabel";
 import { getWorkoutLabel, getCycleLabel } from "../lib/rotation";
 import type {
@@ -42,17 +48,14 @@ export function WorkoutSummary({
       .filter((ex) => {
         const maxPrev = allPreviousSessions
           .flatMap((s) => s.exercises)
-          .filter(
-            (e) => e.templateId === ex.templateId || e.name === ex.name,
-          )
+          .filter((e) => e.templateId === ex.templateId || e.name === ex.name)
           .reduce((max, e) => Math.max(max, e.startingWeight ?? 0), 0);
         return (ex.startingWeight ?? 0) > maxPrev;
       })
       .map((ex) => ex.name),
   );
 
-  const setsDelta =
-    prevTotalSets !== null ? totalSets - prevTotalSets : null;
+  const setsDelta = prevTotalSets !== null ? totalSets - prevTotalSets : null;
 
   const exerciseRows = session.exercises.map((ex) => {
     const prevEx = previousSession?.exercises.find(

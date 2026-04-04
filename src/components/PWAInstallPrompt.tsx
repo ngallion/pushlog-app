@@ -87,7 +87,9 @@ export function PWAInstallPrompt() {
           <ol className="space-y-2">
             <li className="flex items-center gap-2 text-xs text-zinc-300">
               <Share size={14} className="text-violet-400 shrink-0" />
-              Tap the <span className="font-medium text-zinc-100">Share</span>{" "}
+              Tap the <span className="font-medium text-zinc-100">
+                Share
+              </span>{" "}
               button in Safari
             </li>
             <li className="flex items-center gap-2 text-xs text-zinc-300">

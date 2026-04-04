@@ -37,7 +37,11 @@ export function History() {
   const trimmed = searchQuery.trim().toLowerCase();
   const sessions = allSessions.filter((s) => {
     if (activeFilter !== "all" && s.workoutType !== activeFilter) return false;
-    if (trimmed && !s.exercises.some((ex) => ex.name.toLowerCase().includes(trimmed))) return false;
+    if (
+      trimmed &&
+      !s.exercises.some((ex) => ex.name.toLowerCase().includes(trimmed))
+    )
+      return false;
     return true;
   });
 
@@ -57,7 +61,8 @@ export function History() {
     <div className="max-w-lg mx-auto px-4 pt-6 pb-24">
       <h1 className="text-2xl font-bold mb-1">History</h1>
       <p className="text-zinc-500 text-sm mb-4">
-        {state.sessions.length} workout{state.sessions.length !== 1 ? "s" : ""} completed
+        {state.sessions.length} workout{state.sessions.length !== 1 ? "s" : ""}{" "}
+        completed
       </p>
 
       <div className="flex gap-2 overflow-x-auto pb-1 mb-3 no-scrollbar">
@@ -77,7 +82,10 @@ export function History() {
       </div>
 
       <div className="relative mb-5">
-        <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none" />
+        <Search
+          size={15}
+          className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none"
+        />
         <input
           type="text"
           placeholder="Search exercises…"
@@ -97,12 +105,17 @@ export function History() {
       </div>
 
       {sessions.length === 0 && (
-        <p className="text-zinc-500 text-sm text-center mt-12">No sessions match your filter.</p>
+        <p className="text-zinc-500 text-sm text-center mt-12">
+          No sessions match your filter.
+        </p>
       )}
 
       <div className="space-y-3">
         {sessions.map((session) => {
-          const totalSets = session.exercises.reduce((sum, ex) => sum + ex.setsCompleted, 0);
+          const totalSets = session.exercises.reduce(
+            (sum, ex) => sum + ex.setsCompleted,
+            0,
+          );
           const accentClass = ACCENT_MAP[session.workoutType];
           return (
             <div
@@ -168,11 +181,18 @@ export function History() {
                 {session.exercises.map((ex, ei) => {
                   const partial = ex.setsCompleted < ex.targetSets;
                   return (
-                    <div key={ei} className="flex items-center justify-between gap-3 text-sm">
-                      <span className={partial ? "text-zinc-400" : "text-zinc-200"}>
+                    <div
+                      key={ei}
+                      className="flex items-center justify-between gap-3 text-sm"
+                    >
+                      <span
+                        className={partial ? "text-zinc-400" : "text-zinc-200"}
+                      >
                         {ex.name}
                       </span>
-                      <span className={`shrink-0 tabular-nums ${partial ? "text-amber-500/80" : "text-zinc-500"}`}>
+                      <span
+                        className={`shrink-0 tabular-nums ${partial ? "text-amber-500/80" : "text-zinc-500"}`}
+                      >
                         {partial
                           ? `${ex.setsCompleted}/${ex.targetSets} sets · ${ex.minReps}–${ex.maxReps} reps`
                           : `${ex.targetSets} sets · ${ex.minReps}–${ex.maxReps} reps`}

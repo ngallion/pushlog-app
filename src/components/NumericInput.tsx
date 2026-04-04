@@ -1,6 +1,10 @@
 import { useState, useEffect } from "react";
 
-interface Props extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "value" | "onChange" | "type"> {
+interface Props
+  extends Omit<
+    React.InputHTMLAttributes<HTMLInputElement>,
+    "value" | "onChange" | "type"
+  > {
   value: number;
   onChange: (value: number) => void;
 }

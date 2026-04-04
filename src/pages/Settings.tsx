@@ -6,7 +6,15 @@ import {
   saveRestTimerDuration,
   migrateImportedData,
 } from "../lib/storage";
-import { Download, Upload, Timer, Heart, Sparkles, Copy, Check } from "lucide-react";
+import {
+  Download,
+  Upload,
+  Timer,
+  Heart,
+  Sparkles,
+  Copy,
+  Check,
+} from "lucide-react";
 
 const REST_DURATION_OPTIONS = [60, 90, 120, 180] as const;
 
@@ -62,7 +70,9 @@ export function Settings() {
     typeof navigator !== "undefined" &&
     typeof navigator.share === "function" &&
     typeof navigator.canShare === "function" &&
-    navigator.canShare({ files: [new File([""], "test.json", { type: "application/json" })] });
+    navigator.canShare({
+      files: [new File([""], "test.json", { type: "application/json" })],
+    });
 
   const downloadOrShare = async (file: File, title: string) => {
     if (canShare) {
@@ -290,7 +300,9 @@ Please analyze my workout program and give me specific, actionable feedback on:
             {copied ? <Check size={16} /> : <Copy size={16} />}
             {copied ? "Copied!" : "Copy prompt"}
           </button>
-          <p className="text-zinc-500 text-xs mb-2">Open your AI of choice and paste:</p>
+          <p className="text-zinc-500 text-xs mb-2">
+            Open your AI of choice and paste:
+          </p>
           <div className="flex flex-wrap gap-2">
             <a
               href="https://claude.ai/new"
@@ -351,14 +363,14 @@ Please analyze my workout program and give me specific, actionable feedback on:
               onClick={handleExportProgram}
               className="flex items-center gap-2 bg-zinc-700 hover:bg-zinc-600 text-zinc-100 rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors"
             >
-              <Download size={16} />
+              <Upload size={16} />
               Export program
             </button>
             <button
               onClick={() => programFileInputRef.current?.click()}
               className="flex items-center gap-2 bg-zinc-700 hover:bg-zinc-600 text-zinc-100 rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors"
             >
-              <Upload size={16} />
+              <Download size={16} />
               Import program
             </button>
           </div>
@@ -390,14 +402,14 @@ Please analyze my workout program and give me specific, actionable feedback on:
               onClick={handleExport}
               className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 text-white rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors"
             >
-              <Download size={16} />
+              <Upload size={16} />
               Export backup
             </button>
             <button
               onClick={() => fileInputRef.current?.click()}
               className="flex items-center gap-2 bg-zinc-700 hover:bg-zinc-600 text-zinc-100 rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors"
             >
-              <Upload size={16} />
+              <Download size={16} />
               Import backup
             </button>
           </div>

@@ -103,8 +103,12 @@ export function Today() {
   } | null>(null);
 
   const restDuration = loadRestTimerDuration();
-  const { secondsLeft, isRunning: timerRunning, start: startTimer, stop: stopTimer } =
-    useRestTimer(restDuration);
+  const {
+    secondsLeft,
+    isRunning: timerRunning,
+    start: startTimer,
+    stop: stopTimer,
+  } = useRestTimer(restDuration);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -236,7 +240,9 @@ export function Today() {
 
     return (
       <div className="max-w-lg mx-auto px-4 pt-6 pb-28">
-        <div className={`bg-zinc-800 border border-zinc-700 border-l-2 ${activeBorderColor[session.workoutType]} rounded-xl p-4 mb-6`}>
+        <div
+          className={`bg-zinc-800 border border-zinc-700 border-l-2 ${activeBorderColor[session.workoutType]} rounded-xl p-4 mb-6`}
+        >
           <div className="flex items-center gap-3 mb-1">
             <WorkoutTypeLabel
               type={session.workoutType}
@@ -358,7 +364,10 @@ export function Today() {
         )}
 
         {timerRunning && secondsLeft !== null && (
-          <div className="fixed left-0 right-0 z-40 flex justify-center pointer-events-none" style={{ bottom: 'calc(5.5rem + env(safe-area-inset-bottom))' }}>
+          <div
+            className="fixed left-0 right-0 z-40 flex justify-center pointer-events-none"
+            style={{ bottom: "calc(5.5rem + env(safe-area-inset-bottom))" }}
+          >
             <div className="flex items-center gap-3 bg-zinc-900 border border-zinc-800 rounded-full px-5 py-2.5 shadow-xl pointer-events-auto">
               <Timer size={16} className="text-violet-400 shrink-0" />
               <span className="text-sm text-zinc-400">Rest</span>
@@ -444,7 +453,9 @@ export function Today() {
         })}
       </p>
 
-      <div className={`bg-zinc-800 border border-zinc-700 border-l-2 ${previewBorderColor[workoutType]} rounded-xl p-6 mb-4`}>
+      <div
+        className={`bg-zinc-800 border border-zinc-700 border-l-2 ${previewBorderColor[workoutType]} rounded-xl p-6 mb-4`}
+      >
         <p className="text-zinc-400 text-sm mb-2">Next Workout</p>
         <div className="flex items-center gap-3 mb-4">
           <WorkoutTypeLabel type={workoutType} cycle={cycle} />
