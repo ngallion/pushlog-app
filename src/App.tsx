@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AppProvider } from "./context/AppContext";
+import { ErrorBoundary } from "./components/ErrorBoundary";
 import { BottomNav } from "./components/BottomNav";
 import { PWAInstallPrompt } from "./components/PWAInstallPrompt";
 import { Today } from "./pages/Today";
@@ -9,6 +10,7 @@ import { Settings } from "./pages/Settings";
 
 export default function App() {
   return (
+    <ErrorBoundary>
     <AppProvider>
       <BrowserRouter>
         <div className="min-h-screen bg-zinc-900 text-zinc-100">
@@ -23,5 +25,6 @@ export default function App() {
         </div>
       </BrowserRouter>
     </AppProvider>
+    </ErrorBoundary>
   );
 }

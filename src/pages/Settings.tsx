@@ -4,6 +4,7 @@ import type { ProgramBlock, WorkoutSession } from "../lib/types";
 import {
   loadRestTimerDuration,
   saveRestTimerDuration,
+  migrateImportedData,
 } from "../lib/storage";
 import { Download, Upload, Timer, Heart } from "lucide-react";
 
@@ -124,13 +125,11 @@ export function Settings() {
             `Invalid session at index ${invalidSession}: missing required fields (id, workoutType, programBlockId, exercises)`,
           );
         }
-        dispatch({
-          type: "IMPORT_STATE",
-          payload: {
-            programs: parsed.programs as ProgramBlock[],
-            sessions: parsed.sessions as WorkoutSession[],
-          },
-        });
+        const migrated = migrateImportedData(
+          parsed.programs as ProgramBlock[],
+          parsed.sessions as WorkoutSession[],
+        );
+        dispatch({ type: "IMPORT_STATE", payload: migrated });
         setImportStatus("success");
         setErrorMessage("");
       } catch (err) {

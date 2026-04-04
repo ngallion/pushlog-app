@@ -1,4 +1,4 @@
-import type { WorkoutType, DaySet, WorkoutSession } from "./types";
+import type { WorkoutType, Cycle, WorkoutSession } from "./types";
 
 const SEQUENCE: WorkoutType[] = ["upperA", "lowerA", "upperB", "lowerB"];
 
@@ -6,8 +6,8 @@ export function getNextWorkoutType(sessions: WorkoutSession[]): WorkoutType {
   return SEQUENCE[sessions.length % 4];
 }
 
-export function getCurrentDaySet(sessions: WorkoutSession[]): DaySet {
-  return Math.floor(sessions.length / 8) % 2 === 0 ? "day1" : "day2";
+export function getCurrentCycle(sessions: WorkoutSession[]): Cycle {
+  return Math.floor(sessions.length / 8) % 2 === 0 ? "cycle1" : "cycle2";
 }
 
 export function getWorkoutLabel(type: WorkoutType): string {
@@ -20,6 +20,6 @@ export function getWorkoutLabel(type: WorkoutType): string {
   return labels[type];
 }
 
-export function getDaySetLabel(daySet: DaySet): string {
-  return daySet === "day1" ? "Day 1" : "Day 2";
+export function getCycleLabel(cycle: Cycle): string {
+  return cycle === "cycle1" ? "Cycle 1" : "Cycle 2";
 }

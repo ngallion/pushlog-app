@@ -19,18 +19,18 @@ import { useApp } from "../context/AppContext";
 import { WorkoutTypeLabel } from "../components/WorkoutTypeLabel";
 import type {
   WorkoutType,
-  DaySet,
+  Cycle,
   ExerciseTemplate,
   ProgramBlock,
 } from "../lib/types";
-import { getWorkoutLabel, getDaySetLabel } from "../lib/rotation";
+import { getWorkoutLabel, getCycleLabel } from "../lib/rotation";
 import { randomUUID } from "../lib/uuid";
 import { Plus, Trash2, Save, GripVertical, Info, X } from "lucide-react";
 
 const WORKOUT_TYPES: WorkoutType[] = ["upperA", "upperB", "lowerA", "lowerB"];
-const DAY_SETS: DaySet[] = ["day1", "day2"];
+const CYCLES: Cycle[] = ["cycle1", "cycle2"];
 
-type WorkoutsState = Record<DaySet, Record<WorkoutType, ExerciseTemplate[]>>;
+type WorkoutsState = Record<Cycle, Record<WorkoutType, ExerciseTemplate[]>>;
 
 interface SortableExerciseCardProps {
   ex: ExerciseTemplate;
@@ -145,11 +145,11 @@ export function ProgramEditor() {
 
   const [workouts, setWorkouts] = useState<WorkoutsState>(
     currentProgram?.workouts ?? {
-      day1: { upperA: [], upperB: [], lowerA: [], lowerB: [] },
-      day2: { upperA: [], upperB: [], lowerA: [], lowerB: [] },
+      cycle1: { upperA: [], upperB: [], lowerA: [], lowerB: [] },
+      cycle2: { upperA: [], upperB: [], lowerA: [], lowerB: [] },
     },
   );
-  const [activeDay, setActiveDay] = useState<DaySet>("day1");
+  const [activeCycle, setActiveCycle] = useState<Cycle>("cycle1");
   const [activeTab, setActiveTab] = useState<WorkoutType>("upperA");
   const [saved, setSaved] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
@@ -168,9 +168,9 @@ export function ProgramEditor() {
   ) => {
     setWorkouts((prev) => ({
       ...prev,
-      [activeDay]: {
-        ...prev[activeDay],
-        [activeTab]: prev[activeDay][activeTab].map((ex, i) =>
+      [activeCycle]: {
+        ...prev[activeCycle],
+        [activeTab]: prev[activeCycle][activeTab].map((ex, i) =>
           i === idx ? { ...ex, [field]: value } : ex,
         ),
       },
@@ -187,9 +187,9 @@ export function ProgramEditor() {
     };
     setWorkouts((prev) => ({
       ...prev,
-      [activeDay]: {
-        ...prev[activeDay],
-        [activeTab]: [...prev[activeDay][activeTab], newEx],
+      [activeCycle]: {
+        ...prev[activeCycle],
+        [activeTab]: [...prev[activeCycle][activeTab], newEx],
       },
     }));
   };
@@ -197,9 +197,9 @@ export function ProgramEditor() {
   const deleteExercise = (idx: number) => {
     setWorkouts((prev) => ({
       ...prev,
-      [activeDay]: {
-        ...prev[activeDay],
-        [activeTab]: prev[activeDay][activeTab].filter((_, i) => i !== idx),
+      [activeCycle]: {
+        ...prev[activeCycle],
+        [activeTab]: prev[activeCycle][activeTab].filter((_, i) => i !== idx),
       },
     }));
   };
@@ -208,13 +208,13 @@ export function ProgramEditor() {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
     setWorkouts((prev) => {
-      const items = prev[activeDay][activeTab];
+      const items = prev[activeCycle][activeTab];
       const oldIndex = items.findIndex((ex) => ex.id === active.id);
       const newIndex = items.findIndex((ex) => ex.id === over.id);
       return {
         ...prev,
-        [activeDay]: {
-          ...prev[activeDay],
+        [activeCycle]: {
+          ...prev[activeCycle],
           [activeTab]: arrayMove(items, oldIndex, newIndex),
         },
       };
@@ -241,7 +241,7 @@ export function ProgramEditor() {
     setTimeout(() => setSaved(false), 2000);
   };
 
-  const exercises = workouts[activeDay][activeTab];
+  const exercises = workouts[activeCycle][activeTab];
 
   return (
     <div className="max-w-lg mx-auto px-4 pt-6 pb-28">
@@ -308,17 +308,17 @@ export function ProgramEditor() {
 
       {/* Day selector */}
       <div className="flex gap-2 mb-4">
-        {DAY_SETS.map((day) => (
+        {CYCLES.map((day) => (
           <button
             key={day}
-            onClick={() => setActiveDay(day)}
+            onClick={() => setActiveCycle(day)}
             className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-colors ${
-              activeDay === day
+              activeCycle === day
                 ? "bg-violet-600 text-white"
                 : "bg-zinc-800 text-zinc-300 hover:bg-zinc-700"
             }`}
           >
-            {getDaySetLabel(day)}
+            {getCycleLabel(day)}
           </button>
         ))}
       </div>
@@ -341,7 +341,7 @@ export function ProgramEditor() {
       </div>
 
       <div className="flex items-center gap-2 mb-4">
-        <WorkoutTypeLabel type={activeTab} daySet={activeDay} />
+        <WorkoutTypeLabel type={activeTab} cycle={activeCycle} />
         <span className="font-semibold">{getWorkoutLabel(activeTab)}</span>
       </div>
 
