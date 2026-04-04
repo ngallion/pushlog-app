@@ -282,8 +282,8 @@ export function ProgramEditor() {
               </div>
 
               <div>
-                <p className="text-zinc-400 text-xs uppercase tracking-wide font-medium mb-2">Day sets</p>
-                <p>Each workout type has two exercise lists — <span className="text-zinc-200 font-medium">Day 1</span> and <span className="text-zinc-200 font-medium">Day 2</span>. After every 8 workouts (two full cycles), the active day set flips, giving you natural variation without changing the structure.</p>
+                <p className="text-zinc-400 text-xs uppercase tracking-wide font-medium mb-2">Cycles</p>
+                <p>Each workout type has two exercise lists — <span className="text-zinc-200 font-medium">Cycle 1</span> and <span className="text-zinc-200 font-medium">Cycle 2</span>. After every 8 workouts (two full cycles), the active cycle flips, giving you natural variation without changing the structure.</p>
               </div>
 
               <div>
