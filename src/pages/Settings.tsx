@@ -39,10 +39,15 @@ function isValidSession(s: unknown): s is WorkoutSession {
 export function Settings() {
   const { state, dispatch } = useApp();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const programFileInputRef = useRef<HTMLInputElement>(null);
   const [importStatus, setImportStatus] = useState<
     "idle" | "success" | "error"
   >("idle");
+  const [programImportStatus, setProgramImportStatus] = useState<
+    "idle" | "success" | "error"
+  >("idle");
   const [errorMessage, setErrorMessage] = useState("");
+  const [programErrorMessage, setProgramErrorMessage] = useState("");
   const [restDuration, setRestDuration] = useState<number>(
     loadRestTimerDuration,
   );
@@ -86,13 +91,50 @@ export function Settings() {
     await downloadOrShare(file, "Pushlog Backup");
   };
 
-  const handleExportRoutine = async () => {
+  const handleExportProgram = async () => {
     const data = { programs: state.programs, sessions: [] };
-    const fileName = `pushlog-routine-${new Date().toISOString().slice(0, 10)}.json`;
+    const fileName = `pushlog-program-${new Date().toISOString().slice(0, 10)}.json`;
     const file = new File([JSON.stringify(data, null, 2)], fileName, {
       type: "application/json",
     });
-    await downloadOrShare(file, "Pushlog Routine");
+    await downloadOrShare(file, "Pushlog Program");
+  };
+
+  const handleImportProgram = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const parsed = JSON.parse(ev.target?.result as string);
+        if (!Array.isArray(parsed.programs)) {
+          throw new Error("Invalid file: missing programs array");
+        }
+        const invalidProgram = parsed.programs.findIndex(
+          (p: unknown) => !isValidProgram(p),
+        );
+        if (invalidProgram !== -1) {
+          throw new Error(
+            `Invalid program at index ${invalidProgram}: missing required fields (id, startedAt, workouts)`,
+          );
+        }
+        const migrated = migrateImportedData(
+          parsed.programs as ProgramBlock[],
+          state.sessions,
+        );
+        dispatch({ type: "IMPORT_STATE", payload: migrated });
+        setProgramImportStatus("success");
+        setProgramErrorMessage("");
+      } catch (err) {
+        setProgramImportStatus("error");
+        setProgramErrorMessage(
+          err instanceof Error ? err.message : "Failed to parse file",
+        );
+      }
+      if (programFileInputRef.current) programFileInputRef.current.value = "";
+    };
+    reader.readAsText(file);
   };
 
   const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -194,11 +236,51 @@ export function Settings() {
             )}
         </div>
 
-        {/* Export */}
+        {/* Program export/import */}
         <div className="bg-zinc-800 rounded-xl p-4">
-          <h2 className="font-semibold mb-1">Export data</h2>
+          <h2 className="font-semibold mb-1">Program</h2>
           <p className="text-zinc-400 text-sm mb-3">
-            Download all programs and workout history as a JSON file.
+            Export or import your program. Importing will replace your current
+            program but will not affect your workout history.
+          </p>
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={handleExportProgram}
+              className="flex items-center gap-2 bg-zinc-700 hover:bg-zinc-600 text-zinc-100 rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors"
+            >
+              <Download size={16} />
+              Export program
+            </button>
+            <button
+              onClick={() => programFileInputRef.current?.click()}
+              className="flex items-center gap-2 bg-zinc-700 hover:bg-zinc-600 text-zinc-100 rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors"
+            >
+              <Upload size={16} />
+              Import program
+            </button>
+          </div>
+          <input
+            ref={programFileInputRef}
+            type="file"
+            accept=".json,application/json"
+            onChange={handleImportProgram}
+            className="hidden"
+          />
+          {programImportStatus === "success" && (
+            <p className="mt-3 text-sm text-green-400">
+              Program imported successfully.
+            </p>
+          )}
+          {programImportStatus === "error" && (
+            <p className="mt-3 text-sm text-red-400">{programErrorMessage}</p>
+          )}
+        </div>
+
+        {/* Backup export/import */}
+        <div className="bg-zinc-800 rounded-xl p-4">
+          <h2 className="font-semibold mb-1">Backup</h2>
+          <p className="text-zinc-400 text-sm mb-3">
+            Export or restore all programs and workout history as a JSON file.
           </p>
           <div className="flex flex-wrap gap-2">
             <button
@@ -209,29 +291,13 @@ export function Settings() {
               Export backup
             </button>
             <button
-              onClick={handleExportRoutine}
+              onClick={() => fileInputRef.current?.click()}
               className="flex items-center gap-2 bg-zinc-700 hover:bg-zinc-600 text-zinc-100 rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors"
             >
-              <Download size={16} />
-              Export routine
+              <Upload size={16} />
+              Import backup
             </button>
           </div>
-        </div>
-
-        {/* Import */}
-        <div className="bg-zinc-800 rounded-xl p-4">
-          <h2 className="font-semibold mb-1">Import data</h2>
-          <p className="text-zinc-400 text-sm mb-3">
-            Restore from a previously exported JSON file. This will replace all
-            current data.
-          </p>
-          <button
-            onClick={() => fileInputRef.current?.click()}
-            className="flex items-center gap-2 bg-zinc-700 hover:bg-zinc-600 text-zinc-100 rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors"
-          >
-            <Upload size={16} />
-            Import JSON
-          </button>
           <input
             ref={fileInputRef}
             type="file"
