@@ -34,20 +34,22 @@ export function ExerciseCard({
   const [swapping, setSwapping] = useState(false);
   const [swapName, setSwapName] = useState("");
   const [justCompleted, setJustCompleted] = useState(false);
+  const [bonusAnim, setBonusAnim] = useState<number | null>(null);
   const [weightBump, setWeightBump] = useState<number | null>(null);
   const prevSets = useRef(exercise.setsCompleted);
   const prevWeight = useRef(exercise.startingWeight);
 
-  const allDone = exercise.setsCompleted === exercise.targetSets;
+  const targetMet = exercise.setsCompleted >= exercise.targetSets;
+  const isBonus = exercise.setsCompleted > exercise.targetSets;
 
   useEffect(() => {
-    if (exercise.setsCompleted > prevSets.current && allDone) {
+    if (exercise.setsCompleted > prevSets.current && exercise.setsCompleted === exercise.targetSets) {
       setJustCompleted(true);
       const t = setTimeout(() => setJustCompleted(false), 700);
       return () => clearTimeout(t);
     }
     prevSets.current = exercise.setsCompleted;
-  }, [exercise.setsCompleted, allDone]);
+  }, [exercise.setsCompleted, exercise.targetSets]);
 
   const weightDebounce = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -80,12 +82,15 @@ export function ExerciseCard({
   };
 
   const adjustSets = (delta: number) => {
-    const next = Math.max(
-      0,
-      Math.min(exercise.targetSets, exercise.setsCompleted + delta),
-    );
+    const next = Math.max(0, exercise.setsCompleted + delta);
     onChange(exerciseIndex, next, exercise.minReps, exercise.maxReps);
-    if (delta > 0 && next > exercise.setsCompleted) {
+    if (delta > 0) {
+      const extraSets = next - exercise.targetSets;
+      if (extraSets > 0) {
+        const level = Math.min(3, extraSets);
+        setBonusAnim(level);
+        setTimeout(() => setBonusAnim(null), 900);
+      }
       onSetLogged?.();
     }
   };
@@ -93,9 +98,13 @@ export function ExerciseCard({
   return (
     <div
       style={
-        justCompleted ? { animation: "card-complete 0.7s ease-out" } : undefined
+        bonusAnim != null
+          ? { animation: `bonus-glow-${bonusAnim} 0.9s ease-out` }
+          : justCompleted
+          ? { animation: "card-complete 0.7s ease-out" }
+          : undefined
       }
-      className={`bg-zinc-800 rounded-xl p-4 mb-3 transition-opacity ${allDone ? "opacity-60" : ""}`}
+      className={`bg-zinc-800 rounded-xl p-4 mb-3 transition-opacity ${targetMet && !isBonus ? "opacity-60" : ""}`}
     >
       {swapping ? (
         <div className="flex gap-2 items-center mb-3">
@@ -179,8 +188,8 @@ export function ExerciseCard({
             </button>
             <div
               key={exercise.setsCompleted}
-              style={{ animation: "pop 0.25s ease-out" }}
-              className={`text-base font-bold min-w-[44px] text-center ${allDone ? "text-green-400" : "text-zinc-100"}`}
+              style={{ animation: bonusAnim != null ? `bonus-pop-${bonusAnim} 0.5s ease-out` : "pop 0.25s ease-out" }}
+              className={`text-base font-bold min-w-[44px] text-center ${isBonus ? "text-amber-400" : targetMet ? "text-green-400" : "text-zinc-100"}`}
             >
               {exercise.setsCompleted}
               <span className="text-zinc-500 text-xs font-normal">
@@ -189,7 +198,7 @@ export function ExerciseCard({
             </div>
             <button
               onClick={() => adjustSets(1)}
-              disabled={exercise.setsCompleted === exercise.targetSets}
+              disabled={false}
               className="w-7 h-7 rounded-full bg-zinc-700 hover:bg-zinc-600 disabled:opacity-30 flex items-center justify-center transition-colors"
             >
               <Plus size={12} />
