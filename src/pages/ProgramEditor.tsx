@@ -287,8 +287,8 @@ export function ProgramEditor() {
               </div>
 
               <div>
-                <p className="text-zinc-400 text-xs uppercase tracking-wide font-medium mb-2">Program blocks</p>
-                <p>After 8 workouts you'll be prompted to start a new block. <span className="text-zinc-200 font-medium">Start New Block</span> copies your current program as the new baseline so you can tweak weights and exercises each cycle.</p>
+                <p className="text-zinc-400 text-xs uppercase tracking-wide font-medium mb-2">Research</p>
+                <p>Upper/lower splits are well-supported for strength and hypertrophy. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC8372753/" target="_blank" rel="noopener noreferrer" className="text-violet-400 hover:text-violet-300 underline">Evangelista et al. (2021)</a> found split and full-body routines produce similar muscular adaptations when volume is equated.</p>
               </div>
             </div>
           </div>
