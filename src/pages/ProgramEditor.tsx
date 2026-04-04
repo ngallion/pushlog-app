@@ -288,7 +288,12 @@ export function ProgramEditor() {
 
               <div>
                 <p className="text-zinc-400 text-xs uppercase tracking-wide font-medium mb-2">Research</p>
-                <p>Upper/lower splits are well-supported for strength and hypertrophy. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC8372753/" target="_blank" rel="noopener noreferrer" className="text-violet-400 hover:text-violet-300 underline">Evangelista et al. (2021)</a> found split and full-body routines produce similar muscular adaptations when volume is equated.</p>
+                <p className="mb-2">Upper/lower splits are well-supported for strength and hypertrophy. Research consistently shows similar adaptations across split and full-body routines when volume is equated.</p>
+                <ul className="space-y-1.5 list-none">
+                  <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC8372753/" target="_blank" rel="noopener noreferrer" className="text-violet-400 hover:text-violet-300 underline">Evangelista et al. (2021)</a> — split and full-body routines produce similar muscular adaptations.</li>
+                  <li><a href="https://pubmed.ncbi.nlm.nih.gov/27102172/" target="_blank" rel="noopener noreferrer" className="text-violet-400 hover:text-violet-300 underline">Schoenfeld et al. (2016)</a> — training each muscle group twice per week promotes superior hypertrophy vs. once per week.</li>
+                  <li><a href="https://pubmed.ncbi.nlm.nih.gov/38595233/" target="_blank" rel="noopener noreferrer" className="text-violet-400 hover:text-violet-300 underline">Ramos-Campo et al. (2024)</a> — meta-analysis confirms split vs. full-body choice does not significantly impact strength or muscle growth when volume is equated.</li>
+                </ul>
               </div>
             </div>
           </div>
