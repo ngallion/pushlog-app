@@ -5,7 +5,7 @@ import {
   loadRestTimerDuration,
   saveRestTimerDuration,
 } from "../lib/storage";
-import { Download, Upload, Timer } from "lucide-react";
+import { Download, Upload, Timer, Heart } from "lucide-react";
 
 const REST_DURATION_OPTIONS = [60, 90, 120, 180] as const;
 
@@ -248,6 +248,26 @@ export function Settings() {
           {importStatus === "error" && (
             <p className="mt-3 text-sm text-red-400">{errorMessage}</p>
           )}
+        </div>
+
+        {/* Donate */}
+        <div className="bg-zinc-800 rounded-xl p-4">
+          <div className="flex items-center gap-2 mb-1">
+            <Heart size={16} className="text-pink-400" />
+            <h2 className="font-semibold">Support Pushlog</h2>
+          </div>
+          <p className="text-zinc-400 text-sm mb-3">
+            If Pushlog helps your training, consider buying me a coffee.
+          </p>
+          <a
+            href="https://ko-fi.com/nicholasgallion"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 bg-pink-600 hover:bg-pink-500 text-white rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors"
+          >
+            <Heart size={16} />
+            Donate
+          </a>
         </div>
       </div>
     </div>
