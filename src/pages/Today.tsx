@@ -227,26 +227,35 @@ export function Today() {
       dispatch({ type: "FINISH_WORKOUT" });
     };
 
+    const activeBorderColor: Record<string, string> = {
+      upperA: "border-l-violet-500",
+      upperB: "border-l-purple-500",
+      lowerA: "border-l-blue-500",
+      lowerB: "border-l-indigo-500",
+    };
+
     return (
       <div className="max-w-lg mx-auto px-4 pt-6 pb-28">
-        <div className="flex items-center gap-3 mb-1">
-          <WorkoutTypeLabel
-            type={session.workoutType}
-            daySet={session.daySet}
-          />
-          <h1 className="text-2xl font-bold">
-            {getWorkoutLabel(session.workoutType)}
-          </h1>
-        </div>
-        <p className="text-zinc-400 text-sm mb-2">
-          {new Date(session.startedAt).toLocaleDateString("en-US", {
-            weekday: "long",
-            month: "long",
-            day: "numeric",
-          })}
-        </p>
-        <div className="text-xs text-zinc-500 mb-6">
-          {completedExercises}/{totalExercises} exercises complete
+        <div className={`bg-zinc-800 border border-zinc-700 border-l-2 ${activeBorderColor[session.workoutType]} rounded-xl p-4 mb-6`}>
+          <div className="flex items-center gap-3 mb-1">
+            <WorkoutTypeLabel
+              type={session.workoutType}
+              daySet={session.daySet}
+            />
+            <h1 className="text-2xl font-bold">
+              {getWorkoutLabel(session.workoutType)}
+            </h1>
+          </div>
+          <p className="text-zinc-400 text-sm mb-1">
+            {new Date(session.startedAt).toLocaleDateString("en-US", {
+              weekday: "long",
+              month: "long",
+              day: "numeric",
+            })}
+          </p>
+          <div className="text-xs text-zinc-500">
+            {completedExercises}/{totalExercises} exercises complete
+          </div>
         </div>
 
         <DndContext
@@ -417,6 +426,13 @@ export function Today() {
   const totalSessions = state.sessions.length;
   const sessionsInCurrentBlock = (totalSessions % 8) + 1;
 
+  const previewBorderColor: Record<string, string> = {
+    upperA: "border-l-violet-500",
+    upperB: "border-l-purple-500",
+    lowerA: "border-l-blue-500",
+    lowerB: "border-l-indigo-500",
+  };
+
   return (
     <div className="max-w-lg mx-auto px-4 pt-8 pb-24">
       <h1 className="text-3xl font-bold mb-1">Today</h1>
@@ -428,7 +444,7 @@ export function Today() {
         })}
       </p>
 
-      <div className="bg-zinc-800 rounded-xl p-6 mb-4">
+      <div className={`bg-zinc-800 border border-zinc-700 border-l-2 ${previewBorderColor[workoutType]} rounded-xl p-6 mb-4`}>
         <p className="text-zinc-400 text-sm mb-2">Next Workout</p>
         <div className="flex items-center gap-3 mb-4">
           <WorkoutTypeLabel type={workoutType} daySet={daySet} />
