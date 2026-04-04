@@ -31,26 +31,22 @@ export function BottomNav() {
   }, []);
 
   const navClass = ({ isActive }: { isActive: boolean }) =>
-    `flex flex-col items-center gap-1 text-xs transition-colors ${isActive ? "text-violet-400" : "text-zinc-500 hover:text-zinc-300"}`;
+    `flex items-center justify-center w-12 h-12 rounded-full transition-colors ${isActive ? "bg-zinc-900 text-white" : "text-zinc-400 hover:text-zinc-600"}`;
 
   return (
-    <nav ref={navRef} className="fixed bottom-0 left-0 right-0 bg-zinc-900 border-t border-zinc-700 z-50 pb-safe">
-      <div className="max-w-lg mx-auto flex justify-around py-2">
+    <nav ref={navRef} className="fixed bottom-0 left-0 right-0 z-50 flex justify-center pb-6 pb-safe pointer-events-none">
+      <div className="pointer-events-auto flex items-center gap-1 bg-white rounded-full px-3 py-2 shadow-xl">
         <NavLink to="/" end className={navClass}>
-          <Home size={20} />
-          <span>Today</span>
+          <Home size={22} />
         </NavLink>
         <NavLink to="/program" className={navClass}>
-          <ClipboardList size={20} />
-          <span>Program</span>
+          <ClipboardList size={22} />
         </NavLink>
         <NavLink to="/history" className={navClass}>
-          <History size={20} />
-          <span>History</span>
+          <History size={22} />
         </NavLink>
         <NavLink to="/settings" className={navClass}>
-          <Settings size={20} />
-          <span>Settings</span>
+          <Settings size={22} />
         </NavLink>
       </div>
     </nav>
