@@ -413,7 +413,7 @@ export function ProgramEditor() {
               Pushlog stores your data locally on this device only — nothing is
               sent to any server. If you clear your browser data or cookies,
               your program will be lost. Export it now to keep a safe copy, or do
-              it at any time from the Settings menu.
+              it at any time from the Options menu.
             </p>
             <div className="flex gap-2">
               <button

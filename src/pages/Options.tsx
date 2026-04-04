@@ -45,7 +45,7 @@ function isValidSession(s: unknown): s is WorkoutSession {
   );
 }
 
-export function Settings() {
+export function Options() {
   const { state, dispatch } = useApp();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const programFileInputRef = useRef<HTMLInputElement>(null);
@@ -236,8 +236,8 @@ Please analyze my workout program and give me specific, actionable feedback on:
 
   return (
     <div className="max-w-lg mx-auto px-4 pt-6 pb-28">
-      <h1 className="text-2xl font-bold mb-1">Settings</h1>
-      <p className="text-zinc-400 text-sm mb-6">Manage your data</p>
+      <h1 className="text-2xl font-bold mb-1">Options</h1>
+      <p className="text-zinc-400 text-sm mb-6">Manage your experience</p>
 
       <div className="space-y-3">
         {/* Rest Timer */}

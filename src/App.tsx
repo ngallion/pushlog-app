@@ -6,7 +6,7 @@ import { PWAInstallPrompt } from "./components/PWAInstallPrompt";
 import { Today } from "./pages/Today";
 import { ProgramEditor } from "./pages/ProgramEditor";
 import { History } from "./pages/History";
-import { Settings } from "./pages/Settings";
+import { Options } from "./pages/Options.tsx";
 
 export default function App() {
   return (
@@ -18,7 +18,7 @@ export default function App() {
               <Route path="/" element={<Today />} />
               <Route path="/program" element={<ProgramEditor />} />
               <Route path="/history" element={<History />} />
-              <Route path="/settings" element={<Settings />} />
+              <Route path="/options" element={<Options />} />
             </Routes>
             <BottomNav />
             <PWAInstallPrompt />

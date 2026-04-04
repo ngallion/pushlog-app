@@ -6,7 +6,7 @@ const tabs = [
   { to: "/", label: "Today", icon: Home, end: true },
   { to: "/program", label: "Program", icon: ClipboardList, end: false },
   { to: "/history", label: "History", icon: History, end: false },
-  { to: "/settings", label: "Settings", icon: Settings, end: false },
+  { to: "/options", label: "Options", icon: Settings, end: false },
 ];
 
 export function BottomNav() {
