@@ -365,10 +365,10 @@ export function Today() {
 
         {timerRunning && secondsLeft !== null && (
           <div
-            className="fixed bg-opacity-95 left-0 right-0 z-40 flex justify-center pointer-events-none"
+            className="fixed left-0 right-0 z-40 flex justify-center pointer-events-none"
             style={{ bottom: "calc(5.5rem + env(safe-area-inset-bottom))" }}
           >
-            <div className="flex items-center gap-3 bg-zinc-900 border border-zinc-800 rounded-full px-5 py-2.5 shadow-xl pointer-events-auto">
+            <div className="flex bg-opacity-95 items-center gap-3 bg-zinc-900 border border-zinc-800 rounded-full px-5 py-2.5 shadow-xl pointer-events-auto">
               <Timer size={16} className="text-violet-400 shrink-0" />
               <span className="text-sm text-zinc-400">Rest</span>
               <span className="text-xl font-bold tabular-nums text-zinc-100">
