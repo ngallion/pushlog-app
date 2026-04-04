@@ -25,7 +25,7 @@ import type {
 } from "../lib/types";
 import { getWorkoutLabel, getCycleLabel } from "../lib/rotation";
 import { randomUUID } from "../lib/uuid";
-import { Plus, Trash2, Save, GripVertical, Info, X } from "lucide-react";
+import { Plus, Trash2, Save, GripVertical, Info, X, Download } from "lucide-react";
 import { NumericInput } from "../components/NumericInput";
 
 const WORKOUT_TYPES: WorkoutType[] = ["upperA", "upperB", "lowerA", "lowerB"];
@@ -151,6 +151,7 @@ export function ProgramEditor() {
   const [activeTab, setActiveTab] = useState<WorkoutType>("upperA");
   const [saved, setSaved] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
+  const [showExportPrompt, setShowExportPrompt] = useState(false);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -226,6 +227,39 @@ export function ProgramEditor() {
     dispatch({ type: "SAVE_PROGRAM", payload: program });
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
+    setShowExportPrompt(true);
+  };
+
+  const canShare =
+    typeof navigator !== "undefined" &&
+    typeof navigator.share === "function" &&
+    typeof navigator.canShare === "function" &&
+    navigator.canShare({
+      files: [new File([""], "test.json", { type: "application/json" })],
+    });
+
+  const handleExportProgram = async () => {
+    const data = { programs: state.programs, sessions: [] };
+    const fileName = `pushlog-program-${new Date().toISOString().slice(0, 10)}.json`;
+    const file = new File([JSON.stringify(data, null, 2)], fileName, {
+      type: "application/json",
+    });
+    if (canShare) {
+      try {
+        await navigator.share({ title: "Pushlog Program", files: [file] });
+      } catch (err) {
+        if (err instanceof Error && err.name !== "AbortError") {
+          console.error("Share failed:", err);
+        }
+      }
+      return;
+    }
+    const url = URL.createObjectURL(file);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = file.name;
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   const exercises = workouts[activeCycle][activeTab];
@@ -349,6 +383,55 @@ export function ProgramEditor() {
                   </li>
                 </ul>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showExportPrompt && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60"
+          onClick={() => setShowExportPrompt(false)}
+        >
+          <div
+            className="bg-zinc-900 border border-zinc-700 rounded-2xl p-5 max-w-sm w-full shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-base font-semibold text-zinc-100">
+                Back up your program
+              </h2>
+              <button
+                onClick={() => setShowExportPrompt(false)}
+                className="text-zinc-500 hover:text-zinc-300 transition-colors"
+                aria-label="Close"
+              >
+                <X size={18} />
+              </button>
+            </div>
+            <p className="text-sm text-zinc-400 mb-4">
+              Pushlog stores your data locally on this device only — nothing is
+              sent to any server. If you clear your browser data or cookies,
+              your program will be lost. Export it now to keep a safe copy, or do
+              it at any time from the Settings menu.
+            </p>
+            <div className="flex gap-2">
+              <button
+                onClick={async () => {
+                  await handleExportProgram();
+                  setShowExportPrompt(false);
+                }}
+                className="flex-1 flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-500 text-white rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors"
+              >
+                <Download size={16} />
+                Export program
+              </button>
+              <button
+                onClick={() => setShowExportPrompt(false)}
+                className="px-4 py-2.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded-lg text-sm font-semibold transition-colors"
+              >
+                Later
+              </button>
             </div>
           </div>
         </div>
