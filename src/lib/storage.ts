@@ -32,7 +32,7 @@ function migrateSessionsV1ToV2(sessions: WorkoutSession[]): WorkoutSession[] {
  */
 function migrateSessionsV2ToV3(sessions: WorkoutSession[]): WorkoutSession[] {
   return sessions.map((s) => {
-    const raw = s as Record<string, unknown>;
+    const raw = s as unknown as Record<string, unknown>;
     if ("cycle" in raw) return s;
     const daySet = raw["daySet"] as string | undefined;
     const cycle = daySet === "day1" ? "cycle1" : "cycle2";
@@ -86,13 +86,6 @@ export function migrateImportedData(
     programs: runProgramMigrations(programs, 1),
     sessions: runSessionMigrations(sessions, 1),
   };
-}
-
-function getStoredSchemaVersion(): number {
-  const raw = localStorage.getItem(SCHEMA_VERSION_KEY);
-  if (raw === null) return 1; // no version stored → original schema
-  const parsed = parseInt(raw, 10);
-  return isNaN(parsed) ? 1 : parsed;
 }
 
 function setStoredSchemaVersion(version: number): void {

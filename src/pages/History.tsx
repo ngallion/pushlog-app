@@ -3,7 +3,14 @@ import { useApp } from "../context/AppContext";
 import { WorkoutTypeLabel } from "../components/WorkoutTypeLabel";
 import { getWorkoutLabel } from "../lib/rotation";
 import type { WorkoutType } from "../lib/types";
-import { Dumbbell, Search, Trash2, X } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronRight,
+  Dumbbell,
+  Search,
+  Trash2,
+  X,
+} from "lucide-react";
 
 type FilterType = "all" | WorkoutType;
 
@@ -27,6 +34,16 @@ export function History() {
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [activeFilter, setActiveFilter] = useState<FilterType>("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+
+  const toggleExpanded = (id: string) => {
+    setExpandedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
 
   const handleDelete = (id: string) => {
     dispatch({ type: "DELETE_SESSION", payload: id });
@@ -37,12 +54,10 @@ export function History() {
   const trimmed = searchQuery.trim().toLowerCase();
   const sessions = allSessions.filter((s) => {
     if (activeFilter !== "all" && s.workoutType !== activeFilter) return false;
-    if (
+    return !(
       trimmed &&
       !s.exercises.some((ex) => ex.name.toLowerCase().includes(trimmed))
-    )
-      return false;
-    return true;
+    );
   });
 
   if (allSessions.length === 0) {
@@ -173,34 +188,48 @@ export function History() {
                 </div>
               </div>
 
-              {/* Divider */}
-              <div className="border-t border-zinc-800 mx-4" />
+              {/* Collapsible toggle */}
+              <button
+                onClick={() => toggleExpanded(session.id)}
+                className="w-full flex items-center gap-1 px-4 py-2 border-t border-zinc-800 text-xs text-zinc-500 hover:text-zinc-300 transition-colors"
+              >
+                {expandedIds.has(session.id) ? (
+                  <ChevronDown size={13} />
+                ) : (
+                  <ChevronRight size={13} />
+                )}
+                Exercises
+              </button>
 
               {/* Exercise list */}
-              <div className="px-4 py-3 space-y-2">
-                {session.exercises.map((ex, ei) => {
-                  const partial = ex.setsCompleted < ex.targetSets;
-                  return (
-                    <div
-                      key={ei}
-                      className="flex items-center justify-between gap-3 text-sm"
-                    >
-                      <span
-                        className={partial ? "text-zinc-400" : "text-zinc-200"}
+              {expandedIds.has(session.id) && (
+                <div className="px-4 pb-3 space-y-2">
+                  {session.exercises.map((ex, ei) => {
+                    const partial = ex.setsCompleted < ex.targetSets;
+                    return (
+                      <div
+                        key={ei}
+                        className="flex items-center justify-between gap-3 text-sm"
                       >
-                        {ex.name}
-                      </span>
-                      <span
-                        className={`shrink-0 tabular-nums ${partial ? "text-amber-500/80" : "text-zinc-500"}`}
-                      >
-                        {partial
-                          ? `${ex.setsCompleted}/${ex.targetSets} sets · ${ex.minReps}–${ex.maxReps} reps`
-                          : `${ex.targetSets} sets · ${ex.minReps}–${ex.maxReps} reps`}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
+                        <span
+                          className={
+                            partial ? "text-zinc-400" : "text-zinc-200"
+                          }
+                        >
+                          {ex.name}
+                        </span>
+                        <span
+                          className={`shrink-0 tabular-nums ${partial ? "text-amber-500/80" : "text-zinc-500"}`}
+                        >
+                          {partial
+                            ? `${ex.setsCompleted}/${ex.targetSets} sets · ${ex.minReps}–${ex.maxReps} reps`
+                            : `${ex.targetSets} sets · ${ex.minReps}–${ex.maxReps} reps`}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           );
         })}
