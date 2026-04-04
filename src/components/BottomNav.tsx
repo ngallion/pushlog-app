@@ -42,7 +42,7 @@ export function BottomNav() {
       ref={navRef}
       className="fixed bottom-0 left-0 right-0 z-50 flex justify-center pb-6 pb-safe pointer-events-none"
     >
-      <div className="pointer-events-auto flex items-center gap-1 bg-zinc-900 border border-zinc-800 rounded-full px-2 py-2 shadow-xl">
+      <div className="pointer-events-auto bg-opacity-95 flex items-center gap-1 bg-zinc-900 border border-zinc-800 rounded-full px-2 py-2 shadow-xl">
         {tabs.map(({ to, label, icon: Icon, end }) => (
           <NavLink
             key={to}
