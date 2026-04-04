@@ -48,7 +48,7 @@ export function BottomNav() {
             className={({ isActive }) =>
               `flex flex-col items-center gap-0.5 px-4 py-2 rounded-full transition-colors ${
                 isActive
-                  ? "bg-zinc-700/70 text-blue-400"
+                  ? "bg-zinc-700/70 text-violet-400"
                   : "text-zinc-500 hover:text-zinc-300"
               }`
             }
