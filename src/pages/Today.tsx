@@ -349,19 +349,17 @@ export function Today() {
         )}
 
         {timerRunning && secondsLeft !== null && (
-          <div className="fixed left-0 right-0 z-40 flex justify-center pointer-events-none" style={{ bottom: 'calc(4rem + env(safe-area-inset-bottom))' }}>
-            <div className="mx-4 w-full max-w-lg bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 flex items-center justify-between shadow-lg pointer-events-auto">
-              <div className="flex items-center gap-3">
-                <Timer size={18} className="text-violet-400 shrink-0" />
-                <span className="text-sm text-zinc-400">Rest</span>
-                <span className="text-xl font-bold tabular-nums text-zinc-100">
-                  {Math.floor(secondsLeft / 60)}:
-                  {String(secondsLeft % 60).padStart(2, "0")}
-                </span>
-              </div>
+          <div className="fixed left-0 right-0 z-40 flex justify-center pointer-events-none" style={{ bottom: 'calc(5.5rem + env(safe-area-inset-bottom))' }}>
+            <div className="flex items-center gap-3 bg-zinc-900 border border-zinc-800 rounded-full px-5 py-2.5 shadow-xl pointer-events-auto">
+              <Timer size={16} className="text-violet-400 shrink-0" />
+              <span className="text-sm text-zinc-400">Rest</span>
+              <span className="text-xl font-bold tabular-nums text-zinc-100">
+                {Math.floor(secondsLeft / 60)}:
+                {String(secondsLeft % 60).padStart(2, "0")}
+              </span>
               <button
                 onClick={stopTimer}
-                className="text-xs text-zinc-400 hover:text-zinc-200 px-3 py-1.5 rounded-lg bg-zinc-700 hover:bg-zinc-600 transition-colors"
+                className="text-xs text-zinc-400 hover:text-zinc-200 px-3 py-1.5 rounded-full bg-zinc-700 hover:bg-zinc-600 transition-colors"
               >
                 Skip
               </button>
