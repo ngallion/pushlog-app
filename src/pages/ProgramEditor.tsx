@@ -230,17 +230,6 @@ export function ProgramEditor() {
     setTimeout(() => setSaved(false), 2000);
   };
 
-  const handleNewBlock = () => {
-    const newProgram: ProgramBlock = {
-      id: randomUUID(),
-      startedAt: new Date().toISOString(),
-      workouts,
-    };
-    dispatch({ type: "SAVE_PROGRAM", payload: newProgram });
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
-  };
-
   const exercises = workouts[activeCycle][activeTab];
 
   return (
@@ -382,12 +371,6 @@ export function ProgramEditor() {
         >
           <Save size={18} />
           {saved ? "Saved!" : "Save Program"}
-        </button>
-        <button
-          onClick={handleNewBlock}
-          className="flex-1 bg-zinc-700 hover:bg-zinc-600 text-zinc-200 rounded-lg py-3 font-semibold transition-colors text-sm"
-        >
-          Start New Block
         </button>
       </div>
     </div>
