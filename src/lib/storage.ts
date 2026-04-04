@@ -108,13 +108,11 @@ export function loadPrograms(): ProgramBlock[] {
     const raw: ProgramBlock[] = JSON.parse(
       localStorage.getItem(PROGRAMS_KEY) || "[]",
     );
-    const storedVersion = getStoredSchemaVersion();
-    if (storedVersion < CURRENT_SCHEMA_VERSION) {
-      const migrated = runProgramMigrations(raw, storedVersion);
-      localStorage.setItem(PROGRAMS_KEY, JSON.stringify(migrated));
-      return migrated;
-    }
-    return raw;
+    // Always run migrations — they are idempotent and check for old keys,
+    // so data imported or written by an older code path is healed on load.
+    const migrated = runProgramMigrations(raw, 1);
+    localStorage.setItem(PROGRAMS_KEY, JSON.stringify(migrated));
+    return migrated;
   } catch {
     return [];
   }
@@ -129,15 +127,12 @@ export function loadSessions(): WorkoutSession[] {
     const raw: WorkoutSession[] = JSON.parse(
       localStorage.getItem(SESSIONS_KEY) || "[]",
     );
-    const storedVersion = getStoredSchemaVersion();
-    if (storedVersion < CURRENT_SCHEMA_VERSION) {
-      const migrated = runSessionMigrations(raw, storedVersion);
-      // Persist migrated data and bump version
-      localStorage.setItem(SESSIONS_KEY, JSON.stringify(migrated));
-      setStoredSchemaVersion(CURRENT_SCHEMA_VERSION);
-      return migrated;
-    }
-    return raw;
+    // Always run migrations — they are idempotent and check for old keys,
+    // so data imported or written by an older code path is healed on load.
+    const migrated = runSessionMigrations(raw, 1);
+    localStorage.setItem(SESSIONS_KEY, JSON.stringify(migrated));
+    setStoredSchemaVersion(CURRENT_SCHEMA_VERSION);
+    return migrated;
   } catch {
     return [];
   }
