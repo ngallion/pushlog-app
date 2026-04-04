@@ -209,7 +209,7 @@ export function History() {
                     return (
                       <div
                         key={ei}
-                        className="flex items-center justify-between gap-3 text-sm"
+                        className="flex flex-col gap-0.5 text-sm"
                       >
                         <span
                           className={
@@ -219,11 +219,12 @@ export function History() {
                           {ex.name}
                         </span>
                         <span
-                          className={`shrink-0 tabular-nums ${partial ? "text-amber-500/80" : "text-zinc-500"}`}
+                          className={`tabular-nums text-xs ${partial ? "text-amber-500/80" : "text-zinc-500"}`}
                         >
                           {partial
                             ? `${ex.setsCompleted}/${ex.targetSets} sets · ${ex.minReps}–${ex.maxReps} reps`
                             : `${ex.targetSets} sets · ${ex.minReps}–${ex.maxReps} reps`}
+                          {ex.startingWeight != null && ` · ${ex.startingWeight} lbs`}
                         </span>
                       </div>
                     );
