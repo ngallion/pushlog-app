@@ -74,6 +74,20 @@ function runProgramMigrations(
   return migrated;
 }
 
+/**
+ * Run all migrations on imported data. Since exported files have no version
+ * stamp, we always apply every migration (all are idempotent).
+ */
+export function migrateImportedData(
+  programs: ProgramBlock[],
+  sessions: WorkoutSession[],
+): { programs: ProgramBlock[]; sessions: WorkoutSession[] } {
+  return {
+    programs: runProgramMigrations(programs, 1),
+    sessions: runSessionMigrations(sessions, 1),
+  };
+}
+
 function getStoredSchemaVersion(): number {
   const raw = localStorage.getItem(SCHEMA_VERSION_KEY);
   if (raw === null) return 1; // no version stored → original schema
