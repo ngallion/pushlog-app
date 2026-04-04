@@ -351,6 +351,45 @@ Please analyze my workout program and give me specific, actionable feedback on:
           </a>
         </div>
 
+        {/* Backup export/import */}
+        <div className="bg-zinc-800 rounded-xl p-4">
+          <h2 className="font-semibold mb-1">Backup</h2>
+          <p className="text-zinc-400 text-sm mb-3">
+            Export or restore all programs and workout history as a JSON file.
+          </p>
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={handleExport}
+              className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 text-white rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors"
+            >
+              <Upload size={16} />
+              Export backup
+            </button>
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="flex items-center gap-2 bg-zinc-700 hover:bg-zinc-600 text-zinc-100 rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors"
+            >
+              <Download size={16} />
+              Import backup
+            </button>
+          </div>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".json,application/json"
+            onChange={handleImport}
+            className="hidden"
+          />
+          {importStatus === "success" && (
+            <p className="mt-3 text-sm text-green-400">
+              Data imported successfully.
+            </p>
+          )}
+          {importStatus === "error" && (
+            <p className="mt-3 text-sm text-red-400">{errorMessage}</p>
+          )}
+        </div>
+
         {/* Program export/import */}
         <div className="bg-zinc-800 rounded-xl p-4">
           <h2 className="font-semibold mb-1">Program</h2>
@@ -388,45 +427,6 @@ Please analyze my workout program and give me specific, actionable feedback on:
           )}
           {programImportStatus === "error" && (
             <p className="mt-3 text-sm text-red-400">{programErrorMessage}</p>
-          )}
-        </div>
-
-        {/* Backup export/import */}
-        <div className="bg-zinc-800 rounded-xl p-4">
-          <h2 className="font-semibold mb-1">Backup</h2>
-          <p className="text-zinc-400 text-sm mb-3">
-            Export or restore all programs and workout history as a JSON file.
-          </p>
-          <div className="flex flex-wrap gap-2">
-            <button
-              onClick={handleExport}
-              className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 text-white rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors"
-            >
-              <Upload size={16} />
-              Export backup
-            </button>
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              className="flex items-center gap-2 bg-zinc-700 hover:bg-zinc-600 text-zinc-100 rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors"
-            >
-              <Download size={16} />
-              Import backup
-            </button>
-          </div>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept=".json,application/json"
-            onChange={handleImport}
-            className="hidden"
-          />
-          {importStatus === "success" && (
-            <p className="mt-3 text-sm text-green-400">
-              Data imported successfully.
-            </p>
-          )}
-          {importStatus === "error" && (
-            <p className="mt-3 text-sm text-red-400">{errorMessage}</p>
           )}
         </div>
       </div>
