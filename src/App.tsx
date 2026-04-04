@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AppProvider } from "./context/AppContext";
 import { BottomNav } from "./components/BottomNav";
+import { PWAInstallPrompt } from "./components/PWAInstallPrompt";
 import { Today } from "./pages/Today";
 import { ProgramEditor } from "./pages/ProgramEditor";
 import { History } from "./pages/History";
@@ -18,6 +19,7 @@ export default function App() {
             <Route path="/settings" element={<Settings />} />
           </Routes>
           <BottomNav />
+          <PWAInstallPrompt />
         </div>
       </BrowserRouter>
     </AppProvider>
