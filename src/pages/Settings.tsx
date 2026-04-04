@@ -260,7 +260,7 @@ export function Settings() {
             If Pushlog helps your training, consider buying me a coffee.
           </p>
           <a
-            href="#"
+            href="https://ko-fi.com/nicholasgallion"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 bg-pink-600 hover:bg-pink-500 text-white rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors"
