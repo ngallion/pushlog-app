@@ -282,13 +282,17 @@ export function ProgramEditor() {
               </div>
 
               <div>
-                <p className="text-zinc-400 text-xs uppercase tracking-wide font-medium mb-2">Day sets</p>
-                <p>Each workout type has two exercise lists — <span className="text-zinc-200 font-medium">Day 1</span> and <span className="text-zinc-200 font-medium">Day 2</span>. After every 8 workouts (two full cycles), the active day set flips, giving you natural variation without changing the structure.</p>
+                <p className="text-zinc-400 text-xs uppercase tracking-wide font-medium mb-2">Cycles</p>
+                <p>Each workout type has two exercise lists — <span className="text-zinc-200 font-medium">Cycle 1</span> and <span className="text-zinc-200 font-medium">Cycle 2</span>. After every 8 workouts (two full cycles), the active cycle flips, giving you natural variation without changing the structure.</p>
               </div>
 
               <div>
-                <p className="text-zinc-400 text-xs uppercase tracking-wide font-medium mb-2">Program blocks</p>
-                <p>After 8 workouts you'll be prompted to start a new block. <span className="text-zinc-200 font-medium">Start New Block</span> copies your current program as the new baseline so you can tweak weights and exercises each cycle.</p>
+                <p className="text-zinc-400 text-xs uppercase tracking-wide font-medium mb-2">Research</p>
+                <ul className="space-y-1.5 list-none">
+                  <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC8372753/" target="_blank" rel="noopener noreferrer" className="text-violet-400 hover:text-violet-300 underline">Evangelista et al. (2021)</a> — split and full-body routines produce similar muscular adaptations.</li>
+                  <li><a href="https://pubmed.ncbi.nlm.nih.gov/27102172/" target="_blank" rel="noopener noreferrer" className="text-violet-400 hover:text-violet-300 underline">Schoenfeld et al. (2016)</a> — training each muscle group twice per week promotes superior hypertrophy vs. once per week.</li>
+                  <li><a href="https://pubmed.ncbi.nlm.nih.gov/38595233/" target="_blank" rel="noopener noreferrer" className="text-violet-400 hover:text-violet-300 underline">Ramos-Campo et al. (2024)</a> — meta-analysis confirms split vs. full-body choice does not significantly impact strength or muscle growth when volume is equated.</li>
+                </ul>
               </div>
             </div>
           </div>
