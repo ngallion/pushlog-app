@@ -14,6 +14,7 @@ import {
   Sparkles,
   Copy,
   Check,
+  MessageSquare,
 } from "lucide-react";
 
 const REST_DURATION_OPTIONS = [60, 90, 120, 180] as const;
@@ -329,6 +330,26 @@ Please analyze my workout program and give me specific, actionable feedback on:
               Gemini
             </a>
           </div>
+        </div>
+
+        {/* Feedback */}
+        <div className="bg-zinc-800 rounded-xl p-4">
+          <div className="flex items-center gap-2 mb-1">
+            <MessageSquare size={16} className="text-violet-400" />
+            <h2 className="font-semibold">Feedback</h2>
+          </div>
+          <p className="text-zinc-400 text-sm mb-3">
+            Found a bug or have a feature request? Open an issue on GitHub.
+          </p>
+          <a
+            href="https://github.com/ngallion/pushlog-app/issues/new"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 bg-zinc-700 hover:bg-zinc-600 text-zinc-100 rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors"
+          >
+            <MessageSquare size={16} />
+            Submit an issue
+          </a>
         </div>
 
         {/* Donate */}
