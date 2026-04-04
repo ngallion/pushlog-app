@@ -525,7 +525,7 @@ export function ProgramEditor() {
       >
         <button
           onClick={handleSave}
-          className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 text-white rounded-full px-6 py-3 font-semibold shadow-xl pointer-events-auto transition-colors"
+          className="flex bg-opacity-95 items-center gap-2 bg-violet-600 hover:bg-violet-500 text-white rounded-full px-6 py-3 font-semibold shadow-xl pointer-events-auto transition-colors"
         >
           <Save size={18} />
           {saved ? "Saved!" : "Save Program"}
