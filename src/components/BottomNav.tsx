@@ -31,11 +31,11 @@ export function BottomNav() {
   }, []);
 
   const navClass = ({ isActive }: { isActive: boolean }) =>
-    `flex items-center justify-center w-12 h-12 rounded-full transition-colors ${isActive ? "bg-zinc-900 text-white" : "text-zinc-400 hover:text-zinc-600"}`;
+    `flex items-center justify-center w-12 h-12 rounded-full transition-colors ${isActive ? "bg-zinc-700 text-white" : "text-zinc-500 hover:text-zinc-300"}`;
 
   return (
     <nav ref={navRef} className="fixed bottom-0 left-0 right-0 z-50 flex justify-center pb-6 pb-safe pointer-events-none">
-      <div className="pointer-events-auto flex items-center gap-1 bg-white rounded-full px-3 py-2 shadow-xl">
+      <div className="pointer-events-auto flex items-center gap-1 bg-zinc-900 border border-zinc-700 rounded-full px-3 py-2 shadow-xl">
         <NavLink to="/" end className={navClass}>
           <Home size={22} />
         </NavLink>
