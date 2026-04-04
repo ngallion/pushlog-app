@@ -6,7 +6,7 @@ import {
   saveRestTimerDuration,
   migrateImportedData,
 } from "../lib/storage";
-import { Download, Upload, Timer, Heart } from "lucide-react";
+import { Download, Upload, Timer, Heart, Sparkles, Copy, Check } from "lucide-react";
 
 const REST_DURATION_OPTIONS = [60, 90, 120, 180] as const;
 
@@ -51,6 +51,7 @@ export function Settings() {
   const [restDuration, setRestDuration] = useState<number>(
     loadRestTimerDuration,
   );
+  const [copied, setCopied] = useState(false);
 
   const handleRestDurationChange = (seconds: number) => {
     setRestDuration(seconds);
@@ -186,6 +187,42 @@ export function Settings() {
     reader.readAsText(file);
   };
 
+  const buildAiPrompt = () => {
+    const recentSessions = [...state.sessions]
+      .sort(
+        (a, b) =>
+          new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime(),
+      )
+      .slice(0, 10);
+
+    const data = { programs: state.programs, recentSessions };
+
+    return `I use a strength training app called Pushlog that tracks a rotating 4-workout program (Upper A/B, Lower A/B). The rotation is: Upper A → Lower A → Upper B → Lower B → repeat. "Cycle 1" and "Cycle 2" are two different exercise variations for the same workout slot — the app alternates between them every 8 workouts.
+
+Here is my current program and recent workout history as JSON:
+
+\`\`\`json
+${JSON.stringify(data, null, 2)}
+\`\`\`
+
+Please analyze my workout program and give me specific, actionable feedback on:
+1. Exercise selection and balance (push/pull ratio, muscle group coverage, movement patterns)
+2. Volume and intensity — are the sets and rep ranges appropriate?
+3. Weight progression — are my starting weights and rep ranges set up well for progressive overload?
+4. Any gaps, redundancies, or imbalances across the Upper/Lower A/B split
+5. Concrete suggestions for improvements`;
+  };
+
+  const handleCopyPrompt = async () => {
+    try {
+      await navigator.clipboard.writeText(buildAiPrompt());
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // fallback: do nothing silently
+    }
+  };
+
   return (
     <div className="max-w-lg mx-auto px-4 pt-6 pb-28">
       <h1 className="text-2xl font-bold mb-1">Settings</h1>
@@ -234,6 +271,72 @@ export function Settings() {
                 Allow notifications to get an alert when rest is over.
               </p>
             )}
+        </div>
+
+        {/* AI Feedback */}
+        <div className="bg-zinc-800 rounded-xl p-4">
+          <div className="flex items-center gap-2 mb-1">
+            <Sparkles size={16} className="text-violet-400" />
+            <h2 className="font-semibold">AI feedback</h2>
+          </div>
+          <p className="text-zinc-400 text-sm mb-3">
+            Copy a prompt with your program data pre-loaded, then paste it into
+            your AI of choice for personalised feedback.
+          </p>
+          <button
+            onClick={handleCopyPrompt}
+            className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 text-white rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors mb-3"
+          >
+            {copied ? <Check size={16} /> : <Copy size={16} />}
+            {copied ? "Copied!" : "Copy prompt"}
+          </button>
+          <p className="text-zinc-500 text-xs mb-2">Open your AI of choice and paste:</p>
+          <div className="flex flex-wrap gap-2">
+            <a
+              href="https://claude.ai/new"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3 py-1.5 bg-zinc-700 hover:bg-zinc-600 text-zinc-200 rounded-lg text-xs font-semibold transition-colors"
+            >
+              Claude
+            </a>
+            <a
+              href="https://chatgpt.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3 py-1.5 bg-zinc-700 hover:bg-zinc-600 text-zinc-200 rounded-lg text-xs font-semibold transition-colors"
+            >
+              ChatGPT
+            </a>
+            <a
+              href="https://gemini.google.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3 py-1.5 bg-zinc-700 hover:bg-zinc-600 text-zinc-200 rounded-lg text-xs font-semibold transition-colors"
+            >
+              Gemini
+            </a>
+          </div>
+        </div>
+
+        {/* Donate */}
+        <div className="bg-zinc-800 rounded-xl p-4">
+          <div className="flex items-center gap-2 mb-1">
+            <Heart size={16} className="text-pink-400" />
+            <h2 className="font-semibold">Support Pushlog</h2>
+          </div>
+          <p className="text-zinc-400 text-sm mb-3">
+            If Pushlog helps your training, consider buying me a coffee.
+          </p>
+          <a
+            href="https://ko-fi.com/nicholasgallion"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 bg-pink-600 hover:bg-pink-500 text-white rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors"
+          >
+            <Heart size={16} />
+            Donate
+          </a>
         </div>
 
         {/* Program export/import */}
@@ -313,26 +416,6 @@ export function Settings() {
           {importStatus === "error" && (
             <p className="mt-3 text-sm text-red-400">{errorMessage}</p>
           )}
-        </div>
-
-        {/* Donate */}
-        <div className="bg-zinc-800 rounded-xl p-4">
-          <div className="flex items-center gap-2 mb-1">
-            <Heart size={16} className="text-pink-400" />
-            <h2 className="font-semibold">Support Pushlog</h2>
-          </div>
-          <p className="text-zinc-400 text-sm mb-3">
-            If Pushlog helps your training, consider buying me a coffee.
-          </p>
-          <a
-            href="https://ko-fi.com/nicholasgallion"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 bg-pink-600 hover:bg-pink-500 text-white rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors"
-          >
-            <Heart size={16} />
-            Donate
-          </a>
         </div>
       </div>
     </div>
