@@ -4,7 +4,7 @@ import type {
   ProgramBlock,
   WorkoutSession,
   WorkoutType,
-  DaySet,
+  Cycle,
   ExerciseTemplate,
   LoggedExercise,
 } from "../lib/types";
@@ -17,7 +17,7 @@ import {
 import { createDefaultProgram } from "../lib/defaultProgram";
 import { randomUUID } from "../lib/uuid";
 
-const DAYS: DaySet[] = ["day1", "day2"];
+const CYCLES: Cycle[] = ["cycle1", "cycle2"];
 const TYPES: WorkoutType[] = ["upperA", "upperB", "lowerA", "lowerB"];
 
 function setTemplateWeight(
@@ -25,7 +25,7 @@ function setTemplateWeight(
   templateId: string,
   startingWeight: number | undefined,
 ): ProgramBlock {
-  for (const day of DAYS) {
+  for (const day of CYCLES) {
     for (const type of TYPES) {
       const idx = program.workouts[day][type].findIndex(
         (t) => t.id === templateId,
@@ -59,7 +59,7 @@ type AppAction =
       type: "START_WORKOUT";
       payload: {
         workoutType: WorkoutType;
-        daySet: DaySet;
+        cycle: Cycle;
         programBlockId: string;
         exercises: LoggedExercise[];
       };
@@ -100,7 +100,7 @@ function reducer(state: AppState, action: AppAction): AppState {
         id: randomUUID(),
         startedAt: new Date().toISOString(),
         workoutType: action.payload.workoutType,
-        daySet: action.payload.daySet,
+        cycle: action.payload.cycle,
         programBlockId: action.payload.programBlockId,
         exercises: action.payload.exercises,
       };

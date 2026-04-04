@@ -8,7 +8,7 @@ import { loadRestTimerDuration } from "../lib/storage";
 import { WorkoutTypeLabel } from "../components/WorkoutTypeLabel";
 import { ExerciseCard } from "../components/ExerciseCard";
 import { WorkoutSummary } from "../components/WorkoutSummary";
-import { getWorkoutLabel, getDaySetLabel } from "../lib/rotation";
+import { getWorkoutLabel, getCycleLabel } from "../lib/rotation";
 import type {
   ExerciseTemplate,
   LoggedExercise,
@@ -84,11 +84,11 @@ function SortableExerciseCard({
 export function Today() {
   const navigate = useNavigate();
   const { state, dispatch } = useApp();
-  const { workoutType, daySet } = useNextWorkout();
+  const { workoutType, cycle } = useNextWorkout();
   const session = state.activeSession;
   const lastSessionForType = useLastSession(
     session?.workoutType ?? workoutType,
-    session?.daySet ?? daySet,
+    session?.cycle ?? cycle,
   );
 
   const currentProgram = state.programs[state.programs.length - 1];
@@ -121,8 +121,8 @@ export function Today() {
         previousSession={finishedSnapshot.previousSession}
         allPreviousSessions={finishedSnapshot.allPreviousSessions}
         nextWorkoutType={workoutType}
-        nextDaySet={daySet}
-        nextExercises={currentProgram?.workouts[daySet][workoutType] ?? []}
+        nextCycle={cycle}
+        nextExercises={currentProgram?.workouts[cycle][workoutType] ?? []}
         onDismiss={() => setFinishedSnapshot(null)}
       />
     );
@@ -216,7 +216,7 @@ export function Today() {
           .filter(
             (s) =>
               s.workoutType === session.workoutType &&
-              s.daySet === session.daySet,
+              s.cycle === session.cycle,
           )
           .at(-1) ?? null;
       setFinishedSnapshot({
@@ -240,7 +240,7 @@ export function Today() {
           <div className="flex items-center gap-3 mb-1">
             <WorkoutTypeLabel
               type={session.workoutType}
-              daySet={session.daySet}
+              cycle={session.cycle}
             />
             <h1 className="text-2xl font-bold">
               {getWorkoutLabel(session.workoutType)}
@@ -400,7 +400,7 @@ export function Today() {
 
   // ── Next workout preview ─────────────────────────────────────────────────
   const exercises: ExerciseTemplate[] =
-    currentProgram.workouts[daySet][workoutType];
+    currentProgram.workouts[cycle][workoutType];
 
   const handleStart = () => {
     const loggedExercises: LoggedExercise[] = exercises.map((ex) => ({
@@ -416,7 +416,7 @@ export function Today() {
       type: "START_WORKOUT",
       payload: {
         workoutType,
-        daySet,
+        cycle,
         programBlockId: currentProgram.id,
         exercises: loggedExercises,
       },
@@ -447,7 +447,7 @@ export function Today() {
       <div className={`bg-zinc-800 border border-zinc-700 border-l-2 ${previewBorderColor[workoutType]} rounded-xl p-6 mb-4`}>
         <p className="text-zinc-400 text-sm mb-2">Next Workout</p>
         <div className="flex items-center gap-3 mb-4">
-          <WorkoutTypeLabel type={workoutType} daySet={daySet} />
+          <WorkoutTypeLabel type={workoutType} cycle={cycle} />
           <span className="text-2xl font-bold">
             {getWorkoutLabel(workoutType)}
           </span>
@@ -473,7 +473,7 @@ export function Today() {
       <div className="flex justify-between text-xs text-zinc-500 px-1">
         <span>{totalSessions} total workouts</span>
         <span>
-          {getDaySetLabel(daySet)} · {sessionsInCurrentBlock} of 8
+          {getCycleLabel(cycle)} · {sessionsInCurrentBlock} of 8
         </span>
       </div>
     </div>

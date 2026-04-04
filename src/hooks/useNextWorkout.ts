@@ -1,11 +1,11 @@
 import { useApp } from "../context/AppContext";
-import { getNextWorkoutType, getCurrentDaySet } from "../lib/rotation";
-import type { WorkoutType, DaySet } from "../lib/types";
+import { getNextWorkoutType, getCurrentCycle } from "../lib/rotation";
+import type { WorkoutType, Cycle } from "../lib/types";
 
-export function useNextWorkout(): { workoutType: WorkoutType; daySet: DaySet } {
+export function useNextWorkout(): { workoutType: WorkoutType; cycle: Cycle } {
   const { state } = useApp();
   return {
     workoutType: getNextWorkoutType(state.sessions),
-    daySet: getCurrentDaySet(state.sessions),
+    cycle: getCurrentCycle(state.sessions),
   };
 }

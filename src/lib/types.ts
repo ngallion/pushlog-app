@@ -1,5 +1,5 @@
 export type WorkoutType = "upperA" | "upperB" | "lowerA" | "lowerB";
-export type DaySet = "day1" | "day2";
+export type Cycle = "cycle1" | "cycle2";
 
 export interface ExerciseTemplate {
   id: string;
@@ -14,8 +14,8 @@ export interface ProgramBlock {
   id: string;
   startedAt: string;
   workouts: {
-    day1: Record<WorkoutType, ExerciseTemplate[]>;
-    day2: Record<WorkoutType, ExerciseTemplate[]>;
+    cycle1: Record<WorkoutType, ExerciseTemplate[]>;
+    cycle2: Record<WorkoutType, ExerciseTemplate[]>;
   };
 }
 
@@ -35,7 +35,7 @@ export interface WorkoutSession {
   finishedAt?: string; // ISO timestamp — when the workout was finished
   date?: string;       // kept for backwards-compatibility with pre-v2 exports
   workoutType: WorkoutType;
-  daySet: DaySet;
+  cycle: Cycle;
   programBlockId: string;
   exercises: LoggedExercise[];
 }

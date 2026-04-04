@@ -114,7 +114,7 @@ export function History() {
                 <div className="flex flex-col gap-1.5">
                   <WorkoutTypeLabel
                     type={session.workoutType}
-                    daySet={session.daySet}
+                    cycle={session.cycle}
                   />
                   <div className="flex items-baseline gap-2">
                     <span className="font-semibold text-zinc-100">

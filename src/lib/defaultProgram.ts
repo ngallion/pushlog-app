@@ -15,7 +15,7 @@ export function createDefaultProgram(): ProgramBlock {
     id: randomUUID(),
     startedAt: new Date().toISOString(),
     workouts: {
-      day1: {
+      cycle1: {
         upperA: [
           ex("Bench Press", 3, 6, 8),
           ex("Barbell Row", 3, 6, 8),
@@ -41,7 +41,7 @@ export function createDefaultProgram(): ProgramBlock {
           ex("Leg Extension", 3, 12, 15),
         ],
       },
-      day2: {
+      cycle2: {
         upperA: [
           ex("Bench Press", 4, 8, 10),
           ex("Cable Row", 4, 10, 12),

@@ -1,13 +1,13 @@
-import type { WorkoutType, DaySet } from "../lib/types";
-import { getWorkoutLabel, getDaySetLabel } from "../lib/rotation";
+import type { WorkoutType, Cycle } from "../lib/types";
+import { getWorkoutLabel, getCycleLabel } from "../lib/rotation";
 
 interface Props {
   type: WorkoutType;
-  daySet: DaySet;
+  cycle: Cycle;
   className?: string;
 }
 
-export function WorkoutTypeLabel({ type, daySet, className = "" }: Props) {
+export function WorkoutTypeLabel({ type, cycle, className = "" }: Props) {
   const colorMap: Record<WorkoutType, string> = {
     upperA: "bg-violet-700 text-violet-100",
     upperB: "bg-purple-700 text-purple-100",
@@ -20,7 +20,7 @@ export function WorkoutTypeLabel({ type, daySet, className = "" }: Props) {
     >
       {getWorkoutLabel(type)}
       <span className="opacity-70">·</span>
-      {getDaySetLabel(daySet)}
+      {getCycleLabel(cycle)}
     </span>
   );
 }

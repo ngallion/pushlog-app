@@ -1,10 +1,10 @@
 import { CheckCircle, TrendingUp, TrendingDown, Minus, ChevronRight } from "lucide-react";
 import { WorkoutTypeLabel } from "./WorkoutTypeLabel";
-import { getWorkoutLabel, getDaySetLabel } from "../lib/rotation";
+import { getWorkoutLabel, getCycleLabel } from "../lib/rotation";
 import type {
   WorkoutSession,
   WorkoutType,
-  DaySet,
+  Cycle,
   ExerciseTemplate,
 } from "../lib/types";
 
@@ -13,7 +13,7 @@ interface Props {
   previousSession: WorkoutSession | null;
   allPreviousSessions: WorkoutSession[];
   nextWorkoutType: WorkoutType;
-  nextDaySet: DaySet;
+  nextCycle: Cycle;
   nextExercises: ExerciseTemplate[];
   onDismiss: () => void;
 }
@@ -23,7 +23,7 @@ export function WorkoutSummary({
   previousSession,
   allPreviousSessions,
   nextWorkoutType,
-  nextDaySet,
+  nextCycle,
   nextExercises,
   onDismiss,
 }: Props) {
@@ -72,7 +72,7 @@ export function WorkoutSummary({
         <CheckCircle size={52} className="text-green-400 mx-auto mb-3" />
         <h1 className="text-3xl font-bold mb-2">Workout Complete!</h1>
         <div className="flex items-center justify-center gap-2">
-          <WorkoutTypeLabel type={session.workoutType} daySet={session.daySet} />
+          <WorkoutTypeLabel type={session.workoutType} cycle={session.cycle} />
           <span className="text-zinc-400">
             {getWorkoutLabel(session.workoutType)}
           </span>
@@ -183,12 +183,12 @@ export function WorkoutSummary({
           Up Next
         </p>
         <div className="flex items-center gap-3 mb-3">
-          <WorkoutTypeLabel type={nextWorkoutType} daySet={nextDaySet} />
+          <WorkoutTypeLabel type={nextWorkoutType} cycle={nextCycle} />
           <span className="font-semibold">
             {getWorkoutLabel(nextWorkoutType)}
           </span>
           <span className="text-zinc-500 text-sm">
-            {getDaySetLabel(nextDaySet)}
+            {getCycleLabel(nextCycle)}
           </span>
         </div>
         {nextExercises.length > 0 ? (
