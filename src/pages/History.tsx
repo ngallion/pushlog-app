@@ -207,10 +207,7 @@ export function History() {
                   {session.exercises.map((ex, ei) => {
                     const partial = ex.setsCompleted < ex.targetSets;
                     return (
-                      <div
-                        key={ei}
-                        className="flex flex-col gap-0.5 text-sm"
-                      >
+                      <div key={ei} className="flex flex-col gap-0.5 text-sm">
                         <span
                           className={
                             partial ? "text-zinc-400" : "text-zinc-200"
@@ -224,7 +221,8 @@ export function History() {
                           {partial
                             ? `${ex.setsCompleted}/${ex.targetSets} sets · ${ex.minReps}–${ex.maxReps} reps`
                             : `${ex.targetSets} sets · ${ex.minReps}–${ex.maxReps} reps`}
-                          {ex.startingWeight != null && ` · ${ex.startingWeight} lbs`}
+                          {ex.startingWeight != null &&
+                            ` · ${ex.startingWeight} lbs`}
                         </span>
                       </div>
                     );

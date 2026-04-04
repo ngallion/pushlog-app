@@ -43,7 +43,10 @@ export function ExerciseCard({
   const isBonus = exercise.setsCompleted > exercise.targetSets;
 
   useEffect(() => {
-    if (exercise.setsCompleted > prevSets.current && exercise.setsCompleted === exercise.targetSets) {
+    if (
+      exercise.setsCompleted > prevSets.current &&
+      exercise.setsCompleted === exercise.targetSets
+    ) {
       setJustCompleted(true);
       const t = setTimeout(() => setJustCompleted(false), 700);
       return () => clearTimeout(t);
@@ -101,8 +104,8 @@ export function ExerciseCard({
         bonusAnim != null
           ? { animation: `bonus-glow-${bonusAnim} 0.9s ease-out` }
           : justCompleted
-          ? { animation: "card-complete 0.7s ease-out" }
-          : undefined
+            ? { animation: "card-complete 0.7s ease-out" }
+            : undefined
       }
       className={`bg-zinc-800 rounded-xl p-4 mb-3 transition-opacity ${targetMet && !isBonus ? "opacity-60" : ""}`}
     >
@@ -188,7 +191,12 @@ export function ExerciseCard({
             </button>
             <div
               key={exercise.setsCompleted}
-              style={{ animation: bonusAnim != null ? `bonus-pop-${bonusAnim} 0.5s ease-out` : "pop 0.25s ease-out" }}
+              style={{
+                animation:
+                  bonusAnim != null
+                    ? `bonus-pop-${bonusAnim} 0.5s ease-out`
+                    : "pop 0.25s ease-out",
+              }}
               className={`text-base font-bold min-w-[44px] text-center ${isBonus ? "text-amber-400" : targetMet ? "text-green-400" : "text-zinc-100"}`}
             >
               {exercise.setsCompleted}
