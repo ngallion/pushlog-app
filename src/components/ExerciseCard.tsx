@@ -38,7 +38,7 @@ export function ExerciseCard({
   const prevSets = useRef(exercise.setsCompleted);
   const prevWeight = useRef(exercise.startingWeight);
 
-  const allDone = exercise.setsCompleted === exercise.targetSets;
+  const allDone = exercise.setsCompleted >= exercise.targetSets;
 
   useEffect(() => {
     if (exercise.setsCompleted > prevSets.current && allDone) {
@@ -80,12 +80,9 @@ export function ExerciseCard({
   };
 
   const adjustSets = (delta: number) => {
-    const next = Math.max(
-      0,
-      Math.min(exercise.targetSets, exercise.setsCompleted + delta),
-    );
+    const next = Math.max(0, exercise.setsCompleted + delta);
     onChange(exerciseIndex, next, exercise.minReps, exercise.maxReps);
-    if (delta > 0 && next > exercise.setsCompleted) {
+    if (delta > 0) {
       onSetLogged?.();
     }
   };
@@ -189,7 +186,7 @@ export function ExerciseCard({
             </div>
             <button
               onClick={() => adjustSets(1)}
-              disabled={exercise.setsCompleted === exercise.targetSets}
+              disabled={false}
               className="w-7 h-7 rounded-full bg-zinc-700 hover:bg-zinc-600 disabled:opacity-30 flex items-center justify-center transition-colors"
             >
               <Plus size={12} />
