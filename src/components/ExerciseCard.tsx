@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import type { LoggedExercise, WorkoutSession } from "../lib/types";
 import { RefreshCw, Minus, Plus, Search, GripVertical } from "lucide-react";
+import { NumericInput } from "./NumericInput";
 
 interface Props {
   exercise: LoggedExercise;
@@ -200,29 +201,27 @@ export function ExerciseCard({
         <div className="flex-1 min-w-0">
           <div className="text-xs text-zinc-500 mb-1">reps</div>
           <div className="flex items-center bg-zinc-700 rounded overflow-hidden focus-within:ring-1 focus-within:ring-violet-500">
-            <input
-              type="number"
+            <NumericInput
               value={exercise.minReps}
-              onChange={(e) =>
+              onChange={(v) =>
                 onChange(
                   exerciseIndex,
                   exercise.setsCompleted,
-                  Number(e.target.value),
+                  v,
                   exercise.maxReps,
                 )
               }
               className="w-full min-w-0 bg-transparent px-2 py-1.5 text-sm text-zinc-100 focus:outline-none text-center"
             />
             <span className="text-zinc-400 text-sm select-none">–</span>
-            <input
-              type="number"
+            <NumericInput
               value={exercise.maxReps}
-              onChange={(e) =>
+              onChange={(v) =>
                 onChange(
                   exerciseIndex,
                   exercise.setsCompleted,
                   exercise.minReps,
-                  Number(e.target.value),
+                  v,
                 )
               }
               className="w-full min-w-0 bg-transparent px-2 py-1.5 text-sm text-zinc-100 focus:outline-none text-center"
