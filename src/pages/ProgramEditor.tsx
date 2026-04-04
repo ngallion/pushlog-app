@@ -25,7 +25,7 @@ import type {
 } from "../lib/types";
 import { getWorkoutLabel, getDaySetLabel } from "../lib/rotation";
 import { randomUUID } from "../lib/uuid";
-import { Plus, Trash2, Save, GripVertical } from "lucide-react";
+import { Plus, Trash2, Save, GripVertical, Info, X } from "lucide-react";
 
 const WORKOUT_TYPES: WorkoutType[] = ["upperA", "upperB", "lowerA", "lowerB"];
 const DAY_SETS: DaySet[] = ["day1", "day2"];
@@ -152,6 +152,7 @@ export function ProgramEditor() {
   const [activeDay, setActiveDay] = useState<DaySet>("day1");
   const [activeTab, setActiveTab] = useState<WorkoutType>("upperA");
   const [saved, setSaved] = useState(false);
+  const [showInfo, setShowInfo] = useState(false);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -244,8 +245,66 @@ export function ProgramEditor() {
 
   return (
     <div className="max-w-lg mx-auto px-4 pt-6 pb-28">
-      <h1 className="text-2xl font-bold mb-1">Program Editor</h1>
+      <div className="flex items-center gap-2 mb-1">
+        <h1 className="text-2xl font-bold">Program Editor</h1>
+        <button
+          onClick={() => setShowInfo(true)}
+          className="text-zinc-500 hover:text-zinc-300 transition-colors mt-0.5"
+          aria-label="How the rotation works"
+        >
+          <Info size={18} />
+        </button>
+      </div>
       <p className="text-zinc-400 text-sm mb-5">Edit your training program</p>
+
+      {showInfo && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60"
+          onClick={() => setShowInfo(false)}
+        >
+          <div
+            className="bg-zinc-900 border border-zinc-700 rounded-2xl p-5 max-w-sm w-full shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-base font-semibold text-zinc-100">How the rotation works</h2>
+              <button
+                onClick={() => setShowInfo(false)}
+                className="text-zinc-500 hover:text-zinc-300 transition-colors"
+                aria-label="Close"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className="space-y-4 text-sm text-zinc-300">
+              <div>
+                <p className="text-zinc-400 text-xs uppercase tracking-wide font-medium mb-2">Workout sequence</p>
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  {(["upperA", "lowerA", "upperB", "lowerB"] as WorkoutType[]).map((t, i, arr) => (
+                    <span key={t} className="flex items-center gap-1.5">
+                      <span className="bg-zinc-800 rounded px-2 py-0.5 text-zinc-200 font-medium">{getWorkoutLabel(t)}</span>
+                      {i < arr.length - 1 && <span className="text-zinc-600">→</span>}
+                    </span>
+                  ))}
+                  <span className="text-zinc-600">→ repeat</span>
+                </div>
+                <p className="mt-2 text-zinc-400">Every workout cycles through these four types in order.</p>
+              </div>
+
+              <div>
+                <p className="text-zinc-400 text-xs uppercase tracking-wide font-medium mb-2">Day sets</p>
+                <p>Each workout type has two exercise lists — <span className="text-zinc-200 font-medium">Day 1</span> and <span className="text-zinc-200 font-medium">Day 2</span>. After every 8 workouts (two full cycles), the active day set flips, giving you natural variation without changing the structure.</p>
+              </div>
+
+              <div>
+                <p className="text-zinc-400 text-xs uppercase tracking-wide font-medium mb-2">Program blocks</p>
+                <p>After 8 workouts you'll be prompted to start a new block. <span className="text-zinc-200 font-medium">Start New Block</span> copies your current program as the new baseline so you can tweak weights and exercises each cycle.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Day selector */}
       <div className="flex gap-2 mb-4">
