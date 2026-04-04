@@ -51,29 +51,16 @@ export function Settings() {
     saveRestTimerDuration(seconds);
   };
 
-  const buildExportData = () => ({
-    programs: state.programs,
-    sessions: state.sessions,
-  });
-
-  const buildExportFile = () => {
-    const fileName = `pushlog-backup-${new Date().toISOString().slice(0, 10)}.json`;
-    return new File([JSON.stringify(buildExportData(), null, 2)], fileName, {
-      type: "application/json",
-    });
-  };
-
   const canShare =
     typeof navigator !== "undefined" &&
     typeof navigator.share === "function" &&
     typeof navigator.canShare === "function" &&
     navigator.canShare({ files: [new File([""], "test.json", { type: "application/json" })] });
 
-  const handleExport = async () => {
-    const file = buildExportFile();
+  const downloadOrShare = async (file: File, title: string) => {
     if (canShare) {
       try {
-        await navigator.share({ title: "Pushlog Backup", files: [file] });
+        await navigator.share({ title, files: [file] });
       } catch (err) {
         if (err instanceof Error && err.name !== "AbortError") {
           console.error("Share failed:", err);
@@ -87,6 +74,24 @@ export function Settings() {
     a.download = file.name;
     a.click();
     URL.revokeObjectURL(url);
+  };
+
+  const handleExport = async () => {
+    const data = { programs: state.programs, sessions: state.sessions };
+    const fileName = `pushlog-backup-${new Date().toISOString().slice(0, 10)}.json`;
+    const file = new File([JSON.stringify(data, null, 2)], fileName, {
+      type: "application/json",
+    });
+    await downloadOrShare(file, "Pushlog Backup");
+  };
+
+  const handleExportRoutine = async () => {
+    const data = { programs: state.programs, sessions: [] };
+    const fileName = `pushlog-routine-${new Date().toISOString().slice(0, 10)}.json`;
+    const file = new File([JSON.stringify(data, null, 2)], fileName, {
+      type: "application/json",
+    });
+    await downloadOrShare(file, "Pushlog Routine");
   };
 
   const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -196,13 +201,22 @@ export function Settings() {
           <p className="text-zinc-400 text-sm mb-3">
             Download all programs and workout history as a JSON file.
           </p>
-          <button
-            onClick={handleExport}
-            className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 text-white rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors"
-          >
-            <Download size={16} />
-            Export JSON
-          </button>
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={handleExport}
+              className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 text-white rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors"
+            >
+              <Download size={16} />
+              Export backup
+            </button>
+            <button
+              onClick={handleExportRoutine}
+              className="flex items-center gap-2 bg-zinc-700 hover:bg-zinc-600 text-zinc-100 rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors"
+            >
+              <Download size={16} />
+              Export routine
+            </button>
+          </div>
         </div>
 
         {/* Import */}
