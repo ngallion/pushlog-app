@@ -161,7 +161,7 @@ export function ExerciseCard({
           {lastExercise.maxReps} reps
           {lastExercise.startingWeight != null &&
             ` · ${lastExercise.startingWeight} lbs`}
-          {lastExercise.setsCompleted === lastExercise.targetSets && (
+          {lastExercise.minReps >= lastExercise.maxReps && (
             <div className="mt-1.5 text-amber-400">
               You hit the top of your rep range last time — consider adding weight.
             </div>
