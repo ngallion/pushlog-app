@@ -365,7 +365,7 @@ export function Today() {
 
         {timerRunning && secondsLeft !== null && (
           <div
-            className="fixed left-0 right-0 z-40 flex justify-center pointer-events-none"
+            className="fixed bg-opacity-95 left-0 right-0 z-40 flex justify-center pointer-events-none"
             style={{ bottom: "calc(5.5rem + env(safe-area-inset-bottom))" }}
           >
             <div className="flex items-center gap-3 bg-zinc-900 border border-zinc-800 rounded-full px-5 py-2.5 shadow-xl pointer-events-auto">
