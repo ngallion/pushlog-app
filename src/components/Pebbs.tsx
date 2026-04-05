@@ -3,7 +3,7 @@ import type { PebbsMood } from "../hooks/usePebbs";
 interface PebbsProps {
   level: number;
   mood: PebbsMood;
-  withering: boolean;
+  witherLevel: number;
 }
 
 function Eyes({ mood }: { mood: PebbsMood }) {
@@ -173,9 +173,10 @@ function getAnimationClass(mood: PebbsMood): string {
   }
 }
 
-export function Pebbs({ level, mood, withering }: PebbsProps) {
-  const pebbles = PEBBLE_STYLES[level];
+export function Pebbs({ level, mood, witherLevel }: PebbsProps) {
+  const pebbles = PEBBLE_STYLES[level] ?? PEBBLE_STYLES[0];
   const animClass = getAnimationClass(mood);
+  const withering = witherLevel > 0;
 
   return (
     <div

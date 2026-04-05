@@ -122,7 +122,7 @@ export function Today() {
   const {
     level: pebbsLevel,
     mood: pebbsMood,
-    withering: pebbsWithering,
+    witherLevel: pebbsWitherLevel,
     triggerHype,
     triggerCelebrate,
   } = usePebbs(state.sessions);
@@ -140,7 +140,7 @@ export function Today() {
         onDismiss={() => setFinishedSnapshot(null)}
         pebbsLevel={pebbsLevel}
         pebbsMood={pebbsMood}
-        pebbsWithering={pebbsWithering}
+        pebbsWitherLevel={pebbsWitherLevel}
       />
     );
   }
@@ -404,7 +404,7 @@ export function Today() {
           )}
         </div>
 
-        <Pebbs level={pebbsLevel} mood={pebbsMood} withering={pebbsWithering} />
+        <Pebbs level={pebbsLevel} mood={pebbsMood} witherLevel={pebbsWitherLevel} />
       </>
     );
   }
@@ -511,7 +511,7 @@ export function Today() {
         </div>
       </div>
 
-      <Pebbs level={pebbsLevel} mood={pebbsMood} withering={pebbsWithering} />
+      <Pebbs level={pebbsLevel} mood={pebbsMood} witherLevel={pebbsWitherLevel} />
     </>
   );
 }
