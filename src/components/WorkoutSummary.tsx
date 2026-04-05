@@ -26,7 +26,7 @@ interface Props {
   onDismiss: () => void;
   pebbsLevel: number;
   pebbsMood: PebbsMood;
-  pebbsWithering: boolean;
+  pebbsWitherLevel: number;
 }
 
 export function WorkoutSummary({
@@ -39,7 +39,7 @@ export function WorkoutSummary({
   onDismiss,
   pebbsLevel,
   pebbsMood,
-  pebbsWithering,
+  pebbsWitherLevel,
 }: Props) {
   const totalSets = session.exercises.reduce(
     (sum, e) => sum + e.setsCompleted,
@@ -235,7 +235,7 @@ export function WorkoutSummary({
         </button>
       </div>
 
-      <Pebbs level={pebbsLevel} mood={pebbsMood} withering={pebbsWithering} />
+      <Pebbs level={pebbsLevel} mood={pebbsMood} witherLevel={pebbsWitherLevel} />
     </>
   );
 }

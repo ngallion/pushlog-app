@@ -140,7 +140,7 @@ export function Today() {
         onDismiss={() => setFinishedSnapshot(null)}
         pebbsLevel={pebbsLevel}
         pebbsMood={pebbsMood}
-        pebbsWithering={pebbsWithering}
+        pebbsWitherLevel={pebbsWitherLevel}
       />
     );
   }
