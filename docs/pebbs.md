@@ -8,11 +8,11 @@ Pebbs is a small animated pebble creature that lives in the bottom-right corner 
 
 Pebbs is rendered as a stack of rounded pebble shapes. Its visual form grows with your total completed workouts:
 
-| Level | Workouts Completed | Form |
-|-------|--------------------|------|
-| 0 | 0–5 | Single pebble |
-| 1 | 6–15 | Head + body (two pebbles) |
-| 2 | 16+ | Head + body + base (three pebbles) |
+| Level | Workouts Completed | Form                               |
+| ----- | ------------------ | ---------------------------------- |
+| 0     | 0–5                | Single pebble                      |
+| 1     | 6–15               | Head + body (two pebbles)          |
+| 2     | 16+                | Head + body + base (three pebbles) |
 
 Pebbs is always visible on the **Today** screen and on the **post-workout summary**.
 
@@ -22,13 +22,13 @@ Pebbs is always visible on the **Today** screen and on the **post-workout summar
 
 Pebbs has five mood states, each with distinct eye expressions and animations:
 
-| Mood | Eyes | Trigger | Animation |
-|------|------|---------|-----------|
-| `idle` | Half-closed | Default after 2 s of inactivity | Float (gentle Y oscillation, 3.5 s loop) |
-| `watching` | Full open circles | Workout view loads | None |
-| `hype` | Caret `^^` | A set is logged | Bounce with squash/stretch (0.65 s) |
-| `celebrate` | Gold stars `★★` | Workout finished | Spin + scale pulse (3 s) |
-| `wither` | Closed/sad dashes | 7+ days without completing a workout | Opacity + desaturation pulse (2.5 s loop) |
+| Mood        | Eyes              | Trigger                              | Animation                                 |
+| ----------- | ----------------- | ------------------------------------ | ----------------------------------------- |
+| `idle`      | Half-closed       | Default after 2 s of inactivity      | Float (gentle Y oscillation, 3.5 s loop)  |
+| `watching`  | Full open circles | Workout view loads                   | None                                      |
+| `hype`      | Caret `^^`        | A set is logged                      | Bounce with squash/stretch (0.65 s)       |
+| `celebrate` | Gold stars `★★`   | Workout finished                     | Spin + scale pulse (3 s)                  |
+| `wither`    | Closed/sad dashes | 7+ days without completing a workout | Opacity + desaturation pulse (2.5 s loop) |
 
 Moods transition back to `idle` automatically after their animation completes (2 s for `watching`, 700 ms for `hype`, 3 s for `celebrate`). The `wither` mood persists until a workout is completed.
 
@@ -50,16 +50,17 @@ If 7 or more days pass without finishing a workout, Pebbs enters a **withered** 
 Pebbs is driven by the `usePebbs` hook (`src/hooks/usePebbs.ts`), which reads from the full session history to compute level and withering status. The hook exposes:
 
 ```typescript
-const { level, mood, withering, triggerHype, triggerCelebrate } = usePebbs(sessions);
+const { level, mood, withering, triggerHype, triggerCelebrate } =
+  usePebbs(sessions);
 ```
 
-| Hook value / method | Type | Description |
-|---------------------|------|-------------|
-| `level` | `0 \| 1 \| 2` | Visual growth level |
-| `mood` | `PebbsMood` | Current eye/animation state |
-| `withering` | `boolean` | Whether Pebbs is in the withered state |
-| `triggerHype()` | `() => void` | Called when a set is logged; no-op if withering |
-| `triggerCelebrate()` | `() => void` | Called when the workout is finished |
+| Hook value / method  | Type          | Description                                     |
+| -------------------- | ------------- | ----------------------------------------------- |
+| `level`              | `0 \| 1 \| 2` | Visual growth level                             |
+| `mood`               | `PebbsMood`   | Current eye/animation state                     |
+| `withering`          | `boolean`     | Whether Pebbs is in the withered state          |
+| `triggerHype()`      | `() => void`  | Called when a set is logged; no-op if withering |
+| `triggerCelebrate()` | `() => void`  | Called when the workout is finished             |
 
 `Today.tsx` calls `triggerHype()` each time a set is logged and `triggerCelebrate()` when `FINISH_WORKOUT` is dispatched.
 
@@ -67,13 +68,13 @@ const { level, mood, withering, triggerHype, triggerCelebrate } = usePebbs(sessi
 
 ## Implementation Files
 
-| File | Role |
-|------|------|
-| `src/components/Pebbs.tsx` | SVG rendering, eye expressions, level shapes |
-| `src/hooks/usePebbs.ts` | State logic: level, mood transitions, withering |
-| `src/index.css` | Keyframe animations (`pebbs-float`, `pebbs-bounce`, `pebbs-celebrate`, `pebbs-wither`) |
-| `src/pages/Today.tsx` | Mounts Pebbs; calls `triggerHype` / `triggerCelebrate` |
-| `src/components/WorkoutSummary.tsx` | Displays Pebbs on the post-workout summary screen |
+| File                                | Role                                                                                   |
+| ----------------------------------- | -------------------------------------------------------------------------------------- |
+| `src/components/Pebbs.tsx`          | SVG rendering, eye expressions, level shapes                                           |
+| `src/hooks/usePebbs.ts`             | State logic: level, mood transitions, withering                                        |
+| `src/index.css`                     | Keyframe animations (`pebbs-float`, `pebbs-bounce`, `pebbs-celebrate`, `pebbs-wither`) |
+| `src/pages/Today.tsx`               | Mounts Pebbs; calls `triggerHype` / `triggerCelebrate`                                 |
+| `src/components/WorkoutSummary.tsx` | Displays Pebbs on the post-workout summary screen                                      |
 
 ---
 

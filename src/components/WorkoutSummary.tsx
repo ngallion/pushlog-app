@@ -235,7 +235,11 @@ export function WorkoutSummary({
         </button>
       </div>
 
-      <Pebbs level={pebbsLevel} mood={pebbsMood} witherLevel={pebbsWitherLevel} />
+      <Pebbs
+        level={pebbsLevel}
+        mood={pebbsMood}
+        witherLevel={pebbsWitherLevel}
+      />
     </>
   );
 }

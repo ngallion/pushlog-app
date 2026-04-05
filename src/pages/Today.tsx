@@ -404,7 +404,11 @@ export function Today() {
           )}
         </div>
 
-        <Pebbs level={pebbsLevel} mood={pebbsMood} witherLevel={pebbsWitherLevel} />
+        <Pebbs
+          level={pebbsLevel}
+          mood={pebbsMood}
+          witherLevel={pebbsWitherLevel}
+        />
       </>
     );
   }
@@ -511,7 +515,11 @@ export function Today() {
         </div>
       </div>
 
-      <Pebbs level={pebbsLevel} mood={pebbsMood} witherLevel={pebbsWitherLevel} />
+      <Pebbs
+        level={pebbsLevel}
+        mood={pebbsMood}
+        witherLevel={pebbsWitherLevel}
+      />
     </>
   );
 }
