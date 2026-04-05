@@ -6,7 +6,6 @@ export type PebbsMood = "idle" | "watching" | "hype" | "celebrate" | "wither";
 const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
 function getLevel(finishedCount: number): number {
-  if (finishedCount >= 30) return 3;
   if (finishedCount >= 16) return 2;
   if (finishedCount >= 6) return 1;
   return 0;
