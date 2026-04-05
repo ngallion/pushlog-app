@@ -3,27 +3,50 @@ import type { WorkoutSession } from "../lib/types";
 
 export type PebbsMood = "idle" | "watching" | "hype" | "celebrate" | "wither";
 
-const WITHER_DAYS = 7;
+const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
 function getLevel(finishedCount: number): number {
+  if (finishedCount >= 30) return 3;
   if (finishedCount >= 16) return 2;
   if (finishedCount >= 6) return 1;
   return 0;
 }
 
-function isWithering(sessions: WorkoutSession[]): boolean {
+function getWitherLevel(sessions: WorkoutSession[]): number {
   const finished = sessions.filter((s) => s.finishedAt);
-  if (finished.length === 0) return false;
-  const last = finished.at(-1)!;
-  const daysSince =
-    (Date.now() - new Date(last.finishedAt!).getTime()) / (1000 * 60 * 60 * 24);
-  return daysSince >= WITHER_DAYS;
+  if (finished.length === 0) return 0;
+
+  const finishedCount = finished.length;
+  const now = Date.now();
+  const earliest = Math.min(
+    ...finished.map((s) => new Date(s.finishedAt!).getTime()),
+  );
+
+  // Count rolling 7-day windows from earliest session to now with no workouts
+  let zeroWeekCount = 0;
+  let windowEnd = now;
+  while (windowEnd > earliest) {
+    const windowStart = windowEnd - WEEK_MS;
+    const hasWorkout = finished.some((s) => {
+      const t = new Date(s.finishedAt!).getTime();
+      return t >= windowStart && t < windowEnd;
+    });
+    if (!hasWorkout) zeroWeekCount++;
+    windowEnd = windowStart;
+  }
+
+  // Every 4 workouts clears 1 wither level
+  return Math.max(0, zeroWeekCount - Math.floor(finishedCount / 4));
 }
 
 export function usePebbs(sessions: WorkoutSession[]) {
-  const finishedCount = sessions.filter((s) => s.finishedAt).length;
-  const level = getLevel(finishedCount);
-  const withering = isWithering(sessions);
+  const finished = sessions.filter((s) => s.finishedAt);
+  const finishedCount = finished.length;
+
+  const baseLevel = getLevel(finishedCount);
+  const witherLevel = getWitherLevel(sessions);
+  const level = Math.max(0, baseLevel - witherLevel);
+  const withering = witherLevel > 0;
 
   const [mood, setMood] = useState<PebbsMood>(
     withering ? "wither" : "watching",
@@ -50,5 +73,5 @@ export function usePebbs(sessions: WorkoutSession[]) {
     setTimeout(() => setMood("idle"), 3000);
   };
 
-  return { level, mood, withering, triggerHype, triggerCelebrate };
+  return { level, witherLevel, mood, withering, triggerHype, triggerCelebrate };
 }

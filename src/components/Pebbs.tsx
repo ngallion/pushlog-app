@@ -3,7 +3,7 @@ import type { PebbsMood } from "../hooks/usePebbs";
 interface PebbsProps {
   level: number;
   mood: PebbsMood;
-  withering: boolean;
+  witherLevel: number;
 }
 
 function Eyes({ mood }: { mood: PebbsMood }) {
@@ -100,9 +100,10 @@ interface PebbleStyle {
   h: number;
 }
 
-// Each array is ordered top (head) to bottom (base)
+// Each array is ordered top (head) to bottom (body)
+// Levels 2 and 3 share the same pebble stack — arms/legs are added separately
 const PEBBLE_STYLES: PebbleStyle[][] = [
-  // level 0 — single pebble
+  // level 0 — head only
   [
     {
       bg: "#9e9891",
@@ -129,28 +130,38 @@ const PEBBLE_STYLES: PebbleStyle[][] = [
       h: 40,
     },
   ],
-  // level 2 — head + body + base
+  // level 2 — head + body (arms rendered separately)
   [
     {
-      bg: "#a8a39d",
+      bg: "#a09b95",
       shadow: "#706d69",
-      borderRadius: "55% 45% 50% 50% / 48% 54% 46% 52%",
-      w: 34,
-      h: 27,
+      borderRadius: "55% 45% 48% 52% / 50% 54% 46% 50%",
+      w: 38,
+      h: 30,
     },
     {
       bg: "#8a8580",
       shadow: "#605d59",
-      borderRadius: "50% 50% 54% 46% / 52% 48% 50% 50%",
-      w: 44,
-      h: 35,
+      borderRadius: "48% 52% 55% 45% / 52% 48% 50% 50%",
+      w: 50,
+      h: 40,
+    },
+  ],
+  // level 3 — head + body (arms + legs rendered separately)
+  [
+    {
+      bg: "#a09b95",
+      shadow: "#706d69",
+      borderRadius: "55% 45% 48% 52% / 50% 54% 46% 50%",
+      w: 38,
+      h: 30,
     },
     {
-      bg: "#7c7873",
-      shadow: "#565350",
-      borderRadius: "46% 54% 48% 52% / 50% 52% 48% 50%",
-      w: 54,
-      h: 43,
+      bg: "#8a8580",
+      shadow: "#605d59",
+      borderRadius: "48% 52% 55% 45% / 52% 48% 50% 50%",
+      w: 50,
+      h: 40,
     },
   ],
 ];
@@ -173,9 +184,15 @@ function getAnimationClass(mood: PebbsMood): string {
   }
 }
 
-export function Pebbs({ level, mood, withering }: PebbsProps) {
-  const pebbles = PEBBLE_STYLES[level];
+export function Pebbs({ level, mood, witherLevel }: PebbsProps) {
+  const pebbles = PEBBLE_STYLES[level] ?? PEBBLE_STYLES[0];
   const animClass = getAnimationClass(mood);
+  const withering = witherLevel > 0;
+
+  // Body pebble colors (used for arms/legs)
+  const bodyStyle = pebbles.length > 1 ? pebbles[1] : pebbles[0];
+  const armBg = withering ? WITHER_BG : bodyStyle.bg;
+  const armShadow = withering ? WITHER_SHADOW : bodyStyle.shadow;
 
   return (
     <div
@@ -193,26 +210,88 @@ export function Pebbs({ level, mood, withering }: PebbsProps) {
       </div>
 
       <div className={`flex flex-col items-center cursor-default ${animClass}`}>
-        {pebbles.map((pebble, i) => (
+        {pebbles.map((pebble, i) => {
+          const isBody = i === pebbles.length - 1 && pebbles.length > 1;
+          return (
+            <div
+              key={i}
+              style={{
+                width: `${pebble.w}px`,
+                height: `${pebble.h}px`,
+                backgroundColor: withering ? WITHER_BG : pebble.bg,
+                borderRadius: pebble.borderRadius,
+                boxShadow: `inset -3px -4px 0 0 ${withering ? WITHER_SHADOW : pebble.shadow}`,
+                marginTop: i > 0 ? "-6px" : 0,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                position: "relative",
+                zIndex: pebbles.length - i,
+              }}
+            >
+              {i === 0 && <Eyes mood={mood} />}
+
+              {/* Arms — rendered inside body pebble at level 2+ */}
+              {isBody && level >= 2 && (
+                <>
+                  <div
+                    style={{
+                      position: "absolute",
+                      left: -9,
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                      width: 11,
+                      height: 9,
+                      backgroundColor: armBg,
+                      borderRadius: "50% 30% 40% 60% / 50% 50% 50% 50%",
+                      boxShadow: `inset -2px -3px 0 0 ${armShadow}`,
+                    }}
+                  />
+                  <div
+                    style={{
+                      position: "absolute",
+                      right: -9,
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                      width: 11,
+                      height: 9,
+                      backgroundColor: armBg,
+                      borderRadius: "30% 50% 60% 40% / 50% 50% 50% 50%",
+                      boxShadow: `inset 2px -3px 0 0 ${armShadow}`,
+                    }}
+                  />
+                </>
+              )}
+            </div>
+          );
+        })}
+
+        {/* Legs — rendered below body at level 3+ */}
+        {level >= 3 && (
           <div
-            key={i}
-            style={{
-              width: `${pebble.w}px`,
-              height: `${pebble.h}px`,
-              backgroundColor: withering ? WITHER_BG : pebble.bg,
-              borderRadius: pebble.borderRadius,
-              boxShadow: `inset -3px -4px 0 0 ${withering ? WITHER_SHADOW : pebble.shadow}`,
-              marginTop: i > 0 ? "-6px" : 0,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              position: "relative",
-              zIndex: pebbles.length - i,
-            }}
+            className="flex gap-[8px]"
+            style={{ marginTop: -4, zIndex: 0 }}
           >
-            {i === 0 && <Eyes mood={mood} />}
+            <div
+              style={{
+                width: 11,
+                height: 14,
+                backgroundColor: armBg,
+                borderRadius: "40% 30% 50% 50% / 0% 0% 100% 100%",
+                boxShadow: `inset -2px -4px 0 0 ${armShadow}`,
+              }}
+            />
+            <div
+              style={{
+                width: 11,
+                height: 14,
+                backgroundColor: armBg,
+                borderRadius: "30% 40% 50% 50% / 0% 0% 100% 100%",
+                boxShadow: `inset 2px -4px 0 0 ${armShadow}`,
+              }}
+            />
           </div>
-        ))}
+        )}
       </div>
     </div>
   );
