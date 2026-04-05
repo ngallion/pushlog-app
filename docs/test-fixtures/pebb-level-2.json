@@ -1,0 +1,744 @@
+{
+  "programs": [
+    {
+      "id": "64157d2e-0bc8-4161-953b-4cfe406315ad",
+      "startedAt": "2025-10-01T10:00:00.000Z",
+      "workouts": {
+        "cycle1": {
+          "upperA": [
+            {
+              "id": "980f0e6b-e51f-4893-9294-f251c6d0e76e",
+              "name": "Flat Dumbbell Press",
+              "sets": 3,
+              "minReps": 6,
+              "maxReps": 10
+            },
+            {
+              "id": "66dad001-33cc-4f41-8316-48c526ed3597",
+              "name": "Dumbbell Chest Supported Row",
+              "sets": 3,
+              "minReps": 8,
+              "maxReps": 12
+            },
+            {
+              "id": "262ab7f8-df81-48d5-8859-3379e3b1d68a",
+              "name": "Dumbbell Overhead Press",
+              "sets": 3,
+              "minReps": 8,
+              "maxReps": 15
+            }
+          ],
+          "lowerA": [
+            {
+              "id": "308b7ebb-d484-40b8-87bf-bbcca1b44fe9",
+              "name": "Barbell Back Squat",
+              "sets": 3,
+              "minReps": 6,
+              "maxReps": 10
+            },
+            {
+              "id": "f4ea9a5b-d271-46e4-9bfe-bbe383dbce98",
+              "name": "Seated Leg Curls",
+              "sets": 3,
+              "minReps": 10,
+              "maxReps": 15
+            },
+            {
+              "id": "b200adeb-2569-440e-998e-4a68f794ed21",
+              "name": "Calf Raises",
+              "sets": 3,
+              "minReps": 10,
+              "maxReps": 15
+            }
+          ],
+          "upperB": [
+            {
+              "id": "e4a63a9f-b2f3-4d90-add3-41b4e2cf28bc",
+              "name": "Incline Dumbbell Press",
+              "sets": 3,
+              "minReps": 8,
+              "maxReps": 10
+            },
+            {
+              "id": "9a707b8e-4565-4be5-9b7a-a5c4753dd9e7",
+              "name": "Pull-Ups",
+              "sets": 3,
+              "minReps": 6,
+              "maxReps": 10
+            },
+            {
+              "id": "ceaccc38-b9bc-4230-9afe-4761fa81fa2c",
+              "name": "Dumbbell Lateral Raises",
+              "sets": 3,
+              "minReps": 10,
+              "maxReps": 20
+            }
+          ],
+          "lowerB": [
+            {
+              "id": "2d3e6d6e-5f7f-468d-9351-067bbe21741c",
+              "name": "Barbell Hip Thrust",
+              "sets": 3,
+              "minReps": 10,
+              "maxReps": 15
+            },
+            {
+              "id": "f51925b7-f627-4579-8fed-c6a55c5e59a1",
+              "name": "Romanian Deadlift",
+              "sets": 3,
+              "minReps": 6,
+              "maxReps": 10
+            },
+            {
+              "id": "8cde91f3-f215-45c5-84d6-d31be3e21d93",
+              "name": "Reverse Lunges",
+              "sets": 3,
+              "minReps": 8,
+              "maxReps": 10
+            }
+          ]
+        },
+        "cycle2": {
+          "upperA": [
+            {
+              "id": "980f0e6b-e51f-4893-9294-f251c6d0e76e",
+              "name": "Flat Dumbbell Press",
+              "sets": 3,
+              "minReps": 6,
+              "maxReps": 10
+            },
+            {
+              "id": "66dad001-33cc-4f41-8316-48c526ed3597",
+              "name": "Dumbbell Chest Supported Row",
+              "sets": 3,
+              "minReps": 8,
+              "maxReps": 12
+            },
+            {
+              "id": "262ab7f8-df81-48d5-8859-3379e3b1d68a",
+              "name": "Dumbbell Overhead Press",
+              "sets": 3,
+              "minReps": 8,
+              "maxReps": 15
+            }
+          ],
+          "lowerA": [
+            {
+              "id": "308b7ebb-d484-40b8-87bf-bbcca1b44fe9",
+              "name": "Barbell Back Squat",
+              "sets": 3,
+              "minReps": 6,
+              "maxReps": 10
+            },
+            {
+              "id": "f4ea9a5b-d271-46e4-9bfe-bbe383dbce98",
+              "name": "Seated Leg Curls",
+              "sets": 3,
+              "minReps": 10,
+              "maxReps": 15
+            },
+            {
+              "id": "b200adeb-2569-440e-998e-4a68f794ed21",
+              "name": "Calf Raises",
+              "sets": 3,
+              "minReps": 10,
+              "maxReps": 15
+            }
+          ],
+          "upperB": [
+            {
+              "id": "e4a63a9f-b2f3-4d90-add3-41b4e2cf28bc",
+              "name": "Incline Dumbbell Press",
+              "sets": 3,
+              "minReps": 8,
+              "maxReps": 10
+            },
+            {
+              "id": "9a707b8e-4565-4be5-9b7a-a5c4753dd9e7",
+              "name": "Pull-Ups",
+              "sets": 3,
+              "minReps": 6,
+              "maxReps": 10
+            },
+            {
+              "id": "ceaccc38-b9bc-4230-9afe-4761fa81fa2c",
+              "name": "Dumbbell Lateral Raises",
+              "sets": 3,
+              "minReps": 10,
+              "maxReps": 20
+            }
+          ],
+          "lowerB": [
+            {
+              "id": "2d3e6d6e-5f7f-468d-9351-067bbe21741c",
+              "name": "Barbell Hip Thrust",
+              "sets": 3,
+              "minReps": 10,
+              "maxReps": 15
+            },
+            {
+              "id": "f51925b7-f627-4579-8fed-c6a55c5e59a1",
+              "name": "Romanian Deadlift",
+              "sets": 3,
+              "minReps": 6,
+              "maxReps": 10
+            },
+            {
+              "id": "8cde91f3-f215-45c5-84d6-d31be3e21d93",
+              "name": "Reverse Lunges",
+              "sets": 3,
+              "minReps": 8,
+              "maxReps": 10
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "sessions": [
+    {
+      "id": "e588da41-b697-40b5-a7cb-0c20b6efc930",
+      "startedAt": "2026-03-05T17:10:00.000Z",
+      "finishedAt": "2026-03-05T18:00:00.000Z",
+      "workoutType": "upperA",
+      "cycle": "cycle1",
+      "programBlockId": "64157d2e-0bc8-4161-953b-4cfe406315ad",
+      "exercises": [
+        {
+          "templateId": "980f0e6b-e51f-4893-9294-f251c6d0e76e",
+          "name": "Flat Dumbbell Press",
+          "setsCompleted": 3,
+          "targetSets": 3,
+          "minReps": 6,
+          "maxReps": 10
+        },
+        {
+          "templateId": "66dad001-33cc-4f41-8316-48c526ed3597",
+          "name": "Dumbbell Chest Supported Row",
+          "setsCompleted": 3,
+          "targetSets": 3,
+          "minReps": 8,
+          "maxReps": 12
+        },
+        {
+          "templateId": "262ab7f8-df81-48d5-8859-3379e3b1d68a",
+          "name": "Dumbbell Overhead Press",
+          "setsCompleted": 3,
+          "targetSets": 3,
+          "minReps": 8,
+          "maxReps": 15
+        }
+      ]
+    },
+    {
+      "id": "0f4d6852-ff1f-417b-bcb9-52e3ed9a85b8",
+      "startedAt": "2026-03-07T17:10:00.000Z",
+      "finishedAt": "2026-03-07T18:00:00.000Z",
+      "workoutType": "lowerA",
+      "cycle": "cycle1",
+      "programBlockId": "64157d2e-0bc8-4161-953b-4cfe406315ad",
+      "exercises": [
+        {
+          "templateId": "308b7ebb-d484-40b8-87bf-bbcca1b44fe9",
+          "name": "Barbell Back Squat",
+          "setsCompleted": 3,
+          "targetSets": 3,
+          "minReps": 6,
+          "maxReps": 10
+        },
+        {
+          "templateId": "f4ea9a5b-d271-46e4-9bfe-bbe383dbce98",
+          "name": "Seated Leg Curls",
+          "setsCompleted": 3,
+          "targetSets": 3,
+          "minReps": 10,
+          "maxReps": 15
+        },
+        {
+          "templateId": "b200adeb-2569-440e-998e-4a68f794ed21",
+          "name": "Calf Raises",
+          "setsCompleted": 3,
+          "targetSets": 3,
+          "minReps": 10,
+          "maxReps": 15
+        }
+      ]
+    },
+    {
+      "id": "23412e26-9fff-4547-8fc7-de5121eb6369",
+      "startedAt": "2026-03-09T17:10:00.000Z",
+      "finishedAt": "2026-03-09T18:00:00.000Z",
+      "workoutType": "upperB",
+      "cycle": "cycle1",
+      "programBlockId": "64157d2e-0bc8-4161-953b-4cfe406315ad",
+      "exercises": [
+        {
+          "templateId": "e4a63a9f-b2f3-4d90-add3-41b4e2cf28bc",
+          "name": "Incline Dumbbell Press",
+          "setsCompleted": 3,
+          "targetSets": 3,
+          "minReps": 8,
+          "maxReps": 10
+        },
+        {
+          "templateId": "9a707b8e-4565-4be5-9b7a-a5c4753dd9e7",
+          "name": "Pull-Ups",
+          "setsCompleted": 3,
+          "targetSets": 3,
+          "minReps": 6,
+          "maxReps": 10
+        },
+        {
+          "templateId": "ceaccc38-b9bc-4230-9afe-4761fa81fa2c",
+          "name": "Dumbbell Lateral Raises",
+          "setsCompleted": 3,
+          "targetSets": 3,
+          "minReps": 10,
+          "maxReps": 20
+        }
+      ]
+    },
+    {
+      "id": "e09adfda-9e64-44e3-a61a-c6acd666566e",
+      "startedAt": "2026-03-11T17:10:00.000Z",
+      "finishedAt": "2026-03-11T18:00:00.000Z",
+      "workoutType": "lowerB",
+      "cycle": "cycle1",
+      "programBlockId": "64157d2e-0bc8-4161-953b-4cfe406315ad",
+      "exercises": [
+        {
+          "templateId": "2d3e6d6e-5f7f-468d-9351-067bbe21741c",
+          "name": "Barbell Hip Thrust",
+          "setsCompleted": 3,
+          "targetSets": 3,
+          "minReps": 10,
+          "maxReps": 15
+        },
+        {
+          "templateId": "f51925b7-f627-4579-8fed-c6a55c5e59a1",
+          "name": "Romanian Deadlift",
+          "setsCompleted": 3,
+          "targetSets": 3,
+          "minReps": 6,
+          "maxReps": 10
+        },
+        {
+          "templateId": "8cde91f3-f215-45c5-84d6-d31be3e21d93",
+          "name": "Reverse Lunges",
+          "setsCompleted": 3,
+          "targetSets": 3,
+          "minReps": 8,
+          "maxReps": 10
+        }
+      ]
+    },
+    {
+      "id": "b0f9d58e-b32a-4dd7-985e-207fb6f4908e",
+      "startedAt": "2026-03-13T17:10:00.000Z",
+      "finishedAt": "2026-03-13T18:00:00.000Z",
+      "workoutType": "upperA",
+      "cycle": "cycle1",
+      "programBlockId": "64157d2e-0bc8-4161-953b-4cfe406315ad",
+      "exercises": [
+        {
+          "templateId": "980f0e6b-e51f-4893-9294-f251c6d0e76e",
+          "name": "Flat Dumbbell Press",
+          "setsCompleted": 3,
+          "targetSets": 3,
+          "minReps": 6,
+          "maxReps": 10
+        },
+        {
+          "templateId": "66dad001-33cc-4f41-8316-48c526ed3597",
+          "name": "Dumbbell Chest Supported Row",
+          "setsCompleted": 3,
+          "targetSets": 3,
+          "minReps": 8,
+          "maxReps": 12
+        },
+        {
+          "templateId": "262ab7f8-df81-48d5-8859-3379e3b1d68a",
+          "name": "Dumbbell Overhead Press",
+          "setsCompleted": 3,
+          "targetSets": 3,
+          "minReps": 8,
+          "maxReps": 15
+        }
+      ]
+    },
+    {
+      "id": "366f98d4-d4b9-4bcd-9a14-145f6729d9e4",
+      "startedAt": "2026-03-15T17:10:00.000Z",
+      "finishedAt": "2026-03-15T18:00:00.000Z",
+      "workoutType": "lowerA",
+      "cycle": "cycle1",
+      "programBlockId": "64157d2e-0bc8-4161-953b-4cfe406315ad",
+      "exercises": [
+        {
+          "templateId": "308b7ebb-d484-40b8-87bf-bbcca1b44fe9",
+          "name": "Barbell Back Squat",
+          "setsCompleted": 3,
+          "targetSets": 3,
+          "minReps": 6,
+          "maxReps": 10
+        },
+        {
+          "templateId": "f4ea9a5b-d271-46e4-9bfe-bbe383dbce98",
+          "name": "Seated Leg Curls",
+          "setsCompleted": 3,
+          "targetSets": 3,
+          "minReps": 10,
+          "maxReps": 15
+        },
+        {
+          "templateId": "b200adeb-2569-440e-998e-4a68f794ed21",
+          "name": "Calf Raises",
+          "setsCompleted": 3,
+          "targetSets": 3,
+          "minReps": 10,
+          "maxReps": 15
+        }
+      ]
+    },
+    {
+      "id": "5bc727b0-9a31-49f9-a2bc-9234fd19d3e5",
+      "startedAt": "2026-03-17T17:10:00.000Z",
+      "finishedAt": "2026-03-17T18:00:00.000Z",
+      "workoutType": "upperB",
+      "cycle": "cycle1",
+      "programBlockId": "64157d2e-0bc8-4161-953b-4cfe406315ad",
+      "exercises": [
+        {
+          "templateId": "e4a63a9f-b2f3-4d90-add3-41b4e2cf28bc",
+          "name": "Incline Dumbbell Press",
+          "setsCompleted": 3,
+          "targetSets": 3,
+          "minReps": 8,
+          "maxReps": 10
+        },
+        {
+          "templateId": "9a707b8e-4565-4be5-9b7a-a5c4753dd9e7",
+          "name": "Pull-Ups",
+          "setsCompleted": 3,
+          "targetSets": 3,
+          "minReps": 6,
+          "maxReps": 10
+        },
+        {
+          "templateId": "ceaccc38-b9bc-4230-9afe-4761fa81fa2c",
+          "name": "Dumbbell Lateral Raises",
+          "setsCompleted": 3,
+          "targetSets": 3,
+          "minReps": 10,
+          "maxReps": 20
+        }
+      ]
+    },
+    {
+      "id": "fff18e04-b37d-42e6-885b-49223076c9f6",
+      "startedAt": "2026-03-19T17:10:00.000Z",
+      "finishedAt": "2026-03-19T18:00:00.000Z",
+      "workoutType": "lowerB",
+      "cycle": "cycle1",
+      "programBlockId": "64157d2e-0bc8-4161-953b-4cfe406315ad",
+      "exercises": [
+        {
+          "templateId": "2d3e6d6e-5f7f-468d-9351-067bbe21741c",
+          "name": "Barbell Hip Thrust",
+          "setsCompleted": 3,
+          "targetSets": 3,
+          "minReps": 10,
+          "maxReps": 15
+        },
+        {
+          "templateId": "f51925b7-f627-4579-8fed-c6a55c5e59a1",
+          "name": "Romanian Deadlift",
+          "setsCompleted": 3,
+          "targetSets": 3,
+          "minReps": 6,
+          "maxReps": 10
+        },
+        {
+          "templateId": "8cde91f3-f215-45c5-84d6-d31be3e21d93",
+          "name": "Reverse Lunges",
+          "setsCompleted": 3,
+          "targetSets": 3,
+          "minReps": 8,
+          "maxReps": 10
+        }
+      ]
+    },
+    {
+      "id": "2c2741aa-f41a-44f6-9a0e-853adc74e0ed",
+      "startedAt": "2026-03-21T17:10:00.000Z",
+      "finishedAt": "2026-03-21T18:00:00.000Z",
+      "workoutType": "upperA",
+      "cycle": "cycle1",
+      "programBlockId": "64157d2e-0bc8-4161-953b-4cfe406315ad",
+      "exercises": [
+        {
+          "templateId": "980f0e6b-e51f-4893-9294-f251c6d0e76e",
+          "name": "Flat Dumbbell Press",
+          "setsCompleted": 3,
+          "targetSets": 3,
+          "minReps": 6,
+          "maxReps": 10
+        },
+        {
+          "templateId": "66dad001-33cc-4f41-8316-48c526ed3597",
+          "name": "Dumbbell Chest Supported Row",
+          "setsCompleted": 3,
+          "targetSets": 3,
+          "minReps": 8,
+          "maxReps": 12
+        },
+        {
+          "templateId": "262ab7f8-df81-48d5-8859-3379e3b1d68a",
+          "name": "Dumbbell Overhead Press",
+          "setsCompleted": 3,
+          "targetSets": 3,
+          "minReps": 8,
+          "maxReps": 15
+        }
+      ]
+    },
+    {
+      "id": "06d30372-55ac-49c8-aefb-9784c2023317",
+      "startedAt": "2026-03-23T17:10:00.000Z",
+      "finishedAt": "2026-03-23T18:00:00.000Z",
+      "workoutType": "lowerA",
+      "cycle": "cycle1",
+      "programBlockId": "64157d2e-0bc8-4161-953b-4cfe406315ad",
+      "exercises": [
+        {
+          "templateId": "308b7ebb-d484-40b8-87bf-bbcca1b44fe9",
+          "name": "Barbell Back Squat",
+          "setsCompleted": 3,
+          "targetSets": 3,
+          "minReps": 6,
+          "maxReps": 10
+        },
+        {
+          "templateId": "f4ea9a5b-d271-46e4-9bfe-bbe383dbce98",
+          "name": "Seated Leg Curls",
+          "setsCompleted": 3,
+          "targetSets": 3,
+          "minReps": 10,
+          "maxReps": 15
+        },
+        {
+          "templateId": "b200adeb-2569-440e-998e-4a68f794ed21",
+          "name": "Calf Raises",
+          "setsCompleted": 3,
+          "targetSets": 3,
+          "minReps": 10,
+          "maxReps": 15
+        }
+      ]
+    },
+    {
+      "id": "2856b136-50e4-44e2-b029-e734a5eb1c4b",
+      "startedAt": "2026-03-25T17:10:00.000Z",
+      "finishedAt": "2026-03-25T18:00:00.000Z",
+      "workoutType": "upperB",
+      "cycle": "cycle1",
+      "programBlockId": "64157d2e-0bc8-4161-953b-4cfe406315ad",
+      "exercises": [
+        {
+          "templateId": "e4a63a9f-b2f3-4d90-add3-41b4e2cf28bc",
+          "name": "Incline Dumbbell Press",
+          "setsCompleted": 3,
+          "targetSets": 3,
+          "minReps": 8,
+          "maxReps": 10
+        },
+        {
+          "templateId": "9a707b8e-4565-4be5-9b7a-a5c4753dd9e7",
+          "name": "Pull-Ups",
+          "setsCompleted": 3,
+          "targetSets": 3,
+          "minReps": 6,
+          "maxReps": 10
+        },
+        {
+          "templateId": "ceaccc38-b9bc-4230-9afe-4761fa81fa2c",
+          "name": "Dumbbell Lateral Raises",
+          "setsCompleted": 3,
+          "targetSets": 3,
+          "minReps": 10,
+          "maxReps": 20
+        }
+      ]
+    },
+    {
+      "id": "7f938a21-3e9a-40a1-a9af-e719441eb553",
+      "startedAt": "2026-03-27T17:10:00.000Z",
+      "finishedAt": "2026-03-27T18:00:00.000Z",
+      "workoutType": "lowerB",
+      "cycle": "cycle1",
+      "programBlockId": "64157d2e-0bc8-4161-953b-4cfe406315ad",
+      "exercises": [
+        {
+          "templateId": "2d3e6d6e-5f7f-468d-9351-067bbe21741c",
+          "name": "Barbell Hip Thrust",
+          "setsCompleted": 3,
+          "targetSets": 3,
+          "minReps": 10,
+          "maxReps": 15
+        },
+        {
+          "templateId": "f51925b7-f627-4579-8fed-c6a55c5e59a1",
+          "name": "Romanian Deadlift",
+          "setsCompleted": 3,
+          "targetSets": 3,
+          "minReps": 6,
+          "maxReps": 10
+        },
+        {
+          "templateId": "8cde91f3-f215-45c5-84d6-d31be3e21d93",
+          "name": "Reverse Lunges",
+          "setsCompleted": 3,
+          "targetSets": 3,
+          "minReps": 8,
+          "maxReps": 10
+        }
+      ]
+    },
+    {
+      "id": "e69f4583-b6e7-4e5b-b50d-b5b11f6ef66c",
+      "startedAt": "2026-03-29T17:10:00.000Z",
+      "finishedAt": "2026-03-29T18:00:00.000Z",
+      "workoutType": "upperA",
+      "cycle": "cycle1",
+      "programBlockId": "64157d2e-0bc8-4161-953b-4cfe406315ad",
+      "exercises": [
+        {
+          "templateId": "980f0e6b-e51f-4893-9294-f251c6d0e76e",
+          "name": "Flat Dumbbell Press",
+          "setsCompleted": 3,
+          "targetSets": 3,
+          "minReps": 6,
+          "maxReps": 10
+        },
+        {
+          "templateId": "66dad001-33cc-4f41-8316-48c526ed3597",
+          "name": "Dumbbell Chest Supported Row",
+          "setsCompleted": 3,
+          "targetSets": 3,
+          "minReps": 8,
+          "maxReps": 12
+        },
+        {
+          "templateId": "262ab7f8-df81-48d5-8859-3379e3b1d68a",
+          "name": "Dumbbell Overhead Press",
+          "setsCompleted": 3,
+          "targetSets": 3,
+          "minReps": 8,
+          "maxReps": 15
+        }
+      ]
+    },
+    {
+      "id": "2158bb4f-dcbb-46d3-a9e0-5c22449d3659",
+      "startedAt": "2026-03-31T17:10:00.000Z",
+      "finishedAt": "2026-03-31T18:00:00.000Z",
+      "workoutType": "lowerA",
+      "cycle": "cycle1",
+      "programBlockId": "64157d2e-0bc8-4161-953b-4cfe406315ad",
+      "exercises": [
+        {
+          "templateId": "308b7ebb-d484-40b8-87bf-bbcca1b44fe9",
+          "name": "Barbell Back Squat",
+          "setsCompleted": 3,
+          "targetSets": 3,
+          "minReps": 6,
+          "maxReps": 10
+        },
+        {
+          "templateId": "f4ea9a5b-d271-46e4-9bfe-bbe383dbce98",
+          "name": "Seated Leg Curls",
+          "setsCompleted": 3,
+          "targetSets": 3,
+          "minReps": 10,
+          "maxReps": 15
+        },
+        {
+          "templateId": "b200adeb-2569-440e-998e-4a68f794ed21",
+          "name": "Calf Raises",
+          "setsCompleted": 3,
+          "targetSets": 3,
+          "minReps": 10,
+          "maxReps": 15
+        }
+      ]
+    },
+    {
+      "id": "6ed6ca58-a8b6-4b86-8996-cc2fed6ef829",
+      "startedAt": "2026-04-02T17:10:00.000Z",
+      "finishedAt": "2026-04-02T18:00:00.000Z",
+      "workoutType": "upperB",
+      "cycle": "cycle1",
+      "programBlockId": "64157d2e-0bc8-4161-953b-4cfe406315ad",
+      "exercises": [
+        {
+          "templateId": "e4a63a9f-b2f3-4d90-add3-41b4e2cf28bc",
+          "name": "Incline Dumbbell Press",
+          "setsCompleted": 3,
+          "targetSets": 3,
+          "minReps": 8,
+          "maxReps": 10
+        },
+        {
+          "templateId": "9a707b8e-4565-4be5-9b7a-a5c4753dd9e7",
+          "name": "Pull-Ups",
+          "setsCompleted": 3,
+          "targetSets": 3,
+          "minReps": 6,
+          "maxReps": 10
+        },
+        {
+          "templateId": "ceaccc38-b9bc-4230-9afe-4761fa81fa2c",
+          "name": "Dumbbell Lateral Raises",
+          "setsCompleted": 3,
+          "targetSets": 3,
+          "minReps": 10,
+          "maxReps": 20
+        }
+      ]
+    },
+    {
+      "id": "040bd111-eada-4e05-9d65-94d39299b21f",
+      "startedAt": "2026-04-04T17:10:00.000Z",
+      "finishedAt": "2026-04-04T18:00:00.000Z",
+      "workoutType": "lowerB",
+      "cycle": "cycle1",
+      "programBlockId": "64157d2e-0bc8-4161-953b-4cfe406315ad",
+      "exercises": [
+        {
+          "templateId": "2d3e6d6e-5f7f-468d-9351-067bbe21741c",
+          "name": "Barbell Hip Thrust",
+          "setsCompleted": 3,
+          "targetSets": 3,
+          "minReps": 10,
+          "maxReps": 15
+        },
+        {
+          "templateId": "f51925b7-f627-4579-8fed-c6a55c5e59a1",
+          "name": "Romanian Deadlift",
+          "setsCompleted": 3,
+          "targetSets": 3,
+          "minReps": 6,
+          "maxReps": 10
+        },
+        {
+          "templateId": "8cde91f3-f215-45c5-84d6-d31be3e21d93",
+          "name": "Reverse Lunges",
+          "setsCompleted": 3,
+          "targetSets": 3,
+          "minReps": 8,
+          "maxReps": 10
+        }
+      ]
+    }
+  ]
+}
