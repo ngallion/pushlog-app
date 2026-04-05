@@ -17,6 +17,8 @@ import type {
 import { Dumbbell, CheckCircle, Plus, XCircle, Timer } from "lucide-react";
 import confetti from "canvas-confetti";
 import { randomUUID } from "../lib/uuid";
+import { usePebbs } from "../hooks/usePebbs";
+import { Pebbs } from "../components/Pebbs";
 import {
   DndContext,
   closestCenter,
@@ -117,6 +119,14 @@ export function Today() {
     }),
   );
 
+  const {
+    level: pebbsLevel,
+    mood: pebbsMood,
+    withering: pebbsWithering,
+    triggerHype,
+    triggerCelebrate,
+  } = usePebbs(state.sessions);
+
   // ── Post-workout summary ─────────────────────────────────────────────────
   if (finishedSnapshot && !session) {
     return (
@@ -128,6 +138,9 @@ export function Today() {
         nextCycle={cycle}
         nextExercises={currentProgram?.workouts[cycle][workoutType] ?? []}
         onDismiss={() => setFinishedSnapshot(null)}
+        pebbsLevel={pebbsLevel}
+        pebbsMood={pebbsMood}
+        pebbsWithering={pebbsWithering}
       />
     );
   }
@@ -209,6 +222,7 @@ export function Today() {
     };
 
     const handleFinish = () => {
+      triggerCelebrate();
       confetti({
         particleCount: 80,
         spread: 70,
@@ -239,152 +253,159 @@ export function Today() {
     };
 
     return (
-      <div className="max-w-lg mx-auto px-4 pt-6 pb-28">
-        <div
-          className={`bg-zinc-800 border border-zinc-700 border-l-2 ${activeBorderColor[session.workoutType]} rounded-xl p-4 mb-6`}
-        >
-          <div className="flex items-center gap-3 mb-1">
-            <WorkoutTypeLabel
-              type={session.workoutType}
-              cycle={session.cycle}
-            />
-            <h1 className="text-2xl font-bold">
-              {getWorkoutLabel(session.workoutType)}
-            </h1>
-          </div>
-          <p className="text-zinc-400 text-sm mb-1">
-            {new Date(session.startedAt).toLocaleDateString("en-US", {
-              weekday: "long",
-              month: "long",
-              day: "numeric",
-            })}
-          </p>
-          <div className="text-xs text-zinc-500">
-            {completedExercises}/{totalExercises} exercises complete
-          </div>
-        </div>
-
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragEnd={handleDragEnd}
-        >
-          <SortableContext
-            items={session.exercises.map((e) => e.templateId)}
-            strategy={verticalListSortingStrategy}
-          >
-            {session.exercises.map((exercise, ei) => (
-              <SortableExerciseCard
-                key={exercise.templateId}
-                exercise={exercise}
-                exerciseIndex={ei}
-                lastSession={lastSessionForType}
-                onChange={handleChange}
-                onSwap={handleSwap}
-                onWeightChange={handleWeightChange}
-                onSetLogged={restDuration > 0 ? startTimer : undefined}
-              />
-            ))}
-          </SortableContext>
-        </DndContext>
-
-        {addingExercise ? (
-          <div className="flex gap-2 items-center mt-3">
-            <input
-              autoFocus
-              type="text"
-              placeholder="Exercise name"
-              value={newExerciseName}
-              onChange={(e) => setNewExerciseName(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") handleAddExercise();
-                if (e.key === "Escape") {
-                  setAddingExercise(false);
-                  setNewExerciseName("");
-                }
-              }}
-              className="flex-1 bg-zinc-800 rounded-lg px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:ring-1 focus:ring-violet-500"
-            />
-            <button
-              onClick={handleAddExercise}
-              className="bg-violet-600 hover:bg-violet-500 text-white px-3 py-2 rounded-lg text-sm"
-            >
-              Add
-            </button>
-            <button
-              onClick={() => {
-                setAddingExercise(false);
-                setNewExerciseName("");
-              }}
-              className="bg-zinc-800 hover:bg-zinc-700 text-zinc-300 px-3 py-2 rounded-lg text-sm"
-            >
-              Cancel
-            </button>
-          </div>
-        ) : (
-          <button
-            onClick={() => setAddingExercise(true)}
-            className="w-full border border-dashed border-zinc-600 rounded-xl py-3 text-zinc-400 hover:text-zinc-300 hover:border-zinc-500 flex items-center justify-center gap-2 transition-colors mt-3"
-          >
-            <Plus size={16} /> Add Exercise
-          </button>
-        )}
-
-        <button
-          onClick={handleFinish}
-          className="w-full bg-green-600 hover:bg-green-500 text-white rounded-xl py-4 font-bold text-lg flex items-center justify-center gap-2 transition-colors mt-3"
-        >
-          <CheckCircle size={22} />
-          Finish Workout
-        </button>
-
-        {confirmCancel ? (
-          <div className="flex gap-2 mt-3">
-            <button
-              onClick={() => dispatch({ type: "CANCEL_WORKOUT" })}
-              className="flex-1 bg-red-700 hover:bg-red-600 text-white rounded-xl py-3 font-semibold flex items-center justify-center gap-2 transition-colors"
-            >
-              <XCircle size={18} />
-              Discard Workout
-            </button>
-            <button
-              onClick={() => setConfirmCancel(false)}
-              className="flex-1 bg-zinc-700 hover:bg-zinc-600 text-zinc-300 rounded-xl py-3 font-semibold transition-colors"
-            >
-              Keep Going
-            </button>
-          </div>
-        ) : (
-          <button
-            onClick={() => setConfirmCancel(true)}
-            className="w-full text-zinc-500 hover:text-zinc-400 text-sm py-2 mt-1 transition-colors"
-          >
-            Cancel Workout
-          </button>
-        )}
-
-        {timerRunning && secondsLeft !== null && (
+      <>
+        <div className="max-w-lg mx-auto px-4 pt-6 pb-28">
           <div
-            className="fixed left-0 right-0 z-40 flex justify-center pointer-events-none"
-            style={{ bottom: "calc(5.5rem + env(safe-area-inset-bottom))" }}
+            className={`bg-zinc-800 border border-zinc-700 border-l-2 ${activeBorderColor[session.workoutType]} rounded-xl p-4 mb-6`}
           >
-            <div className="flex bg-opacity-95 items-center gap-3 bg-zinc-900 border border-zinc-800 rounded-full px-5 py-2.5 shadow-xl pointer-events-auto">
-              <Timer size={16} className="text-violet-400 shrink-0" />
-              <span className="text-sm text-zinc-400">Rest</span>
-              <span className="text-xl font-bold tabular-nums text-zinc-100">
-                {Math.floor(secondsLeft / 60)}:
-                {String(secondsLeft % 60).padStart(2, "0")}
-              </span>
-              <button
-                onClick={stopTimer}
-                className="text-xs text-zinc-400 hover:text-zinc-200 px-3 py-1.5 rounded-full bg-zinc-700 hover:bg-zinc-600 transition-colors"
-              >
-                Skip
-              </button>
+            <div className="flex items-center gap-3 mb-1">
+              <WorkoutTypeLabel
+                type={session.workoutType}
+                cycle={session.cycle}
+              />
+              <h1 className="text-2xl font-bold">
+                {getWorkoutLabel(session.workoutType)}
+              </h1>
+            </div>
+            <p className="text-zinc-400 text-sm mb-1">
+              {new Date(session.startedAt).toLocaleDateString("en-US", {
+                weekday: "long",
+                month: "long",
+                day: "numeric",
+              })}
+            </p>
+            <div className="text-xs text-zinc-500">
+              {completedExercises}/{totalExercises} exercises complete
             </div>
           </div>
-        )}
-      </div>
+
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext
+              items={session.exercises.map((e) => e.templateId)}
+              strategy={verticalListSortingStrategy}
+            >
+              {session.exercises.map((exercise, ei) => (
+                <SortableExerciseCard
+                  key={exercise.templateId}
+                  exercise={exercise}
+                  exerciseIndex={ei}
+                  lastSession={lastSessionForType}
+                  onChange={handleChange}
+                  onSwap={handleSwap}
+                  onWeightChange={handleWeightChange}
+                  onSetLogged={() => {
+                    if (restDuration > 0) startTimer();
+                    triggerHype();
+                  }}
+                />
+              ))}
+            </SortableContext>
+          </DndContext>
+
+          {addingExercise ? (
+            <div className="flex gap-2 items-center mt-3">
+              <input
+                autoFocus
+                type="text"
+                placeholder="Exercise name"
+                value={newExerciseName}
+                onChange={(e) => setNewExerciseName(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleAddExercise();
+                  if (e.key === "Escape") {
+                    setAddingExercise(false);
+                    setNewExerciseName("");
+                  }
+                }}
+                className="flex-1 bg-zinc-800 rounded-lg px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:ring-1 focus:ring-violet-500"
+              />
+              <button
+                onClick={handleAddExercise}
+                className="bg-violet-600 hover:bg-violet-500 text-white px-3 py-2 rounded-lg text-sm"
+              >
+                Add
+              </button>
+              <button
+                onClick={() => {
+                  setAddingExercise(false);
+                  setNewExerciseName("");
+                }}
+                className="bg-zinc-800 hover:bg-zinc-700 text-zinc-300 px-3 py-2 rounded-lg text-sm"
+              >
+                Cancel
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setAddingExercise(true)}
+              className="w-full border border-dashed border-zinc-600 rounded-xl py-3 text-zinc-400 hover:text-zinc-300 hover:border-zinc-500 flex items-center justify-center gap-2 transition-colors mt-3"
+            >
+              <Plus size={16} /> Add Exercise
+            </button>
+          )}
+
+          <button
+            onClick={handleFinish}
+            className="w-full bg-green-600 hover:bg-green-500 text-white rounded-xl py-4 font-bold text-lg flex items-center justify-center gap-2 transition-colors mt-3"
+          >
+            <CheckCircle size={22} />
+            Finish Workout
+          </button>
+
+          {confirmCancel ? (
+            <div className="flex gap-2 mt-3">
+              <button
+                onClick={() => dispatch({ type: "CANCEL_WORKOUT" })}
+                className="flex-1 bg-red-700 hover:bg-red-600 text-white rounded-xl py-3 font-semibold flex items-center justify-center gap-2 transition-colors"
+              >
+                <XCircle size={18} />
+                Discard Workout
+              </button>
+              <button
+                onClick={() => setConfirmCancel(false)}
+                className="flex-1 bg-zinc-700 hover:bg-zinc-600 text-zinc-300 rounded-xl py-3 font-semibold transition-colors"
+              >
+                Keep Going
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setConfirmCancel(true)}
+              className="w-full text-zinc-500 hover:text-zinc-400 text-sm py-2 mt-1 transition-colors"
+            >
+              Cancel Workout
+            </button>
+          )}
+
+          {timerRunning && secondsLeft !== null && (
+            <div
+              className="fixed left-0 right-0 z-40 flex justify-center pointer-events-none"
+              style={{ bottom: "calc(5.5rem + env(safe-area-inset-bottom))" }}
+            >
+              <div className="flex bg-opacity-95 items-center gap-3 bg-zinc-900 border border-zinc-800 rounded-full px-5 py-2.5 shadow-xl pointer-events-auto">
+                <Timer size={16} className="text-violet-400 shrink-0" />
+                <span className="text-sm text-zinc-400">Rest</span>
+                <span className="text-xl font-bold tabular-nums text-zinc-100">
+                  {Math.floor(secondsLeft / 60)}:
+                  {String(secondsLeft % 60).padStart(2, "0")}
+                </span>
+                <button
+                  onClick={stopTimer}
+                  className="text-xs text-zinc-400 hover:text-zinc-200 px-3 py-1.5 rounded-full bg-zinc-700 hover:bg-zinc-600 transition-colors"
+                >
+                  Skip
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <Pebbs level={pebbsLevel} mood={pebbsMood} withering={pebbsWithering} />
+      </>
     );
   }
 
@@ -443,50 +464,54 @@ export function Today() {
   };
 
   return (
-    <div className="max-w-lg mx-auto px-4 pt-8 pb-24">
-      <h1 className="text-3xl font-bold mb-1">Today</h1>
-      <p className="text-zinc-400 mb-6">
-        {new Date().toLocaleDateString("en-US", {
-          weekday: "long",
-          month: "long",
-          day: "numeric",
-        })}
-      </p>
+    <>
+      <div className="max-w-lg mx-auto px-4 pt-8 pb-24">
+        <h1 className="text-3xl font-bold mb-1">Today</h1>
+        <p className="text-zinc-400 mb-6">
+          {new Date().toLocaleDateString("en-US", {
+            weekday: "long",
+            month: "long",
+            day: "numeric",
+          })}
+        </p>
 
-      <div
-        className={`bg-zinc-800 border border-zinc-700 border-l-2 ${previewBorderColor[workoutType]} rounded-xl p-6 mb-4`}
-      >
-        <p className="text-zinc-400 text-sm mb-2">Next Workout</p>
-        <div className="flex items-center gap-3 mb-4">
-          <WorkoutTypeLabel type={workoutType} cycle={cycle} />
-          <span className="text-2xl font-bold">
-            {getWorkoutLabel(workoutType)}
+        <div
+          className={`bg-zinc-800 border border-zinc-700 border-l-2 ${previewBorderColor[workoutType]} rounded-xl p-6 mb-4`}
+        >
+          <p className="text-zinc-400 text-sm mb-2">Next Workout</p>
+          <div className="flex items-center gap-3 mb-4">
+            <WorkoutTypeLabel type={workoutType} cycle={cycle} />
+            <span className="text-2xl font-bold">
+              {getWorkoutLabel(workoutType)}
+            </span>
+          </div>
+          <div className="space-y-1 mb-6">
+            {exercises.map((ex) => (
+              <div key={ex.id} className="flex justify-between text-sm">
+                <span className="text-zinc-300">{ex.name}</span>
+                <span className="text-zinc-500">
+                  {ex.sets}×{ex.minReps}-{ex.maxReps}
+                </span>
+              </div>
+            ))}
+          </div>
+          <button
+            onClick={handleStart}
+            className="w-full bg-violet-600 hover:bg-violet-500 text-white rounded-lg py-3 font-semibold text-lg transition-colors"
+          >
+            Start Workout
+          </button>
+        </div>
+
+        <div className="flex justify-between text-xs text-zinc-500 px-1">
+          <span>{totalSessions} total workouts</span>
+          <span>
+            {getCycleLabel(cycle)} · {sessionsInCurrentBlock} of 8
           </span>
         </div>
-        <div className="space-y-1 mb-6">
-          {exercises.map((ex) => (
-            <div key={ex.id} className="flex justify-between text-sm">
-              <span className="text-zinc-300">{ex.name}</span>
-              <span className="text-zinc-500">
-                {ex.sets}×{ex.minReps}-{ex.maxReps}
-              </span>
-            </div>
-          ))}
-        </div>
-        <button
-          onClick={handleStart}
-          className="w-full bg-violet-600 hover:bg-violet-500 text-white rounded-lg py-3 font-semibold text-lg transition-colors"
-        >
-          Start Workout
-        </button>
       </div>
 
-      <div className="flex justify-between text-xs text-zinc-500 px-1">
-        <span>{totalSessions} total workouts</span>
-        <span>
-          {getCycleLabel(cycle)} · {sessionsInCurrentBlock} of 8
-        </span>
-      </div>
-    </div>
+      <Pebbs level={pebbsLevel} mood={pebbsMood} withering={pebbsWithering} />
+    </>
   );
 }
