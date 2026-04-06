@@ -1,3 +1,4 @@
+import React from "react";
 import type { PebbsMood } from "../hooks/usePebbs";
 
 interface PebbsProps {
@@ -5,14 +6,28 @@ interface PebbsProps {
   mood: PebbsMood;
   witherLevel: number;
   onTap?: () => void;
+  rolling?: "in" | "out" | null;
 }
 
 function Eyes({ mood }: { mood: PebbsMood }) {
-  const dot = (w: number, h: number, color: string, style?: React.CSSProperties) => (
-    <div className="rounded-full" style={{ width: w, height: h, backgroundColor: color, ...style }} />
+  const dot = (
+    w: number,
+    h: number,
+    color: string,
+    style?: React.CSSProperties,
+  ) => (
+    <div
+      className="rounded-full"
+      style={{ width: w, height: h, backgroundColor: color, ...style }}
+    />
   );
   const char = (ch: string, color: string, size = 9) => (
-    <span className="font-black leading-none select-none" style={{ color, fontSize: size }} >{ch}</span>
+    <span
+      className="font-black leading-none select-none"
+      style={{ color, fontSize: size }}
+    >
+      {ch}
+    </span>
   );
 
   switch (mood) {
@@ -20,8 +35,8 @@ function Eyes({ mood }: { mood: PebbsMood }) {
       // O_O — large wide open circles
       return (
         <div className="flex gap-[5px] items-center justify-center">
-          {dot(10, 10, "#3d3b39")}
-          {dot(10, 10, "#3d3b39")}
+          {dot(8, 8, "#3d3b39")}
+          {dot(8, 8, "#3d3b39")}
         </div>
       );
     case "hype":
@@ -36,8 +51,12 @@ function Eyes({ mood }: { mood: PebbsMood }) {
       // worried inward-tilted eyes
       return (
         <div className="flex gap-[5px] items-center justify-center">
-          {dot(7, 5, "#3d3b39", { transform: "rotate(15deg) translateY(-1px)" })}
-          {dot(7, 5, "#3d3b39", { transform: "rotate(-15deg) translateY(-1px)" })}
+          {dot(7, 5, "#3d3b39", {
+            transform: "rotate(15deg) translateY(-1px)",
+          })}
+          {dot(7, 5, "#3d3b39", {
+            transform: "rotate(-15deg) translateY(-1px)",
+          })}
         </div>
       );
     case "celebrate":
@@ -56,11 +75,10 @@ function Eyes({ mood }: { mood: PebbsMood }) {
         </div>
       );
     case "streak":
-      // warm orange fire eyes
       return (
         <div className="flex gap-[5px] items-center justify-center">
-          {dot(8, 8, "#c45e00")}
-          {dot(8, 8, "#c45e00")}
+          {dot(7, 4, "#3d3b39")}
+          {dot(7, 4, "#3d3b39")}
         </div>
       );
     case "comeback":
@@ -103,19 +121,37 @@ function Eyes({ mood }: { mood: PebbsMood }) {
           {char("@", "#3d3b39")}
         </div>
       );
-    case "shy":
-      // v downward-looking eyes
+    case "pet":
+      // happy squinting eyes — upward arcs
       return (
-        <div className="flex gap-[5px] items-center justify-center">
-          {char("v", "#3d3b39", 8)}
-          {char("v", "#3d3b39", 8)}
+        <div className="flex gap-[6px] items-center justify-center">
+          <div
+            style={{
+              width: 8,
+              height: 5,
+              border: "2px solid #3d3b39",
+              borderBottom: "none",
+              borderRadius: "50% 50% 0 0",
+            }}
+          />
+          <div
+            style={{
+              width: 8,
+              height: 5,
+              border: "2px solid #3d3b39",
+              borderBottom: "none",
+              borderRadius: "50% 50% 0 0",
+            }}
+          />
         </div>
       );
     case "wither":
       return (
         <div className="flex gap-[5px] items-center justify-center">
           {dot(6, 2, "#5a5755", { transform: "rotate(20deg) translateY(1px)" })}
-          {dot(6, 2, "#5a5755", { transform: "rotate(-20deg) translateY(1px)" })}
+          {dot(6, 2, "#5a5755", {
+            transform: "rotate(-20deg) translateY(1px)",
+          })}
         </div>
       );
     case "watching":
@@ -146,16 +182,52 @@ interface PebbleStyle {
 // Each array is ordered top (head) to bottom (base)
 const PEBBLE_STYLES: PebbleStyle[][] = [
   [
-    { bg: "#9e9891", shadow: "#706d69", borderRadius: "55% 45% 48% 52% / 50% 52% 48% 50%", w: 44, h: 36 },
+    {
+      bg: "#9e9891",
+      shadow: "#706d69",
+      borderRadius: "55% 45% 48% 52% / 50% 52% 48% 50%",
+      w: 44,
+      h: 36,
+    },
   ],
   [
-    { bg: "#a09b95", shadow: "#706d69", borderRadius: "55% 45% 48% 52% / 50% 54% 46% 50%", w: 38, h: 30 },
-    { bg: "#8a8580", shadow: "#605d59", borderRadius: "48% 52% 55% 45% / 52% 48% 50% 50%", w: 50, h: 40 },
+    {
+      bg: "#a09b95",
+      shadow: "#706d69",
+      borderRadius: "55% 45% 48% 52% / 50% 54% 46% 50%",
+      w: 38,
+      h: 30,
+    },
+    {
+      bg: "#8a8580",
+      shadow: "#605d59",
+      borderRadius: "48% 52% 55% 45% / 52% 48% 50% 50%",
+      w: 50,
+      h: 40,
+    },
   ],
   [
-    { bg: "#a8a39d", shadow: "#706d69", borderRadius: "55% 45% 50% 50% / 48% 54% 46% 52%", w: 34, h: 27 },
-    { bg: "#8a8580", shadow: "#605d59", borderRadius: "50% 50% 54% 46% / 52% 48% 50% 50%", w: 44, h: 35 },
-    { bg: "#7c7873", shadow: "#565350", borderRadius: "46% 54% 48% 52% / 50% 52% 48% 50%", w: 54, h: 43 },
+    {
+      bg: "#a8a39d",
+      shadow: "#706d69",
+      borderRadius: "55% 45% 50% 50% / 48% 54% 46% 52%",
+      w: 34,
+      h: 27,
+    },
+    {
+      bg: "#8a8580",
+      shadow: "#605d59",
+      borderRadius: "50% 50% 54% 46% / 52% 48% 50% 50%",
+      w: 44,
+      h: 35,
+    },
+    {
+      bg: "#7c7873",
+      shadow: "#565350",
+      borderRadius: "46% 54% 48% 52% / 50% 52% 48% 50%",
+      w: 54,
+      h: 43,
+    },
   ],
 ];
 
@@ -164,28 +236,98 @@ const WITHER_SHADOW = "#4a4846";
 
 function getAnimationClass(mood: PebbsMood): string {
   switch (mood) {
-    case "idle":       return "animate-pebbs-float";
-    case "watching":   return "";
-    case "hype":       return "animate-pebbs-bounce";
-    case "pumped":     return "animate-pebbs-pumped";
-    case "struggling": return "animate-pebbs-struggling";
-    case "celebrate":  return "animate-pebbs-celebrate";
-    case "pr":         return "animate-pebbs-pr";
-    case "streak":     return "animate-pebbs-streak";
-    case "comeback":   return "animate-pebbs-comeback";
-    case "sleepy":     return "animate-pebbs-sleepy";
-    case "excited":    return "animate-pebbs-excited";
-    case "bored":      return "animate-pebbs-bored";
-    case "zoomies":    return "animate-pebbs-zoomies";
-    case "shy":        return "animate-pebbs-shy";
-    case "wither":     return "animate-pebbs-wither";
+    case "idle":
+      return "animate-pebbs-float";
+    case "watching":
+      return "";
+    case "hype":
+      return "animate-pebbs-bounce";
+    case "pumped":
+      return "animate-pebbs-pumped";
+    case "struggling":
+      return "animate-pebbs-struggling";
+    case "celebrate":
+      return "animate-pebbs-celebrate";
+    case "pr":
+      return "animate-pebbs-pr";
+    case "streak":
+      return "animate-pebbs-streak";
+    case "comeback":
+      return "animate-pebbs-comeback";
+    case "sleepy":
+      return "animate-pebbs-sleepy";
+    case "excited":
+      return "animate-pebbs-excited";
+    case "bored":
+      return "animate-pebbs-bored";
+    case "zoomies":
+      return "animate-pebbs-zoomies";
+    case "pet":
+      return "animate-pebbs-pet";
+    case "wither":
+      return "animate-pebbs-wither";
   }
 }
 
-export function Pebbs({ level, mood, witherLevel, onTap }: PebbsProps) {
+export function Pebbs({
+  level,
+  mood,
+  witherLevel,
+  onTap,
+  rolling,
+}: PebbsProps) {
   const pebbles = PEBBLE_STYLES[level] ?? PEBBLE_STYLES[0];
-  const animClass = getAnimationClass(mood);
+  const isMulti = pebbles.length > 1;
   const withering = witherLevel > 0;
+
+  // For single pebble, animate the container.
+  // For multi-pebble with roll, pet, or celebrate, animate each rock individually.
+  const isPetMulti = mood === "pet" && isMulti;
+  const isCelebrateMulti = mood === "celebrate" && isMulti;
+  const isPumpedMulti = mood === "pumped" && isMulti;
+  let containerAnimClass = "";
+  if (!rolling && !isPetMulti && !isCelebrateMulti && !isPumpedMulti) {
+    containerAnimClass = getAnimationClass(mood);
+  } else if (!isMulti) {
+    containerAnimClass =
+      rolling === "in" ? "animate-pebbs-roll-in" : "animate-pebbs-roll-out";
+  }
+
+  // Per-pebble animation for rolling, pet, or celebrate with multiple rocks.
+  const getPebbleStyle = (i: number): React.CSSProperties => {
+    if (rolling && isMulti) {
+      const total = pebbles.length;
+      const rollDuration = rolling === "in" ? 600 : 500;
+      const stagger = rolling === "in" ? 100 : 80;
+      // Roll-in: base (last) arrives first; roll-out: head (first) leaves first
+      const delay = rolling === "in" ? (total - 1 - i) * stagger : i * stagger;
+      return {
+        animation: `pebbs-pebble-${rolling} ${rollDuration}ms ${rolling === "in" ? "cubic-bezier(0.34, 1.56, 0.64, 1)" : "ease-in"} ${delay}ms both`,
+      };
+    }
+    if (isPetMulti) {
+      // Head wiggles first, each rock below follows with a slight delay
+      return { animation: `pebbs-pet 1.5s ease-in-out ${i * 80}ms` };
+    }
+    if (isPumpedMulti) {
+      // Only the head pops — lower rocks stay still
+      return i === 0 ? { animation: "pebbs-pumped 0.9s ease-in-out" } : {};
+    }
+    if (isCelebrateMulti) {
+      const total = pebbles.length;
+      // head (i=0): big jump; last pebble: grounded bounce; middle: sway
+      const keyframe =
+        i === 0
+          ? "pebbs-celebrate-head"
+          : i === total - 1
+            ? "pebbs-celebrate-base"
+            : "pebbs-celebrate-mid";
+      // Stagger upward: base starts slightly before head so they lift together
+      const delay = (total - 1 - i) * 60;
+      return { animation: `${keyframe} 1.4s ease-in-out ${delay}ms` };
+    }
+    return {};
+  };
 
   return (
     <div
@@ -203,9 +345,39 @@ export function Pebbs({ level, mood, witherLevel, onTap }: PebbsProps) {
       </div>
 
       <div
-        className={`flex flex-col items-center cursor-pointer ${animClass}`}
+        className={`relative flex flex-col items-center cursor-pointer ${containerAnimClass}`}
         onClick={onTap}
       >
+        {mood === "pet" && (
+          <>
+            <span
+              style={{
+                position: "absolute",
+                top: -6,
+                left: "18%",
+                color: "#c0416a",
+                fontSize: 11,
+                animation: "pebbs-heart-float 1.2s ease-out forwards",
+                pointerEvents: "none",
+              }}
+            >
+              ♥
+            </span>
+            <span
+              style={{
+                position: "absolute",
+                top: -2,
+                right: "12%",
+                color: "#d4688a",
+                fontSize: 8,
+                animation: "pebbs-heart-float 1.5s ease-out 0.18s forwards",
+                pointerEvents: "none",
+              }}
+            >
+              ♥
+            </span>
+          </>
+        )}
         {pebbles.map((pebble, i) => (
           <div
             key={i}
@@ -221,6 +393,7 @@ export function Pebbs({ level, mood, witherLevel, onTap }: PebbsProps) {
               justifyContent: "center",
               position: "relative",
               zIndex: pebbles.length - i,
+              ...getPebbleStyle(i),
             }}
           >
             {i === 0 && <Eyes mood={mood} />}

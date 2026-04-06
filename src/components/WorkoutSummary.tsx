@@ -13,9 +13,6 @@ import type {
   Cycle,
   ExerciseTemplate,
 } from "../lib/types";
-import { Pebbs } from "./Pebbs";
-import type { PebbsMood } from "../hooks/usePebbs";
-
 interface Props {
   session: WorkoutSession;
   previousSession: WorkoutSession | null;
@@ -24,10 +21,6 @@ interface Props {
   nextCycle: Cycle;
   nextExercises: ExerciseTemplate[];
   onDismiss: () => void;
-  pebbsLevel: number;
-  pebbsMood: PebbsMood;
-  pebbsWitherLevel: number;
-  onPebbsTap?: () => void;
 }
 
 export function WorkoutSummary({
@@ -38,10 +31,6 @@ export function WorkoutSummary({
   nextCycle,
   nextExercises,
   onDismiss,
-  pebbsLevel,
-  pebbsMood,
-  pebbsWitherLevel,
-  onPebbsTap,
 }: Props) {
   const totalSets = session.exercises.reduce(
     (sum, e) => sum + e.setsCompleted,
@@ -236,13 +225,6 @@ export function WorkoutSummary({
           Done <ChevronRight size={18} />
         </button>
       </div>
-
-      <Pebbs
-        level={pebbsLevel}
-        mood={pebbsMood}
-        witherLevel={pebbsWitherLevel}
-        onTap={onPebbsTap}
-      />
     </>
   );
 }

@@ -17,8 +17,7 @@ import type {
 import { Dumbbell, CheckCircle, Plus, XCircle, Timer } from "lucide-react";
 import confetti from "canvas-confetti";
 import { randomUUID } from "../lib/uuid";
-import { usePebbs } from "../hooks/usePebbs";
-import { Pebbs } from "../components/Pebbs";
+import { usePebbsContext } from "../context/PebbsContext";
 import {
   DndContext,
   closestCenter,
@@ -123,17 +122,13 @@ export function Today() {
   );
 
   const {
-    level: pebbsLevel,
-    mood: pebbsMood,
-    witherLevel: pebbsWitherLevel,
     triggerHype,
     triggerPumped,
     triggerStruggling,
     triggerCelebrate,
     triggerPR,
     triggerBored,
-    triggerShy,
-  } = usePebbs(state.sessions);
+  } = usePebbsContext();
 
   // Bored: fires after 30s idle on the pre-workout preview
   useEffect(() => {
@@ -153,10 +148,6 @@ export function Today() {
         nextCycle={cycle}
         nextExercises={currentProgram?.workouts[cycle][workoutType] ?? []}
         onDismiss={() => setFinishedSnapshot(null)}
-        pebbsLevel={pebbsLevel}
-        pebbsMood={pebbsMood}
-        pebbsWitherLevel={pebbsWitherLevel}
-        onPebbsTap={triggerShy}
       />
     );
   }
@@ -438,13 +429,6 @@ export function Today() {
             </div>
           )}
         </div>
-
-        <Pebbs
-          level={pebbsLevel}
-          mood={pebbsMood}
-          witherLevel={pebbsWitherLevel}
-          onTap={triggerShy}
-        />
       </>
     );
   }
@@ -550,13 +534,6 @@ export function Today() {
           </span>
         </div>
       </div>
-
-      <Pebbs
-        level={pebbsLevel}
-        mood={pebbsMood}
-        witherLevel={pebbsWitherLevel}
-        onTap={triggerShy}
-      />
     </>
   );
 }

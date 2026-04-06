@@ -15,11 +15,17 @@ export type PebbsMood =
   | "sleepy"
   | "bored"
   | "zoomies"
-  | "shy"
+  | "pet"
   | "wither";
 
 const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
-const AMBIENT_MOODS = new Set<PebbsMood>(["idle", "sleepy", "streak", "excited", "wither"]);
+const AMBIENT_MOODS = new Set<PebbsMood>([
+  "idle",
+  "sleepy",
+  "streak",
+  "excited",
+  "wither",
+]);
 
 function getLevel(finishedCount: number): number {
   if (finishedCount >= 16) return 2;
@@ -32,7 +38,9 @@ function getWitherLevel(sessions: WorkoutSession[]): number {
   if (finished.length === 0) return 0;
   const finishedCount = finished.length;
   const now = Date.now();
-  const earliest = Math.min(...finished.map((s) => new Date(s.finishedAt!).getTime()));
+  const earliest = Math.min(
+    ...finished.map((s) => new Date(s.finishedAt!).getTime()),
+  );
   let zeroWeekCount = 0;
   let windowEnd = now;
   while (windowEnd > earliest) {
@@ -47,7 +55,10 @@ function getWitherLevel(sessions: WorkoutSession[]): number {
   return Math.max(0, zeroWeekCount - Math.floor(finishedCount / 4));
 }
 
-function computeAmbientMood(sessions: WorkoutSession[], withering: boolean): PebbsMood {
+function computeAmbientMood(
+  sessions: WorkoutSession[],
+  withering: boolean,
+): PebbsMood {
   if (withering) return "wither";
 
   const hour = new Date().getHours();
@@ -63,7 +74,8 @@ function computeAmbientMood(sessions: WorkoutSession[], withering: boolean): Peb
   const last = finished.at(-1);
   if (last) {
     const daysSince =
-      (Date.now() - new Date(last.finishedAt!).getTime()) / (1000 * 60 * 60 * 24);
+      (Date.now() - new Date(last.finishedAt!).getTime()) /
+      (1000 * 60 * 60 * 24);
     if (daysSince >= 2 && daysSince < 7) return "excited";
   }
 
@@ -85,7 +97,9 @@ export function usePebbs(sessions: WorkoutSession[]) {
   const inTransientRef = useRef(false);
   const needsComebackRef = useRef(false);
 
-  const [mood, setMood] = useState<PebbsMood>(withering ? "wither" : "watching");
+  const [mood, setMood] = useState<PebbsMood>(
+    withering ? "wither" : "watching",
+  );
 
   // Run a transient mood then return to ambient (or comeback if queued)
   const transient = useCallback((newMood: PebbsMood, duration: number) => {
@@ -182,8 +196,8 @@ export function usePebbs(sessions: WorkoutSession[]) {
     if (!inTransientRef.current) setMood("bored");
   }, []);
 
-  const triggerShy = useCallback(() => {
-    transient("shy", 1500);
+  const triggerPet = useCallback(() => {
+    transient("pet", 1500);
   }, [transient]);
 
   return {
@@ -197,6 +211,6 @@ export function usePebbs(sessions: WorkoutSession[]) {
     triggerCelebrate,
     triggerPR,
     triggerBored,
-    triggerShy,
+    triggerPet,
   };
 }
