@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useApp } from "../context/AppContext";
 import { useNextWorkout } from "../hooks/useNextWorkout";
@@ -17,8 +17,7 @@ import type {
 import { Dumbbell, CheckCircle, Plus, XCircle, Timer } from "lucide-react";
 import confetti from "canvas-confetti";
 import { randomUUID } from "../lib/uuid";
-import { usePebbs } from "../hooks/usePebbs";
-import { Pebbs } from "../components/Pebbs";
+import { usePebbsContext } from "../context/PebbsContext";
 import {
   DndContext,
   closestCenter,
@@ -44,6 +43,7 @@ function SortableExerciseCard({
   onSwap,
   onWeightChange,
   onSetLogged,
+  onSetDecremented,
 }: {
   exercise: LoggedExercise;
   exerciseIndex: number;
@@ -52,6 +52,7 @@ function SortableExerciseCard({
   onSwap: (i: number, name: string) => void;
   onWeightChange: (i: number, weight: number | undefined) => void;
   onSetLogged?: () => void;
+  onSetDecremented?: () => void;
 }) {
   const {
     attributes,
@@ -76,6 +77,7 @@ function SortableExerciseCard({
         onSwap={onSwap}
         onWeightChange={onWeightChange}
         onSetLogged={onSetLogged}
+        onSetDecremented={onSetDecremented}
         dragHandleAttributes={attributes as unknown as Record<string, unknown>}
         dragHandleListeners={listeners as unknown as Record<string, unknown>}
       />
@@ -120,12 +122,20 @@ export function Today() {
   );
 
   const {
-    level: pebbsLevel,
-    mood: pebbsMood,
-    witherLevel: pebbsWitherLevel,
     triggerHype,
+    triggerPumped,
+    triggerStruggling,
     triggerCelebrate,
-  } = usePebbs(state.sessions);
+    triggerPR,
+    triggerBored,
+  } = usePebbsContext();
+
+  // Bored: fires after 30s idle on the pre-workout preview
+  useEffect(() => {
+    if (session) return;
+    const t = setTimeout(triggerBored, 30_000);
+    return () => clearTimeout(t);
+  }, [!!session, triggerBored]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Post-workout summary ─────────────────────────────────────────────────
   if (finishedSnapshot && !session) {
@@ -138,9 +148,6 @@ export function Today() {
         nextCycle={cycle}
         nextExercises={currentProgram?.workouts[cycle][workoutType] ?? []}
         onDismiss={() => setFinishedSnapshot(null)}
-        pebbsLevel={pebbsLevel}
-        pebbsMood={pebbsMood}
-        pebbsWitherLevel={pebbsWitherLevel}
       />
     );
   }
@@ -222,7 +229,19 @@ export function Today() {
     };
 
     const handleFinish = () => {
-      triggerCelebrate();
+      const hasPRs = session.exercises.some((ex) => {
+        if (!ex.startingWeight) return false;
+        const maxPrev = state.sessions
+          .flatMap((s) =>
+            s.exercises.filter(
+              (e) => e.templateId === ex.templateId || e.name === ex.name,
+            ),
+          )
+          .reduce((max, e) => Math.max(max, e.startingWeight ?? 0), 0);
+        return ex.startingWeight > maxPrev;
+      });
+      if (hasPRs) triggerPR();
+      else triggerCelebrate();
       confetti({
         particleCount: 80,
         spread: 70,
@@ -299,8 +318,15 @@ export function Today() {
                   onWeightChange={handleWeightChange}
                   onSetLogged={() => {
                     if (restDuration > 0) startTimer();
-                    triggerHype();
+                    const isFirstSet =
+                      session.exercises.reduce(
+                        (sum, e) => sum + e.setsCompleted,
+                        0,
+                      ) === 0;
+                    if (isFirstSet) triggerPumped();
+                    else triggerHype();
                   }}
+                  onSetDecremented={triggerStruggling}
                 />
               ))}
             </SortableContext>
@@ -403,12 +429,6 @@ export function Today() {
             </div>
           )}
         </div>
-
-        <Pebbs
-          level={pebbsLevel}
-          mood={pebbsMood}
-          witherLevel={pebbsWitherLevel}
-        />
       </>
     );
   }
@@ -514,12 +534,6 @@ export function Today() {
           </span>
         </div>
       </div>
-
-      <Pebbs
-        level={pebbsLevel}
-        mood={pebbsMood}
-        witherLevel={pebbsWitherLevel}
-      />
     </>
   );
 }

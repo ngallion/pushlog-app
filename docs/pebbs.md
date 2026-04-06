@@ -14,73 +14,126 @@ Pebbs is rendered as a stack of rounded pebble shapes. Its visual form grows wit
 | 1     | 6–15               | Head + body (two pebbles)          |
 | 2     | 16+                | Head + body + base (three pebbles) |
 
-Pebbs is always visible on the **Today** screen and on the **post-workout summary**.
+Withering reduces the effective level (see below), so a level-2 Pebbs with `witherLevel = 1` displays at level 1.
+
+Pebbs is visible on the **Today** screen (both the pre-workout preview and during an active session) and on the **post-workout summary**. Clicking or tapping Pebbs directly triggers the `pet` mood.
 
 ---
 
 ## Moods
 
-Pebbs has five mood states, each with distinct eye expressions and animations:
+Pebbs has 15 mood states split into two categories:
 
-| Mood        | Eyes              | Trigger                              | Animation                                 |
-| ----------- | ----------------- | ------------------------------------ | ----------------------------------------- |
-| `idle`      | Half-closed       | Default after 2 s of inactivity      | Float (gentle Y oscillation, 3.5 s loop)  |
-| `watching`  | Full open circles | Workout view loads                   | None                                      |
-| `hype`      | Caret `^^`        | A set is logged                      | Bounce with squash/stretch (0.65 s)       |
-| `celebrate` | Gold stars `★★`   | Workout finished                     | Spin + scale pulse (3 s)                  |
-| `wither`    | Closed/sad dashes | 7+ days without completing a workout | Opacity + desaturation pulse (2.5 s loop) |
+### Transient moods
 
-Moods transition back to `idle` automatically after their animation completes (2 s for `watching`, 700 ms for `hype`, 3 s for `celebrate`). The `wither` mood persists until a workout is completed.
+These override the ambient mood for a fixed duration, then return to ambient.
+
+| Mood         | Eyes                 | Trigger                                               | Duration | Animation                  |
+| ------------ | -------------------- | ----------------------------------------------------- | -------- | -------------------------- |
+| `watching`   | Full open circles    | On page load                                          | 2 s      | None                       |
+| `pumped`     | Extra-large circles  | Very first set of a session                           | 1.2 s    | Big spring jump            |
+| `hype`       | Caret `^^`           | Any subsequent set logged                             | 0.7 s    | Bounce with squash/stretch |
+| `struggling` | Worried inward ovals | Tap minus below target (set decremented)              | 1.5 s    | Side-to-side shake         |
+| `celebrate`  | Gold stars `★★`      | Workout finished (no PRs)                             | 3 s      | Spin + scale wiggle        |
+| `pr`         | Gold diamonds `✦✦`   | Workout finished with at least one weight PR          | 3.5 s    | Bigger spin + scale wiggle |
+| `comeback`   | Wide green circles   | Wither just cleared; queued to play after celebrate   | 2 s      | Springs up from below      |
+| `zoomies`    | Spiral `@@`          | Automatic, random ~every 4 min while in ambient state | 1.5 s    | Chaotic spin and scale     |
+| `pet`        | Pink hearts `♥♥`   | Pebbs is tapped/clicked directly                      | 1.5 s    | Happy wobbly wiggle        |
+
+### Ambient moods
+
+These are persistent background states derived from session data or time of day. They are active whenever no transient mood is running.
+
+| Mood      | Eyes                  | Condition                                | Animation                                 |
+| --------- | --------------------- | ---------------------------------------- | ----------------------------------------- |
+| `idle`    | Half-closed           | Default                                  | Gentle Y float (3.5 s loop)               |
+| `streak`  | Warm orange circles   | 3+ workouts completed in the last 7 days | Warm brightness pulse (2.5 s loop)        |
+| `excited` | Violet sparkles `✸✸`  | 2–6 days since last workout              | Energetic bounce (1.2 s loop)             |
+| `sleepy`  | Thin horizontal lines | Hour is 22:00–04:59                      | Slow tilted float (5 s loop)              |
+| `bored`   | Tiny sideways dots    | 30 s idle on pre-workout preview screen  | Slow lean to the side (4 s loop)          |
+| `wither`  | Droopy dashes         | Withering (see below)                    | Opacity + desaturation pulse (2.5 s loop) |
+
+The ambient mood is recalculated every minute (for time-based changes like `sleepy`) and whenever the completed session count changes (for `streak` / `excited`).
 
 ---
 
 ## Withering
 
-If 7 or more days pass without finishing a workout, Pebbs enters a **withered** state:
+Withering is a severity score computed from rolling 7-day windows in session history. Each consecutive week with zero completed workouts increments the score; every 4 completed workouts decrease it by 1.
 
-- Visual colors desaturate and darken.
-- The `pebbs-wither` animation pulses opacity and saturation continuously.
-- `triggerHype()` is suppressed — logging a set will not animate Pebbs while it is withering.
-- Completing a workout ends the withered state immediately.
+| Effect          | Behaviour                                                                                                                                       |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| Visual          | Colors desaturate and darken; level decreases by `witherLevel`                                                                                  |
+| Mood            | Ambient mood locked to `wither`                                                                                                                 |
+| `triggerHype()` | Suppressed — logging a set does not animate Pebbs while withering                                                                               |
+| Recovery        | Completing a workout reduces `witherLevel`; when it reaches 0, Pebbs queues a `comeback` mood to play after the celebrate/PR animation finishes |
 
 ---
 
-## Interaction Points
+## Hook API
 
-Pebbs is driven by the `usePebbs` hook (`src/hooks/usePebbs.ts`), which reads from the full session history to compute level and withering status. The hook exposes:
+Pebbs is driven by the `usePebbs` hook (`src/hooks/usePebbs.ts`):
 
 ```typescript
-const { level, mood, withering, triggerHype, triggerCelebrate } =
-  usePebbs(sessions);
+const {
+  level,
+  witherLevel,
+  mood,
+  withering,
+  triggerHype,
+  triggerPumped,
+  triggerStruggling,
+  triggerCelebrate,
+  triggerPR,
+  triggerBored,
+  triggerPet,
+} = usePebbs(sessions);
 ```
 
-| Hook value / method  | Type          | Description                                     |
-| -------------------- | ------------- | ----------------------------------------------- |
-| `level`              | `0 \| 1 \| 2` | Visual growth level                             |
-| `mood`               | `PebbsMood`   | Current eye/animation state                     |
-| `withering`          | `boolean`     | Whether Pebbs is in the withered state          |
-| `triggerHype()`      | `() => void`  | Called when a set is logged; no-op if withering |
-| `triggerCelebrate()` | `() => void`  | Called when the workout is finished             |
+| Value / method        | Type          | Description                                                                    |
+| --------------------- | ------------- | ------------------------------------------------------------------------------ |
+| `level`               | `0 \| 1 \| 2` | Visual growth level (already adjusted for wither)                              |
+| `witherLevel`         | `number`      | Wither severity (0 = healthy)                                                  |
+| `mood`                | `PebbsMood`   | Current mood state                                                             |
+| `withering`           | `boolean`     | `witherLevel > 0`                                                              |
+| `triggerHype()`       | `() => void`  | Subsequent set logged; no-op if withering                                      |
+| `triggerPumped()`     | `() => void`  | First set of the session; no-op if withering                                   |
+| `triggerStruggling()` | `() => void`  | Set decremented below target; no-op if withering                               |
+| `triggerCelebrate()`  | `() => void`  | Workout finished without PRs                                                   |
+| `triggerPR()`         | `() => void`  | Workout finished with at least one PR                                          |
+| `triggerBored()`      | `() => void`  | Called after 30 s on pre-workout preview; stays until cleared by any transient |
+| `triggerPet()`        | `() => void`  | Pebbs tapped — shows heart eyes and happy wiggle                               |
 
-`Today.tsx` calls `triggerHype()` each time a set is logged and `triggerCelebrate()` when `FINISH_WORKOUT` is dispatched.
+`zoomies` and `comeback` are managed entirely inside the hook and have no external trigger.
+
+---
+
+## Call Sites
+
+| File                                | What it calls                                                                                                                                                                                                                |
+| ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/pages/Today.tsx`               | `triggerPumped` / `triggerHype` on set logged; `triggerStruggling` on set decremented; `triggerPR` or `triggerCelebrate` on finish (PR check happens inline); `triggerBored` after 30 s idle; `triggerPet` passed as `onTap` |
+| `src/components/WorkoutSummary.tsx` | Receives `onPebbsTap` → `triggerPet`                                                                                                                                                                                         |
+| `src/components/ExerciseCard.tsx`   | Calls `onSetLogged()` and `onSetDecremented()` callbacks (passed in from Today)                                                                                                                                              |
 
 ---
 
 ## Implementation Files
 
-| File                                | Role                                                                                   |
-| ----------------------------------- | -------------------------------------------------------------------------------------- |
-| `src/components/Pebbs.tsx`          | SVG rendering, eye expressions, level shapes                                           |
-| `src/hooks/usePebbs.ts`             | State logic: level, mood transitions, withering                                        |
-| `src/index.css`                     | Keyframe animations (`pebbs-float`, `pebbs-bounce`, `pebbs-celebrate`, `pebbs-wither`) |
-| `src/pages/Today.tsx`               | Mounts Pebbs; calls `triggerHype` / `triggerCelebrate`                                 |
-| `src/components/WorkoutSummary.tsx` | Displays Pebbs on the post-workout summary screen                                      |
+| File                                | Role                                                                 |
+| ----------------------------------- | -------------------------------------------------------------------- |
+| `src/components/Pebbs.tsx`          | CSS rendering, eye expressions per mood, level shapes, `onTap` prop  |
+| `src/hooks/usePebbs.ts`             | All state logic: ambient system, transient triggers, wither, zoomies |
+| `src/index.css`                     | 14 keyframe animations (`pebbs-*`)                                   |
+| `src/pages/Today.tsx`               | Mounts Pebbs on preview + active workout screens                     |
+| `src/components/WorkoutSummary.tsx` | Mounts Pebbs on the post-workout summary screen                      |
+| `src/components/ExerciseCard.tsx`   | Fires `onSetLogged` / `onSetDecremented` callbacks                   |
 
 ---
 
 ## Design Notes
 
-- Pebbs is decorative and non-interactive beyond the hover tooltip showing its name.
-- It is fixed to the bottom-right, above the bottom nav bar (`z-index: 30`).
-- Colors are intentionally muted grays (`#9e9891`, `#8a8580`, `#7c7873`) to stay unobtrusive; celebration eyes use gold (`#92701a`) as the only accent.
-- The level system is tied to `sessions` from the global state — it counts all completed workouts across all program blocks, not just the current one.
+- Pebbs is fixed to the bottom-right, above the bottom nav bar (`z-index: 30`).
+- Colors are intentionally muted stone grays to stay unobtrusive. Accent colors are used only for specific moods: gold for celebrate/PR eyes, orange for streak, green for comeback, violet for excited.
+- Level is computed from all completed workouts across all program blocks, not just the current one.
+- Ambient mood priority order (highest to lowest): `wither` → `sleepy` → `streak` → `excited` → `idle`.

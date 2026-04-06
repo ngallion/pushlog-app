@@ -16,6 +16,7 @@ interface Props {
   onSwap: (exerciseIndex: number, newName: string) => void;
   onWeightChange: (exerciseIndex: number, weight: number | undefined) => void;
   onSetLogged?: () => void;
+  onSetDecremented?: () => void;
   dragHandleAttributes?: Record<string, unknown>;
   dragHandleListeners?: Record<string, unknown>;
 }
@@ -28,6 +29,7 @@ export function ExerciseCard({
   onSwap,
   onWeightChange,
   onSetLogged,
+  onSetDecremented,
   dragHandleAttributes,
   dragHandleListeners,
 }: Props) {
@@ -95,6 +97,8 @@ export function ExerciseCard({
         setTimeout(() => setBonusAnim(null), 900);
       }
       onSetLogged?.();
+    } else if (delta < 0 && next < exercise.targetSets) {
+      onSetDecremented?.();
     }
   };
 
