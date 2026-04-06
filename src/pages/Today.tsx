@@ -555,6 +555,7 @@ export function Today() {
         level={pebbsLevel}
         mood={pebbsMood}
         witherLevel={pebbsWitherLevel}
+        onTap={triggerShy}
       />
     </>
   );
