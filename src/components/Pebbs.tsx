@@ -39,6 +39,7 @@ function Eyes({ mood }: { mood: PebbsMood }) {
           {dot(8, 8, "#3d3b39")}
         </div>
       );
+    case "celebrate":
     case "hype":
       // ^ ^ excited
       return (
@@ -57,21 +58,6 @@ function Eyes({ mood }: { mood: PebbsMood }) {
           {dot(7, 5, "#3d3b39", {
             transform: "rotate(-15deg) translateY(-1px)",
           })}
-        </div>
-      );
-    case "celebrate":
-      return (
-        <div className="flex gap-[5px] items-center justify-center">
-          {char("★", "#92701a")}
-          {char("★", "#92701a")}
-        </div>
-      );
-    case "pr":
-      // ✦ gold diamond — distinct from celebrate
-      return (
-        <div className="flex gap-[5px] items-center justify-center">
-          {char("✦", "#b8860b", 10)}
-          {char("✦", "#b8860b", 10)}
         </div>
       );
     case "streak":
@@ -121,6 +107,7 @@ function Eyes({ mood }: { mood: PebbsMood }) {
           {char("@", "#3d3b39")}
         </div>
       );
+    case "pr":
     case "pet":
       // happy squinting eyes — upward arcs
       return (
@@ -280,53 +267,41 @@ export function Pebbs({
   const isMulti = pebbles.length > 1;
   const withering = witherLevel > 0;
 
-  // For single pebble, animate the container.
-  // For multi-pebble with roll, pet, or celebrate, animate each rock individually.
-  const isPetMulti = mood === "pet" && isMulti;
-  const isCelebrateMulti = mood === "celebrate" && isMulti;
-  const isPumpedMulti = mood === "pumped" && isMulti;
+  // Moods that animate each pebble individually at higher levels
+  const PER_PEBBLE_MOODS = new Set<PebbsMood>(["pet", "celebrate", "pumped", "pr"]);
+  const isPerPebble = isMulti && PER_PEBBLE_MOODS.has(mood);
+
   let containerAnimClass = "";
-  if (!rolling && !isPetMulti && !isCelebrateMulti && !isPumpedMulti) {
+  if (!rolling && !isPerPebble) {
     containerAnimClass = getAnimationClass(mood);
   } else if (!isMulti) {
     containerAnimClass =
       rolling === "in" ? "animate-pebbs-roll-in" : "animate-pebbs-roll-out";
   }
 
-  // Per-pebble animation for rolling, pet, or celebrate with multiple rocks.
   const getPebbleStyle = (i: number): React.CSSProperties => {
     if (rolling && isMulti) {
-      const total = pebbles.length;
       const rollDuration = rolling === "in" ? 600 : 500;
       const stagger = rolling === "in" ? 100 : 80;
-      // Roll-in: base (last) arrives first; roll-out: head (first) leaves first
-      const delay = rolling === "in" ? (total - 1 - i) * stagger : i * stagger;
+      const delay = rolling === "in" ? (pebbles.length - 1 - i) * stagger : i * stagger;
       return {
         animation: `pebbs-pebble-${rolling} ${rollDuration}ms ${rolling === "in" ? "cubic-bezier(0.34, 1.56, 0.64, 1)" : "ease-in"} ${delay}ms both`,
       };
     }
-    if (isPetMulti) {
-      // Head wiggles first, each rock below follows with a slight delay
-      return { animation: `pebbs-pet 1.5s ease-in-out ${i * 80}ms` };
-    }
-    if (isPumpedMulti) {
-      // Only the head pops — lower rocks stay still
-      return i === 0 ? { animation: "pebbs-pumped 0.9s ease-in-out" } : {};
-    }
-    if (isCelebrateMulti) {
-      const total = pebbles.length;
-      // head (i=0): big jump; last pebble: grounded bounce; middle: sway
+    if (!isPerPebble) return {};
+    // Returns animation for moods where head/mid/base each get their own keyframe
+    const layered = (prefix: string, duration: string): React.CSSProperties => {
       const keyframe =
-        i === 0
-          ? "pebbs-celebrate-head"
-          : i === total - 1
-            ? "pebbs-celebrate-base"
-            : "pebbs-celebrate-mid";
-      // Stagger upward: base starts slightly before head so they lift together
-      const delay = (total - 1 - i) * 60;
-      return { animation: `${keyframe} 1.4s ease-in-out ${delay}ms` };
+        i === 0 ? `${prefix}-head` : i === pebbles.length - 1 ? `${prefix}-base` : `${prefix}-mid`;
+      return { animation: `${keyframe} ${duration} ease-in-out ${(pebbles.length - 1 - i) * 60}ms` };
+    };
+    switch (mood) {
+      case "pet":       return { animation: `pebbs-pet 1.5s ease-in-out ${i * 80}ms` };
+      case "pumped":    return i === 0 ? { animation: "pebbs-pumped 0.9s ease-in-out" } : {};
+      case "celebrate": return layered("pebbs-celebrate", "1.4s");
+      case "pr":        return layered("pebbs-pr", "1.8s");
+      default:          return {};
     }
-    return {};
   };
 
   return (
@@ -377,6 +352,22 @@ export function Pebbs({
               ♥
             </span>
           </>
+        )}
+        {mood === "pr" && (
+          <span
+            style={{
+              position: "absolute",
+              top: -14,
+              left: "50%",
+              transform: "translateX(-50%)",
+              fontSize: 14,
+              lineHeight: 1,
+              pointerEvents: "none",
+              userSelect: "none",
+            }}
+          >
+            👑
+          </span>
         )}
         {pebbles.map((pebble, i) => (
           <div
