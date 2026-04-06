@@ -27,6 +27,7 @@ interface Props {
   pebbsLevel: number;
   pebbsMood: PebbsMood;
   pebbsWitherLevel: number;
+  onPebbsTap?: () => void;
 }
 
 export function WorkoutSummary({
@@ -40,6 +41,7 @@ export function WorkoutSummary({
   pebbsLevel,
   pebbsMood,
   pebbsWitherLevel,
+  onPebbsTap,
 }: Props) {
   const totalSets = session.exercises.reduce(
     (sum, e) => sum + e.setsCompleted,
@@ -239,6 +241,7 @@ export function WorkoutSummary({
         level={pebbsLevel}
         mood={pebbsMood}
         witherLevel={pebbsWitherLevel}
+        onTap={onPebbsTap}
       />
     </>
   );
