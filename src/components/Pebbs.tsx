@@ -373,22 +373,6 @@ export function Pebbs({
             </span>
           </>
         )}
-        {mood === "pr" && (
-          <span
-            style={{
-              position: "absolute",
-              top: -14,
-              left: "50%",
-              transform: "translateX(-50%)",
-              fontSize: 14,
-              lineHeight: 1,
-              pointerEvents: "none",
-              userSelect: "none",
-            }}
-          >
-            👑
-          </span>
-        )}
         {pebbles.map((pebble, i) => (
           <div
             key={i}
@@ -408,6 +392,22 @@ export function Pebbs({
             }}
           >
             {i === 0 && <Eyes mood={mood} />}
+            {i === 0 && mood === "pr" && (
+              <span
+                style={{
+                  position: "absolute",
+                  top: -14,
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                  fontSize: 14,
+                  lineHeight: 1,
+                  pointerEvents: "none",
+                  userSelect: "none",
+                }}
+              >
+                👑
+              </span>
+            )}
           </div>
         ))}
       </div>
