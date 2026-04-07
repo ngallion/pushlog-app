@@ -8,9 +8,29 @@ function formatTime(seconds: number): string {
 
 export { formatTime };
 
+function fireRestCompleteAlert() {
+  if (
+    typeof Notification !== "undefined" &&
+    Notification.permission === "granted"
+  ) {
+    new Notification("Rest time's up!", {
+      body: "Time for your next set.",
+      silent: false,
+      tag: "rest-timer",
+      requireInteraction: true,
+    });
+  }
+
+  if (typeof navigator !== "undefined" && navigator.vibrate) {
+    navigator.vibrate([200, 100, 200, 100, 400]);
+  }
+}
+
 export function useRestTimer(durationSeconds: number) {
   const [secondsLeft, setSecondsLeft] = useState<number | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  // Tracks whether the timer just expired so we can fire alerts in an effect
+  const justExpiredRef = useRef(false);
 
   const stop = useCallback(() => {
     if (intervalRef.current) {
@@ -31,6 +51,7 @@ export function useRestTimer(durationSeconds: number) {
       Notification.requestPermission().catch(() => {});
     }
 
+    justExpiredRef.current = false;
     if (intervalRef.current) clearInterval(intervalRef.current);
     setSecondsLeft(durationSeconds);
 
@@ -39,27 +60,22 @@ export function useRestTimer(durationSeconds: number) {
         if (prev === null || prev <= 1) {
           clearInterval(intervalRef.current!);
           intervalRef.current = null;
-
-          if (
-            typeof Notification !== "undefined" &&
-            Notification.permission === "granted"
-          ) {
-            new Notification("Rest time's up!", {
-              body: "Time for your next set.",
-              silent: false,
-            });
-          }
-
-          if (typeof navigator !== "undefined" && navigator.vibrate) {
-            navigator.vibrate([200, 100, 200]);
-          }
-
+          justExpiredRef.current = true;
           return null;
         }
         return prev - 1;
       });
     }, 1000);
   }, [durationSeconds]);
+
+  // Fire notification + vibrate outside the setState updater so browser APIs
+  // are called in a normal execution context, not inside React's batching.
+  useEffect(() => {
+    if (secondsLeft === null && justExpiredRef.current) {
+      justExpiredRef.current = false;
+      fireRestCompleteAlert();
+    }
+  }, [secondsLeft]);
 
   useEffect(() => {
     return () => {

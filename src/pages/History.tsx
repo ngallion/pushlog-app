@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useApp } from "../context/AppContext";
 import { WorkoutTypeLabel } from "../components/WorkoutTypeLabel";
 import { getWorkoutLabel } from "../lib/rotation";
@@ -31,6 +31,44 @@ const ACCENT_MAP: Record<WorkoutType, string> = {
   lowerB: "border-l-indigo-500",
 };
 
+// Returns a YYYY-MM-DD string in local time
+function toLocalDateStr(isoStr: string): string {
+  const d = new Date(isoStr);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
+const HEATMAP_WEEKS = 16;
+
+function buildHeatmapGrid(): string[] {
+  // Align to the most recent Sunday, then go back HEATMAP_WEEKS weeks
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const dayOfWeek = today.getDay(); // 0=Sun
+  const gridEnd = new Date(today);
+  gridEnd.setDate(today.getDate() + (6 - dayOfWeek)); // end of current week (Sat)
+  const gridStart = new Date(gridEnd);
+  gridStart.setDate(gridEnd.getDate() - HEATMAP_WEEKS * 7 + 1);
+
+  const days: string[] = [];
+  const cur = new Date(gridStart);
+  while (cur <= gridEnd) {
+    days.push(
+      `${cur.getFullYear()}-${String(cur.getMonth() + 1).padStart(2, "0")}-${String(cur.getDate()).padStart(2, "0")}`,
+    );
+    cur.setDate(cur.getDate() + 1);
+  }
+  return days;
+}
+
+function heatmapColor(sets: number, isHighlighted: boolean): string {
+  if (isHighlighted) return "bg-yellow-400";
+  if (sets === 0) return "bg-zinc-800";
+  if (sets < 8) return "bg-violet-900";
+  if (sets < 16) return "bg-violet-700";
+  if (sets < 24) return "bg-violet-500";
+  return "bg-violet-400";
+}
+
 export function History() {
   const { state, dispatch } = useApp();
   const [view, setView] = useState<View>("sessions");
@@ -38,6 +76,8 @@ export function History() {
   const [activeFilter, setActiveFilter] = useState<FilterType>("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+  const [highlightedDate, setHighlightedDate] = useState<string | null>(null);
+  const sessionRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   const toggleExpanded = (id: string) => {
     setExpandedIds((prev) => {
@@ -71,6 +111,48 @@ export function History() {
       .sort((a, b) => b.weight - a.weight);
   })();
 
+  // Build sets-per-day map for heatmap
+  const setsPerDay = new Map<string, number>();
+  for (const session of state.sessions) {
+    const day = toLocalDateStr(session.startedAt);
+    const sets = session.exercises.reduce((s, ex) => s + ex.setsCompleted, 0);
+    setsPerDay.set(day, (setsPerDay.get(day) ?? 0) + sets);
+  }
+
+  // Map date → session id (latest session that day, for scroll targeting)
+  const sessionByDay = new Map<string, string>();
+  for (const session of [...state.sessions].reverse()) {
+    const day = toLocalDateStr(session.startedAt);
+    sessionByDay.set(day, session.id);
+  }
+
+  const heatmapDays = buildHeatmapGrid();
+
+  const handleCellClick = (day: string) => {
+    const sessionId = sessionByDay.get(day);
+    if (!sessionId) return;
+
+    setView("sessions");
+    setActiveFilter("all");
+    setSearchQuery("");
+    setHighlightedDate(day);
+
+    // Expand the session and scroll to it after state settles
+    setExpandedIds((prev) => {
+      const next = new Set(prev);
+      next.add(sessionId);
+      return next;
+    });
+
+    setTimeout(() => {
+      sessionRefs.current[sessionId]?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+      setTimeout(() => setHighlightedDate(null), 2000);
+    }, 50);
+  };
+
   const allSessions = [...state.sessions].reverse();
   const trimmed = searchQuery.trim().toLowerCase();
   const sessions = allSessions.filter((s) => {
@@ -79,6 +161,23 @@ export function History() {
       trimmed &&
       !s.exercises.some((ex) => ex.name.toLowerCase().includes(trimmed))
     );
+  });
+
+  // Month labels for heatmap x-axis: one label per column where month changes
+  const monthLabels: { col: number; label: string }[] = [];
+  let lastMonth = -1;
+  heatmapDays.forEach((day, i) => {
+    const col = Math.floor(i / 7);
+    const month = new Date(day + "T00:00:00").getMonth();
+    if (month !== lastMonth) {
+      monthLabels.push({
+        col,
+        label: new Date(day + "T00:00:00").toLocaleDateString("en-US", {
+          month: "short",
+        }),
+      });
+      lastMonth = month;
+    }
   });
 
   if (allSessions.length === 0) {
@@ -100,6 +199,79 @@ export function History() {
         {state.sessions.length} workout{state.sessions.length !== 1 ? "s" : ""}{" "}
         completed
       </p>
+
+      {/* Heatmap */}
+      <div className="bg-zinc-900 border border-zinc-800 rounded-2xl px-4 pt-3 pb-4 mb-4 overflow-x-auto no-scrollbar">
+        {/* Month labels */}
+        <div
+          className="grid mb-1"
+          style={{
+            gridTemplateColumns: `repeat(${HEATMAP_WEEKS}, minmax(0, 1fr))`,
+            columnGap: 3,
+          }}
+        >
+          {Array.from({ length: HEATMAP_WEEKS }, (_, col) => {
+            const label = monthLabels.find((m) => m.col === col);
+            return (
+              <div
+                key={col}
+                className="text-zinc-600 text-center"
+                style={{ fontSize: 9 }}
+              >
+                {label?.label ?? ""}
+              </div>
+            );
+          })}
+        </div>
+        {/* Day cells: 7 rows × HEATMAP_WEEKS cols */}
+        <div
+          className="grid"
+          style={{
+            gridTemplateColumns: `repeat(${HEATMAP_WEEKS}, minmax(0, 1fr))`,
+            gridTemplateRows: "repeat(7, minmax(0, 1fr))",
+            gridAutoFlow: "column",
+            gap: 3,
+          }}
+        >
+          {heatmapDays.map((day) => {
+            const sets = setsPerDay.get(day) ?? 0;
+            const hasSession = sessionByDay.has(day);
+            const isHighlighted = highlightedDate === day;
+            return (
+              <button
+                key={day}
+                onClick={() => handleCellClick(day)}
+                disabled={!hasSession}
+                title={sets > 0 ? `${day}: ${sets} sets` : day}
+                className={`rounded-sm aspect-square transition-opacity ${heatmapColor(sets, isHighlighted)} ${hasSession ? "cursor-pointer hover:opacity-75" : "cursor-default"}`}
+                style={{ minWidth: 10, minHeight: 10 }}
+              />
+            );
+          })}
+        </div>
+        {/* Legend */}
+        <div className="flex items-center gap-1.5 mt-2 justify-end">
+          <span className="text-zinc-600" style={{ fontSize: 9 }}>
+            Less
+          </span>
+          {[
+            "bg-zinc-800",
+            "bg-violet-900",
+            "bg-violet-700",
+            "bg-violet-500",
+            "bg-violet-400",
+          ].map((cls) => (
+            <div
+              key={cls}
+              className={`rounded-sm ${cls}`}
+              style={{ width: 10, height: 10 }}
+            />
+          ))}
+          <span className="text-zinc-600" style={{ fontSize: 9 }}>
+            More
+          </span>
+        </div>
+      </div>
 
       {/* View toggle */}
       <div className="flex bg-zinc-800 rounded-xl p-1 mb-4">
@@ -248,10 +420,19 @@ export function History() {
                   )
                 : null;
               const accentClass = ACCENT_MAP[session.workoutType];
+              const sessionDay = toLocalDateStr(session.startedAt);
+              const isHighlightedSession = highlightedDate === sessionDay;
               return (
                 <div
                   key={session.id}
-                  className={`bg-zinc-900 border border-zinc-800 border-l-2 ${accentClass} rounded-2xl overflow-hidden`}
+                  ref={(el) => {
+                    sessionRefs.current[session.id] = el;
+                  }}
+                  className={`border border-l-2 ${accentClass} rounded-2xl overflow-hidden transition-colors duration-500 ${
+                    isHighlightedSession
+                      ? "bg-zinc-700 border-zinc-600"
+                      : "bg-zinc-900 border-zinc-800"
+                  }`}
                 >
                   {/* Card header */}
                   <div className="flex items-start justify-between px-4 pt-4 pb-3">
