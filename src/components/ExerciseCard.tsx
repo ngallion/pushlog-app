@@ -1,8 +1,15 @@
 import { useState, useEffect, useRef } from "react";
 import type { LoggedExercise, WorkoutSession } from "../lib/types";
-import { RefreshCw, Minus, Plus, Search, GripVertical } from "lucide-react";
+import {
+  RefreshCw,
+  Minus,
+  Plus,
+  Search,
+  GripVertical,
+  Calculator,
+} from "lucide-react";
 import { NumericInput } from "./NumericInput";
-import { calcPlates, loadBarWeight } from "../lib/plates";
+import { PlateCalculator } from "./PlateCalculator";
 
 interface Props {
   exercise: LoggedExercise;
@@ -39,7 +46,7 @@ export function ExerciseCard({
   const [justCompleted, setJustCompleted] = useState(false);
   const [bonusAnim, setBonusAnim] = useState<number | null>(null);
   const [weightBump, setWeightBump] = useState<number | null>(null);
-  const [barWeight] = useState<number>(loadBarWeight);
+  const [calcOpen, setCalcOpen] = useState(false);
   const prevSets = useRef(exercise.setsCompleted);
   const prevWeight = useRef(exercise.startingWeight);
 
@@ -262,7 +269,16 @@ export function ExerciseCard({
               +{weightBump} lbs
             </div>
           )}
-          <div className="text-xs text-zinc-500 mb-1">lbs</div>
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-xs text-zinc-500">lbs</span>
+            <button
+              onClick={() => setCalcOpen(true)}
+              className="text-zinc-600 hover:text-violet-400 transition-colors"
+              aria-label="Open plate calculator"
+            >
+              <Calculator size={11} />
+            </button>
+          </div>
           <input
             type="number"
             placeholder="—"
@@ -278,28 +294,15 @@ export function ExerciseCard({
         </div>
       </div>
 
-      {exercise.startingWeight != null &&
-        exercise.startingWeight > barWeight && (() => {
-          const plates = calcPlates(exercise.startingWeight, barWeight);
-          if (plates.length === 0) return null;
-          const grouped = plates.reduce<Record<number, number>>((acc, p) => {
-            acc[p] = (acc[p] ?? 0) + 1;
-            return acc;
-          }, {});
-          return (
-            <div className="mt-2 flex flex-wrap gap-1 items-center">
-              <span className="text-xs text-zinc-500 mr-0.5">each side:</span>
-              {Object.entries(grouped).map(([plate, count]) => (
-                <span
-                  key={plate}
-                  className="text-xs bg-zinc-700 text-zinc-300 rounded px-1.5 py-0.5 font-mono"
-                >
-                  {count > 1 ? `${count}×` : ""}{plate}
-                </span>
-              ))}
-            </div>
-          );
-        })()}
+      {calcOpen && (
+        <PlateCalculator
+          onConfirm={(weight) => {
+            onWeightChange(exerciseIndex, weight);
+            setCalcOpen(false);
+          }}
+          onClose={() => setCalcOpen(false)}
+        />
+      )}
     </div>
   );
 }
