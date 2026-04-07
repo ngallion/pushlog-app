@@ -268,7 +268,12 @@ export function Pebbs({
   const withering = witherLevel > 0;
 
   // Moods that animate each pebble individually at higher levels
-  const PER_PEBBLE_MOODS = new Set<PebbsMood>(["pet", "celebrate", "pumped", "pr"]);
+  const PER_PEBBLE_MOODS = new Set<PebbsMood>([
+    "pet",
+    "celebrate",
+    "pumped",
+    "pr",
+  ]);
   const isPerPebble = isMulti && PER_PEBBLE_MOODS.has(mood);
 
   let containerAnimClass = "";
@@ -283,7 +288,8 @@ export function Pebbs({
     if (rolling && isMulti) {
       const rollDuration = rolling === "in" ? 600 : 500;
       const stagger = rolling === "in" ? 100 : 80;
-      const delay = rolling === "in" ? (pebbles.length - 1 - i) * stagger : i * stagger;
+      const delay =
+        rolling === "in" ? (pebbles.length - 1 - i) * stagger : i * stagger;
       return {
         animation: `pebbs-pebble-${rolling} ${rollDuration}ms ${rolling === "in" ? "cubic-bezier(0.34, 1.56, 0.64, 1)" : "ease-in"} ${delay}ms both`,
       };
@@ -292,15 +298,26 @@ export function Pebbs({
     // Returns animation for moods where head/mid/base each get their own keyframe
     const layered = (prefix: string, duration: string): React.CSSProperties => {
       const keyframe =
-        i === 0 ? `${prefix}-head` : i === pebbles.length - 1 ? `${prefix}-base` : `${prefix}-mid`;
-      return { animation: `${keyframe} ${duration} ease-in-out ${(pebbles.length - 1 - i) * 60}ms` };
+        i === 0
+          ? `${prefix}-head`
+          : i === pebbles.length - 1
+            ? `${prefix}-base`
+            : `${prefix}-mid`;
+      return {
+        animation: `${keyframe} ${duration} ease-in-out ${(pebbles.length - 1 - i) * 60}ms`,
+      };
     };
     switch (mood) {
-      case "pet":       return { animation: `pebbs-pet 1.5s ease-in-out ${i * 80}ms` };
-      case "pumped":    return i === 0 ? { animation: "pebbs-pumped 0.9s ease-in-out" } : {};
-      case "celebrate": return layered("pebbs-celebrate", "1.4s");
-      case "pr":        return layered("pebbs-pr", "1.8s");
-      default:          return {};
+      case "pet":
+        return { animation: `pebbs-pet 1.5s ease-in-out ${i * 80}ms` };
+      case "pumped":
+        return i === 0 ? { animation: "pebbs-pumped 0.9s ease-in-out" } : {};
+      case "celebrate":
+        return layered("pebbs-celebrate", "1.4s");
+      case "pr":
+        return layered("pebbs-pr", "1.8s");
+      default:
+        return {};
     }
   };
 

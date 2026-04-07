@@ -256,8 +256,12 @@ export function Today() {
               s.cycle === session.cycle,
           )
           .at(-1) ?? null;
+      const finishedSession = {
+        ...session,
+        finishedAt: new Date().toISOString(),
+      };
       setFinishedSnapshot({
-        session,
+        session: finishedSession,
         previousSession: prevSession,
         allPreviousSessions: [...state.sessions],
       });

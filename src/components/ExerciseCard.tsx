@@ -111,7 +111,7 @@ export function ExerciseCard({
             ? { animation: "card-complete 0.7s ease-out" }
             : undefined
       }
-      className={`bg-zinc-800 rounded-xl p-4 mb-3 transition-opacity ${targetMet && !isBonus ? "opacity-60" : ""}`}
+      className={`bg-zinc-800 rounded-xl p-4 mb-3 transition-opacity ${targetMet ? "opacity-70" : ""}`}
     >
       {swapping ? (
         <div className="flex gap-2 items-center mb-3">

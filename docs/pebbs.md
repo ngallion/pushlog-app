@@ -38,7 +38,7 @@ These override the ambient mood for a fixed duration, then return to ambient.
 | `pr`         | Gold diamonds `✦✦`   | Workout finished with at least one weight PR          | 3.5 s    | Bigger spin + scale wiggle |
 | `comeback`   | Wide green circles   | Wither just cleared; queued to play after celebrate   | 2 s      | Springs up from below      |
 | `zoomies`    | Spiral `@@`          | Automatic, random ~every 4 min while in ambient state | 1.5 s    | Chaotic spin and scale     |
-| `pet`        | Pink hearts `♥♥`   | Pebbs is tapped/clicked directly                      | 1.5 s    | Happy wobbly wiggle        |
+| `pet`        | Pink hearts `♥♥`     | Pebbs is tapped/clicked directly                      | 1.5 s    | Happy wobbly wiggle        |
 
 ### Ambient moods
 

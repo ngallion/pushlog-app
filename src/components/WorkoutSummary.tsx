@@ -36,6 +36,13 @@ export function WorkoutSummary({
     (sum, e) => sum + e.setsCompleted,
     0,
   );
+  const durationMins = session.finishedAt
+    ? Math.round(
+        (new Date(session.finishedAt).getTime() -
+          new Date(session.startedAt).getTime()) /
+          60000,
+      )
+    : null;
   const prevTotalSets = previousSession
     ? previousSession.exercises.reduce((sum, e) => sum + e.setsCompleted, 0)
     : null;
@@ -91,6 +98,11 @@ export function WorkoutSummary({
             <div>
               <p className="text-zinc-400 text-sm mb-0.5">Total Sets</p>
               <p className="text-4xl font-bold tabular-nums">{totalSets}</p>
+              {durationMins !== null && (
+                <p className="text-zinc-500 text-sm mt-0.5">
+                  {durationMins} min
+                </p>
+              )}
             </div>
             {setsDelta !== null && (
               <div
