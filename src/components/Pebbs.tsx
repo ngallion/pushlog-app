@@ -188,9 +188,9 @@ const PEBBLE_STYLES: PebbleStyle[][] = [
     {
       bg: "#8a8580",
       shadow: "#605d59",
-      borderRadius: "48% 52% 55% 45% / 52% 48% 50% 50%",
-      w: 50,
-      h: 40,
+      borderRadius: "62% 38% 44% 56% / 38% 52% 38% 58%",
+      w: 58,
+      h: 31,
     },
   ],
   [
@@ -204,16 +204,16 @@ const PEBBLE_STYLES: PebbleStyle[][] = [
     {
       bg: "#8a8580",
       shadow: "#605d59",
-      borderRadius: "50% 50% 54% 46% / 52% 48% 50% 50%",
-      w: 44,
-      h: 35,
+      borderRadius: "38% 62% 55% 45% / 58% 42% 62% 38%",
+      w: 48,
+      h: 32,
     },
     {
       bg: "#7c7873",
       shadow: "#565350",
-      borderRadius: "46% 54% 48% 52% / 50% 52% 48% 50%",
-      w: 54,
-      h: 43,
+      borderRadius: "58% 42% 35% 65% / 38% 58% 30% 50%",
+      w: 64,
+      h: 34,
     },
   ],
 ];
@@ -273,6 +273,7 @@ export function Pebbs({
     "celebrate",
     "pumped",
     "pr",
+    "zoomies",
   ]);
   const isPerPebble = isMulti && PER_PEBBLE_MOODS.has(mood);
 
@@ -316,6 +317,8 @@ export function Pebbs({
         return layered("pebbs-celebrate", "1.4s");
       case "pr":
         return layered("pebbs-pr", "1.8s");
+      case "zoomies":
+        return layered("pebbs-zoomies", "1.5s");
       default:
         return {};
     }
