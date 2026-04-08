@@ -112,188 +112,189 @@ export function ExerciseCard({
   };
 
   return (
-    <div
-      style={
-        bonusAnim != null
-          ? { animation: `bonus-glow-${bonusAnim} 0.9s ease-out` }
-          : justCompleted
-            ? { animation: "card-complete 0.7s ease-out" }
-            : undefined
-      }
-      className={`bg-zinc-800 rounded-xl p-4 mb-3 transition-opacity ${targetMet ? "opacity-70" : ""}`}
-    >
-      {swapping ? (
-        <div className="flex gap-2 items-center mb-3">
-          <input
-            autoFocus
-            type="text"
-            placeholder="New exercise name"
-            value={swapName}
-            onChange={(e) => setSwapName(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") handleSwapConfirm();
-              if (e.key === "Escape") setSwapping(false);
-            }}
-            className="flex-1 bg-zinc-700 rounded px-3 py-1.5 text-sm text-zinc-100 focus:outline-none focus:ring-1 focus:ring-violet-500"
-          />
-          <button
-            onClick={handleSwapConfirm}
-            className="bg-violet-600 hover:bg-violet-500 text-white px-3 py-1.5 rounded text-sm"
-          >
-            Confirm
-          </button>
-          <button
-            onClick={() => setSwapping(false)}
-            className="bg-zinc-700 hover:bg-zinc-600 text-zinc-300 px-3 py-1.5 rounded text-sm"
-          >
-            Cancel
-          </button>
-        </div>
-      ) : (
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2">
-            {dragHandleAttributes && (
-              <button
-                {...dragHandleAttributes}
-                {...dragHandleListeners}
-                className="text-zinc-500 hover:text-zinc-300 touch-none cursor-grab active:cursor-grabbing"
-              >
-                <GripVertical size={14} />
-              </button>
-            )}
-            <h3 className="font-semibold text-zinc-100">{exercise.name}</h3>
-            <a
-              href={`https://www.google.com/search?q=${encodeURIComponent(exercise.name + " exercise form")}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-zinc-500 hover:text-zinc-300 transition-colors"
-            >
-              <Search size={13} />
-            </a>
-          </div>
-          <button
-            onClick={() => setSwapping(true)}
-            className="flex items-center gap-1 text-xs text-zinc-400 hover:text-zinc-200 transition-colors"
-          >
-            <RefreshCw size={12} /> Swap
-          </button>
-        </div>
-      )}
-
-      {lastExercise && (
-        <div className="mb-3 text-xs text-zinc-400 bg-zinc-700/50 rounded px-3 py-2">
-          <span className="text-zinc-500 mr-1">Last time:</span>
-          {lastExercise.setsCompleted} sets · {lastExercise.minReps}-
-          {lastExercise.maxReps} reps
-          {lastExercise.startingWeight != null &&
-            ` · ${lastExercise.startingWeight} lbs`}
-        </div>
-      )}
-
-      <div className="flex items-start gap-2">
-        {/* Sets stepper */}
-        <div className="flex flex-col">
-          <div className="text-xs text-zinc-500 mb-1">sets</div>
-          <div className="flex items-center gap-1.5 mt-[2px]">
-            <button
-              onClick={() => adjustSets(-1)}
-              disabled={exercise.setsCompleted === 0}
-              className="w-7 h-7 rounded-full bg-zinc-700 hover:bg-zinc-600 disabled:opacity-30 flex items-center justify-center transition-colors"
-            >
-              <Minus size={12} />
-            </button>
-            <div
-              key={exercise.setsCompleted}
-              style={{
-                animation:
-                  bonusAnim != null
-                    ? `bonus-pop-${bonusAnim} 0.5s ease-out`
-                    : "pop 0.25s ease-out",
+    <>
+      <div
+        style={
+          bonusAnim != null
+            ? { animation: `bonus-glow-${bonusAnim} 0.9s ease-out` }
+            : justCompleted
+              ? { animation: "card-complete 0.7s ease-out" }
+              : undefined
+        }
+        className={`bg-zinc-800 rounded-xl p-4 mb-3 transition-opacity ${targetMet ? "opacity-70" : ""}`}
+      >
+        {swapping ? (
+          <div className="flex gap-2 items-center mb-3">
+            <input
+              autoFocus
+              type="text"
+              placeholder="New exercise name"
+              value={swapName}
+              onChange={(e) => setSwapName(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleSwapConfirm();
+                if (e.key === "Escape") setSwapping(false);
               }}
-              className={`text-base font-bold min-w-[44px] text-center ${isBonus ? "text-amber-400" : targetMet ? "text-green-400" : "text-zinc-100"}`}
-            >
-              {exercise.setsCompleted}
-              <span className="text-zinc-500 text-xs font-normal">
-                /{exercise.targetSets}
-              </span>
-            </div>
+              className="flex-1 bg-zinc-700 rounded px-3 py-1.5 text-sm text-zinc-100 focus:outline-none focus:ring-1 focus:ring-violet-500"
+            />
             <button
-              onClick={() => adjustSets(1)}
-              disabled={false}
-              className="w-7 h-7 rounded-full bg-zinc-700 hover:bg-zinc-600 disabled:opacity-30 flex items-center justify-center transition-colors"
+              onClick={handleSwapConfirm}
+              className="bg-violet-600 hover:bg-violet-500 text-white px-3 py-1.5 rounded text-sm"
             >
-              <Plus size={12} />
+              Confirm
+            </button>
+            <button
+              onClick={() => setSwapping(false)}
+              className="bg-zinc-700 hover:bg-zinc-600 text-zinc-300 px-3 py-1.5 rounded text-sm"
+            >
+              Cancel
             </button>
           </div>
-        </div>
-
-        {/* Reps inputs */}
-        <div className="flex-1 min-w-0">
-          <div className="text-xs text-zinc-500 mb-1">reps</div>
-          <div className="flex items-center bg-zinc-700 rounded overflow-hidden focus-within:ring-1 focus-within:ring-violet-500">
-            <NumericInput
-              value={exercise.minReps}
-              onChange={(v) =>
-                onChange(
-                  exerciseIndex,
-                  exercise.setsCompleted,
-                  v,
-                  exercise.maxReps,
-                )
-              }
-              className="w-full min-w-0 bg-transparent px-2 py-1.5 text-sm text-zinc-100 focus:outline-none text-center"
-            />
-            <span className="text-zinc-400 text-sm select-none">–</span>
-            <NumericInput
-              value={exercise.maxReps}
-              onChange={(v) =>
-                onChange(
-                  exerciseIndex,
-                  exercise.setsCompleted,
-                  exercise.minReps,
-                  v,
-                )
-              }
-              className="w-full min-w-0 bg-transparent px-2 py-1.5 text-sm text-zinc-100 focus:outline-none text-center"
-            />
-          </div>
-        </div>
-
-        {/* Weight input */}
-        <div className="w-16 relative">
-          {weightBump != null && (
-            <div
-              style={{ animation: "float-up 0.9s ease-out forwards" }}
-              className="absolute -top-1 left-1/2 -translate-x-1/2 text-xs font-bold text-green-400 pointer-events-none whitespace-nowrap"
-            >
-              +{weightBump} lbs
+        ) : (
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              {dragHandleAttributes && (
+                <button
+                  {...dragHandleAttributes}
+                  {...dragHandleListeners}
+                  className="text-zinc-500 hover:text-zinc-300 touch-none cursor-grab active:cursor-grabbing"
+                >
+                  <GripVertical size={14} />
+                </button>
+              )}
+              <h3 className="font-semibold text-zinc-100">{exercise.name}</h3>
+              <a
+                href={`https://www.google.com/search?q=${encodeURIComponent(exercise.name + " exercise form")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-zinc-500 hover:text-zinc-300 transition-colors"
+              >
+                <Search size={13} />
+              </a>
             </div>
-          )}
-          <div className="flex items-center justify-between mb-1">
-            <span className="text-xs text-zinc-500">lbs</span>
             <button
-              onClick={() => setCalcOpen(true)}
-              className="text-zinc-600 hover:text-violet-400 transition-colors"
-              aria-label="Open plate calculator"
+              onClick={() => setSwapping(true)}
+              className="flex items-center gap-1 text-xs text-zinc-400 hover:text-zinc-200 transition-colors"
             >
-              <Calculator size={11} />
+              <RefreshCw size={12} /> Swap
             </button>
           </div>
-          <input
-            type="number"
-            placeholder="—"
-            value={exercise.startingWeight ?? ""}
-            onChange={(e) =>
-              onWeightChange(
-                exerciseIndex,
-                e.target.value === "" ? undefined : Number(e.target.value),
-              )
-            }
-            className="w-full bg-zinc-700 rounded px-2 py-1.5 text-sm text-zinc-100 focus:outline-none focus:ring-1 focus:ring-violet-500"
-          />
+        )}
+
+        {lastExercise && (
+          <div className="mb-3 text-xs text-zinc-400 bg-zinc-700/50 rounded px-3 py-2">
+            <span className="text-zinc-500 mr-1">Last time:</span>
+            {lastExercise.setsCompleted} sets · {lastExercise.minReps}-
+            {lastExercise.maxReps} reps
+            {lastExercise.startingWeight != null &&
+              ` · ${lastExercise.startingWeight} lbs`}
+          </div>
+        )}
+
+        <div className="flex items-start gap-2">
+          {/* Sets stepper */}
+          <div className="flex flex-col">
+            <div className="text-xs text-zinc-500 mb-1">sets</div>
+            <div className="flex items-center gap-1.5 mt-[2px]">
+              <button
+                onClick={() => adjustSets(-1)}
+                disabled={exercise.setsCompleted === 0}
+                className="w-7 h-7 rounded-full bg-zinc-700 hover:bg-zinc-600 disabled:opacity-30 flex items-center justify-center transition-colors"
+              >
+                <Minus size={12} />
+              </button>
+              <div
+                key={exercise.setsCompleted}
+                style={{
+                  animation:
+                    bonusAnim != null
+                      ? `bonus-pop-${bonusAnim} 0.5s ease-out`
+                      : "pop 0.25s ease-out",
+                }}
+                className={`text-base font-bold min-w-[44px] text-center ${isBonus ? "text-amber-400" : targetMet ? "text-green-400" : "text-zinc-100"}`}
+              >
+                {exercise.setsCompleted}
+                <span className="text-zinc-500 text-xs font-normal">
+                  /{exercise.targetSets}
+                </span>
+              </div>
+              <button
+                onClick={() => adjustSets(1)}
+                disabled={false}
+                className="w-7 h-7 rounded-full bg-zinc-700 hover:bg-zinc-600 disabled:opacity-30 flex items-center justify-center transition-colors"
+              >
+                <Plus size={12} />
+              </button>
+            </div>
+          </div>
+
+          {/* Reps inputs */}
+          <div className="flex-1 min-w-0">
+            <div className="text-xs text-zinc-500 mb-1">reps</div>
+            <div className="flex items-center bg-zinc-700 rounded overflow-hidden focus-within:ring-1 focus-within:ring-violet-500">
+              <NumericInput
+                value={exercise.minReps}
+                onChange={(v) =>
+                  onChange(
+                    exerciseIndex,
+                    exercise.setsCompleted,
+                    v,
+                    exercise.maxReps,
+                  )
+                }
+                className="w-full min-w-0 bg-transparent px-2 py-1.5 text-sm text-zinc-100 focus:outline-none text-center"
+              />
+              <span className="text-zinc-400 text-sm select-none">–</span>
+              <NumericInput
+                value={exercise.maxReps}
+                onChange={(v) =>
+                  onChange(
+                    exerciseIndex,
+                    exercise.setsCompleted,
+                    exercise.minReps,
+                    v,
+                  )
+                }
+                className="w-full min-w-0 bg-transparent px-2 py-1.5 text-sm text-zinc-100 focus:outline-none text-center"
+              />
+            </div>
+          </div>
+
+          {/* Weight input + calculator */}
+          <div className="relative">
+            {weightBump != null && (
+              <div
+                style={{ animation: "float-up 0.9s ease-out forwards" }}
+                className="absolute -top-1 left-1/2 -translate-x-1/2 text-xs font-bold text-green-400 pointer-events-none whitespace-nowrap"
+              >
+                +{weightBump} lbs
+              </div>
+            )}
+            <div className="text-xs text-zinc-500 mb-1">lbs</div>
+            <div className="flex items-stretch gap-1.5">
+              <input
+                type="number"
+                placeholder="—"
+                value={exercise.startingWeight ?? ""}
+                onChange={(e) =>
+                  onWeightChange(
+                    exerciseIndex,
+                    e.target.value === "" ? undefined : Number(e.target.value),
+                  )
+                }
+                className="w-16 bg-zinc-700 rounded px-2 py-1.5 text-sm text-zinc-100 focus:outline-none focus:ring-1 focus:ring-violet-500"
+              />
+              <button
+                onClick={() => setCalcOpen(true)}
+                className="bg-zinc-700 hover:bg-zinc-600 text-zinc-400 hover:text-violet-400 rounded px-2 transition-colors flex items-center"
+                aria-label="Open plate calculator"
+              >
+                <Calculator size={14} />
+              </button>
+            </div>
+          </div>
         </div>
       </div>
-
       {calcOpen && (
         <PlateCalculator
           onConfirm={(weight) => {
@@ -303,6 +304,6 @@ export function ExerciseCard({
           onClose={() => setCalcOpen(false)}
         />
       )}
-    </div>
+    </>
   );
 }
