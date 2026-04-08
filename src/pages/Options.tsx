@@ -7,11 +7,6 @@ import {
   migrateImportedData,
 } from "../lib/storage";
 import {
-  loadBarWeight,
-  saveBarWeight,
-  DEFAULT_BAR_WEIGHT,
-} from "../lib/plates";
-import {
   Download,
   Upload,
   Timer,
@@ -20,7 +15,6 @@ import {
   Copy,
   Check,
   MessageSquare,
-  Dumbbell,
 } from "lucide-react";
 
 const REST_DURATION_OPTIONS = [60, 90, 120, 180] as const;
@@ -67,16 +61,10 @@ export function Options() {
     loadRestTimerDuration,
   );
   const [copied, setCopied] = useState(false);
-  const [barWeight, setBarWeight] = useState<number>(loadBarWeight);
 
   const handleRestDurationChange = (seconds: number) => {
     setRestDuration(seconds);
     saveRestTimerDuration(seconds);
-  };
-
-  const handleBarWeightChange = (lbs: number) => {
-    setBarWeight(lbs);
-    saveBarWeight(lbs);
   };
 
   const canShare =
@@ -294,51 +282,6 @@ Please analyze my workout program and give me specific, actionable feedback on:
                 Allow notifications to get an alert when rest is over.
               </p>
             )}
-        </div>
-
-        {/* Plate calculator */}
-        <div className="bg-zinc-800 rounded-xl p-4">
-          <div className="flex items-center gap-2 mb-1">
-            <Dumbbell size={16} className="text-violet-400" />
-            <h2 className="font-semibold">Plate calculator</h2>
-          </div>
-          <p className="text-zinc-400 text-sm mb-3">
-            Set your bar weight so the plate breakdown shown during workouts is
-            accurate.
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {[35, 45].map((w) => (
-              <button
-                key={w}
-                onClick={() => handleBarWeightChange(w)}
-                className={`px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors ${
-                  barWeight === w
-                    ? "bg-violet-600 text-white"
-                    : "bg-zinc-700 text-zinc-300 hover:bg-zinc-600"
-                }`}
-              >
-                {w} lbs
-              </button>
-            ))}
-            <div className="flex items-center gap-1.5">
-              <input
-                type="number"
-                min={0}
-                step={1}
-                value={barWeight === 35 || barWeight === 45 ? "" : barWeight}
-                placeholder="Custom"
-                onChange={(e) => {
-                  const v = parseFloat(e.target.value);
-                  if (!isNaN(v) && v >= 0) handleBarWeightChange(v);
-                }}
-                className="w-24 bg-zinc-700 rounded px-2 py-1.5 text-sm text-zinc-100 focus:outline-none focus:ring-1 focus:ring-violet-500 placeholder:text-zinc-500"
-              />
-              <span className="text-zinc-400 text-sm">lbs</span>
-            </div>
-          </div>
-          <p className="mt-2 text-xs text-zinc-500">
-            Default: {DEFAULT_BAR_WEIGHT} lbs (standard Olympic bar)
-          </p>
         </div>
 
         {/* AI Feedback */}
