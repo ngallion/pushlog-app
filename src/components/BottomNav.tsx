@@ -52,7 +52,7 @@ export function BottomNav() {
               `flex flex-col items-center gap-0.5 px-4 py-2 rounded-full transition-colors ${
                 isActive
                   ? "bg-zinc-700/70 text-white"
-                  : "text-zinc-500 hover:text-zinc-300"
+                  : "text-violet-400 hover:text-violet-300"
               }`
             }
           >
