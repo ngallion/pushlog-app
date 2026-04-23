@@ -29,21 +29,45 @@ function fireRestCompleteAlert() {
 export function useRestTimer(durationSeconds: number) {
   const [secondsLeft, setSecondsLeft] = useState<number | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  // Tracks whether the timer just expired so we can fire alerts in an effect
+  // Absolute timestamp when the timer should expire — used to stay accurate
+  // even when the browser throttles background timers.
+  const endTimeRef = useRef<number | null>(null);
   const justExpiredRef = useRef(false);
+
+  const expire = useCallback(() => {
+    // Guard against double-expiry (e.g. interval + visibilitychange racing)
+    if (endTimeRef.current === null) return;
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+    endTimeRef.current = null;
+    justExpiredRef.current = true;
+    setSecondsLeft(null);
+  }, []);
+
+  const recalculate = useCallback(() => {
+    if (endTimeRef.current === null) return;
+    const remaining = Math.ceil((endTimeRef.current - Date.now()) / 1000);
+    if (remaining <= 0) {
+      expire();
+    } else {
+      setSecondsLeft(remaining);
+    }
+  }, [expire]);
 
   const stop = useCallback(() => {
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
     }
+    endTimeRef.current = null;
     setSecondsLeft(null);
   }, []);
 
   const start = useCallback(() => {
     if (durationSeconds <= 0) return;
 
-    // Request notification permission on first use (non-blocking)
     if (
       typeof Notification !== "undefined" &&
       Notification.permission === "default"
@@ -53,20 +77,28 @@ export function useRestTimer(durationSeconds: number) {
 
     justExpiredRef.current = false;
     if (intervalRef.current) clearInterval(intervalRef.current);
+
+    endTimeRef.current = Date.now() + durationSeconds * 1000;
     setSecondsLeft(durationSeconds);
 
-    intervalRef.current = setInterval(() => {
-      setSecondsLeft((prev) => {
-        if (prev === null || prev <= 1) {
-          clearInterval(intervalRef.current!);
-          intervalRef.current = null;
-          justExpiredRef.current = true;
-          return null;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-  }, [durationSeconds]);
+    // Poll at 500ms so we catch the boundary within half a second even when
+    // the browser fires intervals slightly late in the foreground.
+    intervalRef.current = setInterval(recalculate, 500);
+  }, [durationSeconds, recalculate]);
+
+  // When the app returns from background the interval may have been throttled
+  // for a long time. Recalculate immediately on visibility restore so the
+  // display jumps to the correct value (or fires the alert if already expired).
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        recalculate();
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () =>
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, [recalculate]);
 
   // Fire notification + vibrate outside the setState updater so browser APIs
   // are called in a normal execution context, not inside React's batching.
