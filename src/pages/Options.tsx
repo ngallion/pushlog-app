@@ -352,14 +352,14 @@ Please analyze my workout program and give me specific, actionable feedback on:
           </a>
         </div>
 
-        {/* Donate */}
+        {/* Tip */}
         <div className="bg-zinc-800 rounded-xl p-4">
           <div className="flex items-center gap-2 mb-1">
             <Heart size={16} className="text-pink-400" />
             <h2 className="font-semibold">Support Pushlog</h2>
           </div>
           <p className="text-zinc-400 text-sm mb-3">
-            If Pushlog helps your training, consider buying me a coffee.
+            If Pushlog helps your training, consider leaving a tip.
           </p>
           <a
             href="https://ko-fi.com/nicholasgallion"
@@ -368,7 +368,7 @@ Please analyze my workout program and give me specific, actionable feedback on:
             className="inline-flex items-center gap-2 bg-pink-600 hover:bg-pink-500 text-white rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors"
           >
             <Heart size={16} />
-            Donate
+            Leave a tip
           </a>
         </div>
 
