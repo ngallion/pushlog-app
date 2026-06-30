@@ -5,6 +5,7 @@ export const DEFAULT_REST_DURATION = 90;
 
 const PROGRAMS_KEY = "pushlog:programs";
 const SESSIONS_KEY = "pushlog:sessions";
+const ACTIVE_SESSION_KEY = "pushlog:activeSession";
 const SCHEMA_VERSION_KEY = "pushlog:schemaVersion";
 
 const CURRENT_SCHEMA_VERSION = 3;
@@ -135,6 +136,24 @@ export function saveSessions(sessions: WorkoutSession[]): void {
   localStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions));
   // Ensure the version stamp is always current after a save
   setStoredSchemaVersion(CURRENT_SCHEMA_VERSION);
+}
+
+export function loadActiveSession(): WorkoutSession | null {
+  try {
+    const raw = localStorage.getItem(ACTIVE_SESSION_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw) as WorkoutSession;
+  } catch {
+    return null;
+  }
+}
+
+export function saveActiveSession(session: WorkoutSession | null): void {
+  if (session === null) {
+    localStorage.removeItem(ACTIVE_SESSION_KEY);
+  } else {
+    localStorage.setItem(ACTIVE_SESSION_KEY, JSON.stringify(session));
+  }
 }
 
 export function loadRestTimerDuration(): number {

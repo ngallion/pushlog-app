@@ -13,6 +13,8 @@ import {
   savePrograms,
   loadSessions,
   saveSessions,
+  loadActiveSession,
+  saveActiveSession,
 } from "../lib/storage";
 import { createDefaultProgram } from "../lib/defaultProgram";
 import { randomUUID } from "../lib/uuid";
@@ -232,7 +234,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(reducer, {
     programs: initialPrograms,
     sessions: loadSessions(),
-    activeSession: null,
+    activeSession: loadActiveSession(),
   });
 
   useEffect(() => {
@@ -242,6 +244,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     saveSessions(state.sessions);
   }, [state.sessions]);
+
+  useEffect(() => {
+    saveActiveSession(state.activeSession);
+  }, [state.activeSession]);
 
   return (
     <AppContext.Provider value={{ state, dispatch }}>
