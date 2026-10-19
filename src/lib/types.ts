@@ -39,3 +39,13 @@ export interface WorkoutSession {
   programBlockId: string;
   exercises: LoggedExercise[];
 }
+
+/**
+ * Manual override of the rotation position. Sessions finished after `setAt`
+ * advance the rotation from `position` instead of from the total count.
+ * `position` is an index into the 16-slot loop (8 × Cycle 1, then 8 × Cycle 2).
+ */
+export interface RotationAnchor {
+  position: number;
+  setAt: string; // ISO timestamp
+}

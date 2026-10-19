@@ -26,6 +26,7 @@ The app tracks where you are in the rotation and always shows you what's next. A
 ### 1. Home — "Today"
 
 - Shows the next workout in your rotation (e.g. "Upper A")
+- "Change" lets you pick a different next workout; the rotation restarts from that workout's place in week 1 of Cycle 1
 - If today is a rest day, shows "Rest Day" with the next workout queued
 - Button to start the workout
 

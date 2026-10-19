@@ -1,4 +1,4 @@
-import type { ProgramBlock, WorkoutSession } from "./types";
+import type { ProgramBlock, RotationAnchor, WorkoutSession } from "./types";
 
 const REST_TIMER_KEY = "pushlog:restTimerDuration";
 export const DEFAULT_REST_DURATION = 90;
@@ -7,6 +7,7 @@ const PROGRAMS_KEY = "pushlog:programs";
 const SESSIONS_KEY = "pushlog:sessions";
 const ACTIVE_SESSION_KEY = "pushlog:activeSession";
 const SCHEMA_VERSION_KEY = "pushlog:schemaVersion";
+const ROTATION_ANCHOR_KEY = "pushlog:rotationAnchor";
 
 const CURRENT_SCHEMA_VERSION = 3;
 
@@ -153,6 +154,37 @@ export function saveActiveSession(session: WorkoutSession | null): void {
     localStorage.removeItem(ACTIVE_SESSION_KEY);
   } else {
     localStorage.setItem(ACTIVE_SESSION_KEY, JSON.stringify(session));
+  }
+}
+
+export function isValidRotationAnchor(a: unknown): a is RotationAnchor {
+  if (!a || typeof a !== "object") return false;
+  const anchor = a as Record<string, unknown>;
+  return (
+    typeof anchor.position === "number" &&
+    Number.isInteger(anchor.position) &&
+    anchor.position >= 0 &&
+    typeof anchor.setAt === "string" &&
+    !isNaN(Date.parse(anchor.setAt))
+  );
+}
+
+export function loadRotationAnchor(): RotationAnchor | null {
+  try {
+    const raw = localStorage.getItem(ROTATION_ANCHOR_KEY);
+    if (!raw) return null;
+    const parsed: unknown = JSON.parse(raw);
+    return isValidRotationAnchor(parsed) ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
+export function saveRotationAnchor(anchor: RotationAnchor | null): void {
+  if (anchor === null) {
+    localStorage.removeItem(ROTATION_ANCHOR_KEY);
+  } else {
+    localStorage.setItem(ROTATION_ANCHOR_KEY, JSON.stringify(anchor));
   }
 }
 

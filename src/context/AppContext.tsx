@@ -7,6 +7,7 @@ import type {
   Cycle,
   ExerciseTemplate,
   LoggedExercise,
+  RotationAnchor,
 } from "../lib/types";
 import {
   loadPrograms,
@@ -15,7 +16,10 @@ import {
   saveSessions,
   loadActiveSession,
   saveActiveSession,
+  loadRotationAnchor,
+  saveRotationAnchor,
 } from "../lib/storage";
+import { createRotationAnchor } from "../lib/rotation";
 import { createDefaultProgram } from "../lib/defaultProgram";
 import { randomUUID } from "../lib/uuid";
 
@@ -54,6 +58,7 @@ interface AppState {
   programs: ProgramBlock[];
   sessions: WorkoutSession[];
   activeSession: WorkoutSession | null;
+  rotationAnchor: RotationAnchor | null;
 }
 
 type AppAction =
@@ -84,7 +89,11 @@ type AppAction =
   | { type: "DELETE_PROGRAM"; payload: string }
   | {
       type: "IMPORT_STATE";
-      payload: { programs: ProgramBlock[]; sessions: WorkoutSession[] };
+      payload: {
+        programs: ProgramBlock[];
+        sessions: WorkoutSession[];
+        rotationAnchor: RotationAnchor | null;
+      };
     }
   | {
       type: "UPDATE_WEIGHT";
@@ -93,6 +102,7 @@ type AppAction =
   | { type: "ADD_EXERCISE"; payload: LoggedExercise }
   | { type: "REORDER_EXERCISES"; payload: LoggedExercise[] }
   | { type: "DELETE_SESSION"; payload: string }
+  | { type: "SET_ROTATION_START"; payload: WorkoutType }
   | { type: "CANCEL_WORKOUT" };
 
 function reducer(state: AppState, action: AppAction): AppState {
@@ -166,6 +176,7 @@ function reducer(state: AppState, action: AppAction): AppState {
         ...state,
         programs: action.payload.programs,
         sessions: action.payload.sessions,
+        rotationAnchor: action.payload.rotationAnchor,
         activeSession: null,
       };
     }
@@ -211,6 +222,9 @@ function reducer(state: AppState, action: AppAction): AppState {
         sessions: state.sessions.filter((s) => s.id !== action.payload),
       };
     }
+    case "SET_ROTATION_START": {
+      return { ...state, rotationAnchor: createRotationAnchor(action.payload) };
+    }
     case "CANCEL_WORKOUT": {
       return { ...state, activeSession: null };
     }
@@ -235,6 +249,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     programs: initialPrograms,
     sessions: loadSessions(),
     activeSession: loadActiveSession(),
+    rotationAnchor: loadRotationAnchor(),
   });
 
   useEffect(() => {
@@ -248,6 +263,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     saveActiveSession(state.activeSession);
   }, [state.activeSession]);
+
+  useEffect(() => {
+    saveRotationAnchor(state.rotationAnchor);
+  }, [state.rotationAnchor]);
 
   return (
     <AppContext.Provider value={{ state, dispatch }}>
