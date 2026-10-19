@@ -8,11 +8,13 @@ import { loadRestTimerDuration } from "../lib/storage";
 import { WorkoutTypeLabel } from "../components/WorkoutTypeLabel";
 import { ExerciseCard } from "../components/ExerciseCard";
 import { WorkoutSummary } from "../components/WorkoutSummary";
-import { getWorkoutLabel, getCycleLabel } from "../lib/rotation";
+import { getWorkoutLabel, getCycleLabel, SEQUENCE } from "../lib/rotation";
 import type {
+  Cycle,
   ExerciseTemplate,
   LoggedExercise,
   WorkoutSession,
+  WorkoutType,
 } from "../lib/types";
 import { Dumbbell, CheckCircle, Plus, XCircle, Timer } from "lucide-react";
 import confetti from "canvas-confetti";
@@ -88,7 +90,7 @@ function SortableExerciseCard({
 export function Today() {
   const navigate = useNavigate();
   const { state, dispatch } = useApp();
-  const { workoutType, cycle } = useNextWorkout();
+  const { workoutType, cycle, rotationIndex } = useNextWorkout();
   const session = state.activeSession;
   const lastSessionForType = useLastSession(
     session?.workoutType ?? workoutType,
@@ -100,6 +102,8 @@ export function Today() {
   const [addingExercise, setAddingExercise] = useState(false);
   const [newExerciseName, setNewExerciseName] = useState("");
   const [confirmCancel, setConfirmCancel] = useState(false);
+  const [pickingStart, setPickingStart] = useState(false);
+  const [pickCycle, setPickCycle] = useState<Cycle>("cycle1");
   const [finishedSnapshot, setFinishedSnapshot] = useState<{
     session: WorkoutSession;
     previousSession: WorkoutSession | null;
@@ -482,7 +486,20 @@ export function Today() {
   };
 
   const totalSessions = state.sessions.length;
-  const sessionsInCurrentBlock = (totalSessions % 8) + 1;
+  const sessionsInCurrentBlock = (rotationIndex % 8) + 1;
+
+  const togglePicker = () => {
+    if (!pickingStart) setPickCycle(cycle);
+    setPickingStart((v) => !v);
+  };
+
+  const handlePickStart = (type: WorkoutType) => {
+    dispatch({
+      type: "SET_ROTATION_START",
+      payload: { workoutType: type, cycle: pickCycle },
+    });
+    setPickingStart(false);
+  };
 
   const previewBorderColor: Record<string, string> = {
     upperA: "border-l-violet-500",
@@ -506,7 +523,49 @@ export function Today() {
         <div
           className={`bg-zinc-800 border border-zinc-700 border-l-2 ${previewBorderColor[workoutType]} rounded-xl p-6 mb-4`}
         >
-          <p className="text-zinc-400 text-sm mb-2">Next Workout</p>
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-zinc-400 text-sm">Next Workout</p>
+            <button
+              onClick={togglePicker}
+              className="text-violet-400 hover:text-violet-300 text-sm"
+            >
+              {pickingStart ? "Cancel" : "Change"}
+            </button>
+          </div>
+          {pickingStart && (
+            <div className="mb-4">
+              <p className="text-zinc-500 text-xs mb-2">
+                Restart the rotation from week 1 of:
+              </p>
+              <div className="flex bg-zinc-900 rounded-lg p-1 mb-2">
+                {(["cycle1", "cycle2"] as const).map((c) => (
+                  <button
+                    key={c}
+                    onClick={() => setPickCycle(c)}
+                    className={`flex-1 rounded-md py-1.5 text-sm font-semibold transition-colors ${
+                      pickCycle === c
+                        ? "bg-violet-600 text-white"
+                        : "text-zinc-400 hover:text-zinc-200"
+                    }`}
+                  >
+                    {getCycleLabel(c)}
+                  </button>
+                ))}
+              </div>
+              <p className="text-zinc-500 text-xs mb-2">Starting at:</p>
+              <div className="grid grid-cols-2 gap-2">
+                {SEQUENCE.map((type) => (
+                  <button
+                    key={type}
+                    onClick={() => handlePickStart(type)}
+                    className={`bg-zinc-900 hover:bg-zinc-700 border border-zinc-700 border-l-2 ${previewBorderColor[type]} rounded-lg py-2 text-sm font-semibold`}
+                  >
+                    {getWorkoutLabel(type)}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
           <div className="flex items-center gap-3 mb-4">
             <WorkoutTypeLabel type={workoutType} cycle={cycle} />
             <span className="text-2xl font-bold">

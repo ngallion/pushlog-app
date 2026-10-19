@@ -5,6 +5,7 @@ import {
   loadRestTimerDuration,
   saveRestTimerDuration,
   migrateImportedData,
+  isValidRotationAnchor,
 } from "../lib/storage";
 import {
   Download,
@@ -95,7 +96,11 @@ export function Options() {
   };
 
   const handleExport = async () => {
-    const data = { programs: state.programs, sessions: state.sessions };
+    const data = {
+      programs: state.programs,
+      sessions: state.sessions,
+      rotationAnchor: state.rotationAnchor,
+    };
     const fileName = `pushlog-backup-${new Date().toISOString().slice(0, 10)}.json`;
     const file = new File([JSON.stringify(data, null, 2)], fileName, {
       type: "application/json",
@@ -135,7 +140,10 @@ export function Options() {
           parsed.programs as ProgramBlock[],
           state.sessions,
         );
-        dispatch({ type: "IMPORT_STATE", payload: migrated });
+        dispatch({
+          type: "IMPORT_STATE",
+          payload: { ...migrated, rotationAnchor: state.rotationAnchor },
+        });
         setProgramImportStatus("success");
         setProgramErrorMessage("");
       } catch (err) {
@@ -183,7 +191,14 @@ export function Options() {
           parsed.programs as ProgramBlock[],
           parsed.sessions as WorkoutSession[],
         );
-        dispatch({ type: "IMPORT_STATE", payload: migrated });
+        // Older backups have no anchor — fall back to the plain session count
+        const rotationAnchor = isValidRotationAnchor(parsed.rotationAnchor)
+          ? parsed.rotationAnchor
+          : null;
+        dispatch({
+          type: "IMPORT_STATE",
+          payload: { ...migrated, rotationAnchor },
+        });
         setImportStatus("success");
         setErrorMessage("");
       } catch (err) {

@@ -1,13 +1,44 @@
-import type { WorkoutType, Cycle, WorkoutSession } from "./types";
+import type {
+  WorkoutType,
+  Cycle,
+  WorkoutSession,
+  RotationAnchor,
+} from "./types";
 
-const SEQUENCE: WorkoutType[] = ["upperA", "lowerA", "upperB", "lowerB"];
+export const SEQUENCE: WorkoutType[] = ["upperA", "lowerA", "upperB", "lowerB"];
 
-export function getNextWorkoutType(sessions: WorkoutSession[]): WorkoutType {
-  return SEQUENCE[sessions.length % 4];
+function sessionTime(s: WorkoutSession): number {
+  return Date.parse(s.finishedAt ?? s.startedAt ?? s.date ?? "");
 }
 
-export function getCurrentCycle(sessions: WorkoutSession[]): Cycle {
-  return Math.floor(sessions.length / 8) % 2 === 0 ? "cycle1" : "cycle2";
+/** Position of the next workout in the rotation (0 = Upper A, Cycle 1, workout 1 of 8). */
+export function getRotationIndex(
+  sessions: WorkoutSession[],
+  anchor: RotationAnchor | null,
+): number {
+  if (!anchor) return sessions.length;
+  const anchorTime = Date.parse(anchor.setAt);
+  const sinceAnchor = sessions.filter((s) => sessionTime(s) > anchorTime);
+  return anchor.position + sinceAnchor.length;
+}
+
+/** Anchor that restarts the rotation at `type`'s slot in week 1 of `cycle`. */
+export function createRotationAnchor(
+  type: WorkoutType,
+  cycle: Cycle,
+): RotationAnchor {
+  return {
+    position: SEQUENCE.indexOf(type) + (cycle === "cycle2" ? 8 : 0),
+    setAt: new Date().toISOString(),
+  };
+}
+
+export function getNextWorkoutType(index: number): WorkoutType {
+  return SEQUENCE[index % 4];
+}
+
+export function getCurrentCycle(index: number): Cycle {
+  return Math.floor(index / 8) % 2 === 0 ? "cycle1" : "cycle2";
 }
 
 export function getWorkoutLabel(type: WorkoutType): string {

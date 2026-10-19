@@ -118,6 +118,7 @@ interface WorkoutSession {
 
 - `pushlog:programs` — `ProgramBlock[]`
 - `pushlog:sessions` — `WorkoutSession[]`
+- `pushlog:rotationAnchor` — `RotationAnchor | null` (manual rotation start, see below)
 
 ---
 
@@ -138,7 +139,8 @@ State lives in `src/context/AppContext.tsx`. Use the `useApp()` hook to access `
 | `UPDATE_WEIGHT`     | Updates weight in active session and template                              |
 | `ADD_EXERCISE`      | Adds exercise to active workout (non-persisted, `id: "impromptu-${uuid}"`) |
 | `REORDER_EXERCISES` | Reorders exercises in active session                                       |
-| `IMPORT_STATE`      | Replaces all programs and sessions (used by Settings import)               |
+| `IMPORT_STATE`      | Replaces all programs, sessions, and rotation anchor (Settings import)     |
+| `SET_ROTATION_START`| Restarts the rotation at a workout type's week-1 slot in a chosen cycle   |
 
 State changes trigger `useEffect` to sync to `localStorage`.
 
@@ -154,6 +156,7 @@ upperA → lowerA → upperB → lowerB → (repeat)
 
 - **DaySet** alternates every 8 completed workouts (2 full cycles).
 - After 8 workouts, the UI prompts the user to start a new `ProgramBlock`.
+- The user can pick the next workout from the Today screen ("Change"). This stores a `RotationAnchor` (`position` + `setAt`); the rotation index becomes `position + sessions finished after setAt`, instead of `sessions.length`. The user picks a cycle and a type; it lands on that type's week-1 slot in the chosen cycle (e.g. Lower B, Cycle 2 → Cycle 2 · 4 of 8).
 - "Start New Block" copies the current program structure as the new baseline.
 
 ---
