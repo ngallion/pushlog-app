@@ -102,7 +102,10 @@ type AppAction =
   | { type: "ADD_EXERCISE"; payload: LoggedExercise }
   | { type: "REORDER_EXERCISES"; payload: LoggedExercise[] }
   | { type: "DELETE_SESSION"; payload: string }
-  | { type: "SET_ROTATION_START"; payload: WorkoutType }
+  | {
+      type: "SET_ROTATION_START";
+      payload: { workoutType: WorkoutType; cycle: Cycle };
+    }
   | { type: "CANCEL_WORKOUT" };
 
 function reducer(state: AppState, action: AppAction): AppState {
@@ -223,7 +226,11 @@ function reducer(state: AppState, action: AppAction): AppState {
       };
     }
     case "SET_ROTATION_START": {
-      return { ...state, rotationAnchor: createRotationAnchor(action.payload) };
+      const { workoutType, cycle } = action.payload;
+      return {
+        ...state,
+        rotationAnchor: createRotationAnchor(workoutType, cycle),
+      };
     }
     case "CANCEL_WORKOUT": {
       return { ...state, activeSession: null };

@@ -22,10 +22,13 @@ export function getRotationIndex(
   return anchor.position + sinceAnchor.length;
 }
 
-/** Anchor that restarts the rotation at `type`'s slot in week 1 of Cycle 1. */
-export function createRotationAnchor(type: WorkoutType): RotationAnchor {
+/** Anchor that restarts the rotation at `type`'s slot in week 1 of `cycle`. */
+export function createRotationAnchor(
+  type: WorkoutType,
+  cycle: Cycle,
+): RotationAnchor {
   return {
-    position: SEQUENCE.indexOf(type),
+    position: SEQUENCE.indexOf(type) + (cycle === "cycle2" ? 8 : 0),
     setAt: new Date().toISOString(),
   };
 }

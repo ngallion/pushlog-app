@@ -107,7 +107,7 @@ Block rollover: after 8 completed workouts (2 full cycles of the 4-type sequence
 
 The app does not track calendar dates for rotation purposes — it only looks at completed sessions. The next workout is always the next item in the sequence after the last completed session's type.
 
-**Manual rotation start:** From the Today screen the user can pick which workout comes next. The pick restarts the rotation as if in week 1 of Cycle 1 — it lands on that workout's slot in the first week (Upper A = 1 of 8, Lower A = 2, Upper B = 3, Lower B = 4) and continues normally from there. Past sessions are not relabeled. The anchor is timestamp-based rather than count-based so deleting older sessions from History doesn't shift the rotation.
+**Manual rotation start:** From the Today screen the user can pick which workout comes next. The user chooses a cycle (defaulting to the current one) and a workout type. The pick restarts the rotation as if in week 1 of that cycle — it lands on that workout's slot in the first week (Upper A = 1 of 8, Lower A = 2, Upper B = 3, Lower B = 4) and continues normally from there. Past sessions are not relabeled. The anchor is timestamp-based rather than count-based so deleting older sessions from History doesn't shift the rotation.
 
 **Block rollover:** When session count within the current block reaches 8, the "Start New Block" prompt appears on the home screen. The user kicks off the new block manually (to allow them to update exercises first).
 
