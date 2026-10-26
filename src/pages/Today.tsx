@@ -16,7 +16,14 @@ import type {
   WorkoutSession,
   WorkoutType,
 } from "../lib/types";
-import { Dumbbell, CheckCircle, Plus, XCircle, Timer } from "lucide-react";
+import {
+  Dumbbell,
+  CheckCircle,
+  Plus,
+  XCircle,
+  Timer,
+  SkipForward,
+} from "lucide-react";
 import confetti from "canvas-confetti";
 import { randomUUID } from "../lib/uuid";
 import { usePebbsContext } from "../context/PebbsContext";
@@ -501,6 +508,11 @@ export function Today() {
     setPickingStart(false);
   };
 
+  const handleSkip = () => {
+    dispatch({ type: "SKIP_WORKOUT" });
+    setPickingStart(false);
+  };
+
   const previewBorderColor: Record<string, string> = {
     upperA: "border-l-violet-500",
     upperB: "border-l-purple-500",
@@ -525,12 +537,23 @@ export function Today() {
         >
           <div className="flex items-center justify-between mb-2">
             <p className="text-zinc-400 text-sm">Next Workout</p>
-            <button
-              onClick={togglePicker}
-              className="text-violet-400 hover:text-violet-300 text-sm"
-            >
-              {pickingStart ? "Cancel" : "Change"}
-            </button>
+            <div className="flex items-center gap-4">
+              {!pickingStart && (
+                <button
+                  onClick={handleSkip}
+                  className="flex items-center gap-1 text-zinc-400 hover:text-zinc-200 text-sm"
+                >
+                  <SkipForward size={14} />
+                  Skip
+                </button>
+              )}
+              <button
+                onClick={togglePicker}
+                className="text-violet-400 hover:text-violet-300 text-sm"
+              >
+                {pickingStart ? "Cancel" : "Change"}
+              </button>
+            </div>
           </div>
           {pickingStart && (
             <div className="mb-4">
