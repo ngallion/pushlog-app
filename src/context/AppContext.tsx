@@ -19,7 +19,11 @@ import {
   loadRotationAnchor,
   saveRotationAnchor,
 } from "../lib/storage";
-import { createRotationAnchor } from "../lib/rotation";
+import {
+  createRotationAnchor,
+  createSkipAnchor,
+  getRotationIndex,
+} from "../lib/rotation";
 import { createDefaultProgram } from "../lib/defaultProgram";
 import { randomUUID } from "../lib/uuid";
 
@@ -106,6 +110,7 @@ type AppAction =
       type: "SET_ROTATION_START";
       payload: { workoutType: WorkoutType; cycle: Cycle };
     }
+  | { type: "SKIP_WORKOUT" }
   | { type: "CANCEL_WORKOUT" };
 
 function reducer(state: AppState, action: AppAction): AppState {
@@ -230,6 +235,14 @@ function reducer(state: AppState, action: AppAction): AppState {
       return {
         ...state,
         rotationAnchor: createRotationAnchor(workoutType, cycle),
+      };
+    }
+    case "SKIP_WORKOUT": {
+      return {
+        ...state,
+        rotationAnchor: createSkipAnchor(
+          getRotationIndex(state.sessions, state.rotationAnchor),
+        ),
       };
     }
     case "CANCEL_WORKOUT": {

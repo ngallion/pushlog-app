@@ -33,6 +33,11 @@ export function createRotationAnchor(
   };
 }
 
+/** Anchor that moves the rotation one slot past `index`, skipping that workout. */
+export function createSkipAnchor(index: number): RotationAnchor {
+  return { position: index + 1, setAt: new Date().toISOString() };
+}
+
 export function getNextWorkoutType(index: number): WorkoutType {
   return SEQUENCE[index % 4];
 }

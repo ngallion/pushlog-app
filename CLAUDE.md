@@ -141,6 +141,7 @@ State lives in `src/context/AppContext.tsx`. Use the `useApp()` hook to access `
 | `REORDER_EXERCISES` | Reorders exercises in active session                                       |
 | `IMPORT_STATE`      | Replaces all programs, sessions, and rotation anchor (Settings import)     |
 | `SET_ROTATION_START`| Restarts the rotation at a workout type's week-1 slot in a chosen cycle   |
+| `SKIP_WORKOUT`      | Advances the rotation one slot without logging a session                   |
 
 State changes trigger `useEffect` to sync to `localStorage`.
 
@@ -157,6 +158,7 @@ upperA → lowerA → upperB → lowerB → (repeat)
 - **DaySet** alternates every 8 completed workouts (2 full cycles).
 - After 8 workouts, the UI prompts the user to start a new `ProgramBlock`.
 - The user can pick the next workout from the Today screen ("Change"). This stores a `RotationAnchor` (`position` + `setAt`); the rotation index becomes `position + sessions finished after setAt`, instead of `sessions.length`. The user picks a cycle and a type; it lands on that type's week-1 slot in the chosen cycle (e.g. Lower B, Cycle 2 → Cycle 2 · 4 of 8).
+- "Skip" on the Today screen moves the anchor to `current index + 1`, so the rotation (and cycle) advance exactly as if that workout had been done, without logging a session.
 - "Start New Block" copies the current program structure as the new baseline.
 
 ---
